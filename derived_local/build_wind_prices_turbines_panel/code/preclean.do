@@ -27,7 +27,8 @@ program build_wind
     gen regionname = zcta5ce10
     drop if wind_zip_area_ratio > 100
     
-    save "../temp/wind_zip_area_ratio.dta", replace
+    save_data "../temp/wind_zip_area_ratio.dta", ///
+        key(regionname) replace
     
     replace wind_zip_area_ratio = round(wind_zip_area_ratio, .001)
     export delimited using "${GoogleDrive}/stata/zip_wind_weighted.csv", replace
@@ -42,7 +43,7 @@ program build_zillow
         local x p`x'
         rename `v' `x'
     }
-    save "../temp/zillow_prices.dta", replace
+    save_data "../temp/zillow_prices.dta", key(regionname) replace
     
     import delimited "${GoogleDrive}/gis_derived/zip_area.csv", ///
         stringcol(1) clear
@@ -57,7 +58,7 @@ end
 
 program build_wind_farms
     import delimited "${GoogleDrive}/gis_derived/zip_turbines.csv", clear
-    keep objectid_1 dtbuilt propdes sprname zcta5ce10
+    keep objectid_1 dtbuilt sprname zcta5ce10
     
     gen date = date(dtbuilt, "YMDhms")
     gen dt = mofd(date)
@@ -70,14 +71,12 @@ program build_wind_farms
     keep if nbr_turbines_by_prj >= 10
     bys zcta5ce10 dt: gen new_turbines_zip_month = _N
     
-    additional_turbines_plot
-    
     egen t = tag(zcta5ce10 dt)
     keep if t == 1
     keep zcta5ce10 new_turbines_zip_month dt
     bys zcta5ce10 (dt): gen aggr_turb_zip_month = sum(new_turbines_zip_month)
     rename zcta5ce10 regionname
-    save "../temp/turbines_zip.dta", replace
+    save_data "../temp/turbines_zip.dta", key(regionname dt) replace
     
     use "../temp/zillow_prices.dta", clear
     reshape long p, i(regionname) j(date, string)
@@ -98,18 +97,8 @@ program build_wind_farms
         nogen assert(1 2 3) keep(3)
         
     xtset regionname dt
-    save "../temp/wind_prices_turbines.dta", replace
-end
-
-program additional_turbines_plot
-    preserve
-        keep if year >= 1998 & year <= 2017
-        collapse (count) objectid_1, by(year)
-
-        graph bar (asis) objectid_1, over(year, label(angle(45) labsize(small))) ///
-            ytitle("Annual installed turbines") exclude0
-        graph export "../output/annual_new_turbines.png", replace
-    restore
+    save_data "${GoogleDrive}/stata/wind_prices_turbines.dta", ///
+        key(regionname dt) replace
 end
 
 * Execute

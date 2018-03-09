@@ -1,7 +1,7 @@
 set more off
 adopath + ../../../lib/stata/gslab_misc/ado
 adopath + ../../../lib/third_party/stata_tools
-preliminaries
+preliminaries, loadglob("../../../lib/python/wind/input_params.txt")
 
 program main
     local table_file "../output/tables.txt"
@@ -21,7 +21,7 @@ program build_descriptive_table
     local ss_est = "_b[`endog'] \ _se[`endog']"
     local fs_est = "_b[`instr'] \ _se[`instr']"
 
-    use "../temp/wind_prices_turbines.dta", clear
+    use "${GoogleDrive}/stata/wind_prices_turbines.dta", clear
     
     reghdfe `endog' `instr', absorb(dt) `options'
     matrix fs_col = (`fs_est' \ `obs')
