@@ -1,5 +1,5 @@
 
- make.py started: 2018-03-09 18:25:18 C:\Users\giamb\Documents\GitHub\blowin_wind\analysis\descriptive_plots\code 
+ make.py started: 2018-03-10 12:10:11 C:\Users\giamb\Documents\GitHub\blowin_wind\analysis\descriptive_plots\code 
 
 
 
@@ -53,47 +53,81 @@ Notes:
 
 . 
 . program main
-  1.     plot_annual_new_turbines
-  2.     plot_prices_ts
-  3. end
+  1.     local keep_every 1
+  2.     
+.     import delimited "${GoogleDrive}/gis_derived/zip_turbines.csv", clear
+  3.     plot_annual_new_turbines
+  4.     
+.     use "${GoogleDrive}/stata/wind_prices_turbines.dta", clear
+  5.     replace p = p/1000
+  6.     label var p "Zillow Home Value Index ($1,000)"
+  7. 
+.     plot_prices_ts
+  8.     
+.     build_zillow_histogram if p <= 1000
+  9.     build_zillow_cdf if p <= 1000, keep_every(`keep_every')
+ 10. end
 
 . 
 . program plot_annual_new_turbines
-  1.     import delimited "${GoogleDrive}/gis_derived/zip_turbines.csv", clear
-  2.     keep objectid_1 dtbuilt sprname
-  3.     
+  1.     keep objectid_1 dtbuilt sprname
+  2.     
 .     gen date = date(dtbuilt, "YMDhms")
-  4.     gen dt = mofd(date)
-  5.     format dt %tm
-  6.     generate year=year(date)
-  7.     keep if year > 1930 & year < 5000
-  8.     
+  3.     gen dt = mofd(date)
+  4.     format dt %tm
+  5.     generate year=year(date)
+  6.     keep if year > 1930 & year < 5000
+  7.     
 .     drop if sprname == ""
-  9.     bys sprname: gen nbr_turbines_by_prj = _N
- 10.     keep if nbr_turbines_by_prj >= 10
- 11.     keep if year >= 1998 & year <= 2017
- 12.     collapse (count) objectid_1, by(year)
- 13. 
+  8.     bys sprname: gen nbr_turbines_by_prj = _N
+  9.     keep if nbr_turbines_by_prj >= 10
+ 10.     keep if year >= 1998 & year <= 2017
+ 11.     collapse (count) objectid_1, by(year)
+ 12. 
 .     graph bar (asis) objectid_1, over(year, label(angle(45) labsize(small))) ///
 >         ytitle("Annual installed turbines")
- 14.     graph export "../output/annual_new_turbines.png", replace
- 15. end
+ 13.     graph export "../output/annual_new_turbines.png", replace
+ 14. end
 
 . 
 . program plot_prices_ts
-  1.     use "${GoogleDrive}/stata/wind_prices_turbines.dta", clear
-  2.     bys regionname (dt): egen ever_wind_farm = max(wind_farm)
-  3.     collapse (mean) p, by(ever_wind_farm dt)
-  4.     tsset ever_wind_farm dt
-  5.     
-.     replace p = p/1000
-  6.     label var p "Average Zillow Home Value Index (1,000$)"
-  7.     
-.     graph twoway (tsline p if ever_wind_farm == 0, lpattern(dash) lcolor(gs3)) ///
->         (tsline p if ever_wind_farm == 1, lcolor(gs3)), ytitle(`: var label p') ///
->         xtitle("") legend(label(1 "No wind farm") label(2 "Wind farm"))
-  8.     graph export "../output/prices_ts.png", replace
-  9. end
+  1.     preserve
+  2.         bys regionname (dt): egen ever_wind_farm = max(wind_farm)
+  3.         collapse (mean) p, by(ever_wind_farm dt)
+  4.         tsset ever_wind_farm dt
+  5.         
+.         label var p "Average Zillow Home Value Index ($1,000)"
+  6.         sum dt
+  7.         
+.         graph twoway (tsline p if ever_wind_farm == 0, lpattern(dash) lcolor(gs3))  ///
+>             (tsline p if ever_wind_farm == 1, lcolor(gs3)), ytitle(`: var label p') ///
+>             xtitle("") xlabel(`r(min)'(50)`r(max)', format(%tmMon-CCYY) labsize(3) angle(45))  ///
+>             legend(label(1 "No wind farm") label(2 "Wind farm"))
+  8.         graph export "../output/prices_ts.png", replace
+  9.     restore
+ 10. end
+
+. 
+. program build_zillow_histogram
+  1.     syntax [if]
+  2. 
+.     histogram p `if', percent
+  3.     graph export "../output/hist_zillow_prices.png", replace
+  4. end
+
+. 
+. program build_zillow_cdf
+  1.     syntax [if], keep_every(int)
+  2. 
+.     preserve
+  3.         cumul p `if', gen(c_prices)
+  4.         label var c_prices "Cumulative probability"
+  5.         sort c_prices
+  6.         keep if _n == 1 | mod(_n, `keep_every') == 0
+  7.         line c_prices p `if'
+  8.         graph export "../output/cdf_zillow_prices.png", replace
+  9.     restore
+ 10. end
 
 . 
 . * Execute
@@ -108,14 +142,25 @@ Notes:
 (87 observations deleted)
 (note: file ../output/annual_new_turbines.png not found)
 (file ../output/annual_new_turbines.png written in PNG format)
+variable p was long now double
+(3,323,401 real changes made)
        panel variable:  ever_wind_farm (strongly balanced)
         time variable:  dt, 1996m4 to 2018m1
                 delta:  1 month
-(524 real changes made)
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+          dt |        524       565.5    75.70461        435        696
 (note: file ../output/prices_ts.png not found)
 (file ../output/prices_ts.png written in PNG format)
+(bin=65, start=16.7, width=15.127692)
+(note: file ../output/hist_zillow_prices.png not found)
+(file ../output/hist_zillow_prices.png written in PNG format)
+(0 observations deleted)
+(note: file ../output/cdf_zillow_prices.png not found)
+(file ../output/cdf_zillow_prices.png written in PNG format)
 
 . 
 end of do-file
 
- make.py ended: 2018-03-09 18:25:39
+ make.py ended: 2018-03-10 12:11:17
