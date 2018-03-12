@@ -1,0 +1,33 @@
+
+ make.py started: 2018-03-12 15:05:44 C:\Users\giamb\Documents\GitHub\blowin_wind\slides\source 
+
+
+
+
+Execute:  lyx -e pdf2 "../output\breakfast_filled.lyx"
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (MiKTeX 2.9.6500)
+
+entering extended mode
+
+(breakfast_filled.tex
+
+LaTeX2e <2017-04-15>
+
+Babel <3.17> and hyphenation patterns for 75 language(s) loaded.
+
+
+
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (MiKTeX 2.9.6500)
+
+entering extended mode
+
+(breakfast_filled.tex
+
+LaTeX2e <2017-04-15>
+
+Babel <3.17> and hyphenation patterns for 75 language(s) loaded.
+
+
+
+
+ make.py ended: 2018-03-12 15:05:50

@@ -17,8 +17,7 @@ set_option(link_logs_dir = '../output')
 clear_dirs('../output', '../temp')
 start_make_logging()
 
-run_stata(program='analysis.do', executable='StataSE-64')
-run_stata(program='energy_figures.do', executable='StataSE-64')
+run_stata(program='figures.do', executable='StataSE-64')
 
 end_make_logging()
 

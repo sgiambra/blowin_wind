@@ -7,6 +7,7 @@ program main
     build_wind
     build_zillow
     build_wind_farms
+    build_wind_panel
 end
 
 program build_wind
@@ -43,6 +44,10 @@ program build_zillow
         local x p`x'
         rename `v' `x'
     }
+    *rename regionname zipcode
+    *merge 1:1 zipcode using "../temp/zip_zcta_xwalk.dta", ///
+    *    nogen keep(3) assert(1 2 3)
+    *drop zipcode
     save_data "../temp/zillow_prices.dta", key(regionname) replace
     
     import delimited "${GoogleDrive}/gis_derived/zip_area.csv", ///
@@ -50,7 +55,8 @@ program build_zillow
     destring zcta5ce10, gen(regionname)
     keep zcta5ce10 regionname
     
-    merge 1:1 regionname using "../temp/zillow_prices.dta", keep(3) assert(1 2 3) nogen
+    merge 1:1 regionname using "../temp/zillow_prices.dta", ///
+        keep(3) assert(1 2 3) nogen
     keep zcta5ce10 p2007m01
     
     export delimited using "${GoogleDrive}/stata/zillow_zip.csv", replace
@@ -77,7 +83,9 @@ program build_wind_farms
     bys zcta5ce10 (dt): gen aggr_turb_zip_month = sum(new_turbines_zip_month)
     rename zcta5ce10 regionname
     save_data "../temp/turbines_zip.dta", key(regionname dt) replace
-    
+end
+
+program build_wind_panel
     use "../temp/zillow_prices.dta", clear
     reshape long p, i(regionname) j(date, string)
     gen dt = monthly(date,"YM")
@@ -94,6 +102,8 @@ program build_wind_farms
     }
     
     merge m:1 regionname using "../temp/wind_zip_area_ratio.dta", ///
+        nogen assert(1 2 3) keep(3)
+    merge m:1 regionname using "../temp/zip_controls.dta", ///
         nogen assert(1 2 3) keep(3)
         
     xtset regionname dt

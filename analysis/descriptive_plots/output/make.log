@@ -1,5 +1,5 @@
 
- make.py started: 2018-03-10 12:10:11 C:\Users\giamb\Documents\GitHub\blowin_wind\analysis\descriptive_plots\code 
+ make.py started: 2018-03-12 14:55:58 C:\Users\giamb\Documents\GitHub\blowin_wind\analysis\descriptive_plots\code 
 
 
 
@@ -143,7 +143,7 @@ Notes:
 (note: file ../output/annual_new_turbines.png not found)
 (file ../output/annual_new_turbines.png written in PNG format)
 variable p was long now double
-(3,323,401 real changes made)
+(3,282,557 real changes made)
        panel variable:  ever_wind_farm (strongly balanced)
         time variable:  dt, 1996m4 to 2018m1
                 delta:  1 month
@@ -163,4 +163,103 @@ variable p was long now double
 . 
 end of do-file
 
- make.py ended: 2018-03-10 12:11:17
+
+Execute:  StataSE-64 /e do "./energy_figures.do"
+
+  ___  ____  ____  ____  ____ (R)
+ /__    /   ____/   /   ____/
+___/   /   /___/   /   /___/   15.0   Copyright 1985-2017 StataCorp LLC
+  Statistics/Data Analysis            StataCorp
+                                      4905 Lakeway Drive
+     Special Edition                  College Station, Texas 77845 USA
+                                      800-STATA-PC        http://www.stata.com
+                                      979-696-4600        stata@stata.com
+                                      979-696-4601 (fax)
+
+110-user Stata network perpetual license:
+       Serial number:  401506201178
+         Licensed to:  Brown University
+                       Brown University
+
+Notes:
+      1.  Stata is running in batch mode.
+      2.  Unicode is supported; see help unicode_advice.
+      3.  Maximum number of variables is set to 5000; see help set_maxvar.
+
+. do ./energy_figures.do 
+
+. set more off
+
+. adopath + ../../../lib/stata/gslab_misc/ado
+  [1]  (BASE)      "C:\Program Files (x86)\Stata15\ado\base/"
+  [2]  (SITE)      "C:\Program Files (x86)\Stata15\ado\site/"
+  [3]              "."
+  [4]  (PERSONAL)  "c:\ado\personal/"
+  [5]  (PLUS)      "c:\ado\plus/"
+  [6]  (OLDPLACE)  "c:\ado/"
+  [7]              "../../../lib/stata/gslab_misc/ado"
+
+. adopath + ../../../lib/third_party/stata_tools
+  [1]  (BASE)      "C:\Program Files (x86)\Stata15\ado\base/"
+  [2]  (SITE)      "C:\Program Files (x86)\Stata15\ado\site/"
+  [3]              "."
+  [4]  (PERSONAL)  "c:\ado\personal/"
+  [5]  (PLUS)      "c:\ado\plus/"
+  [6]  (OLDPLACE)  "c:\ado/"
+  [7]              "../../../lib/stata/gslab_misc/ado"
+  [8]              "../../../lib/third_party/stata_tools"
+
+. preliminaries, loadglob("../../../lib/python/wind/input_params.txt")
+
+. 
+. program main
+  1.     import excel "${GoogleDrive}/raw_data/energy_data/Wind energy capacity_American Wind Energy Association.xls", ///
+>         sheet("Foglio1") firstrow
+  2. 
+.     graph bar (asis) cumulativecapacityMW,                  ///
+>         over(year, label(labsize(small)))                   ///
+>         ytitle("Cumulative Wind Power Capacity (MW)")       ///
+>         note("Source: American Wind Energy Association", span)
+  3.     graph export "../output/WindEnergyTrend.png", replace
+  4. 
+.     import excel "${GoogleDrive}/raw_data/energy_data/Wind energy capacity_American Wind Energy Association.xls", ///
+>         sheet("Foglio2") firstrow clear
+  5.     
+.     foreach v of varlist A-Z{
+  6.             local x : variable label `v'
+  7.             local q`v' = strtoname("`x'")
+  8.             ren `v' `q`v''
+  9.     }
+ 10. 
+.     gen world=1
+ 11.     reshape long _, i(world) j(year)
+ 12.     rename _ energy_cons
+ 13. 
+.     graph bar (asis) energy_cons, over(year, label(angle(45) labsize(small)))       ///
+>         ytitle("World Energy Consumption (Mtoe)") ylabel(5000(5000)15000) exclude0  ///
+>         note("Source: Global Energy Statistical Yearbook 2016", span)
+ 14.     graph export "../output/WorldEnergyConsumption.png", replace
+ 15. end
+
+. 
+. * Execute
+. main
+(note: file ../output/WindEnergyTrend.png not found)
+(file ../output/WindEnergyTrend.png written in PNG format)
+(note: j = 1990 1991 1992 1993 1994 1995 1996 1997 1998 1999 2000 2001 2002 2003 2004 2005 2006 2007 2008 2009 2010 2011 2012 2013 2014 2015)
+
+Data                               wide   ->   long
+-----------------------------------------------------------------------------
+Number of obs.                        1   ->      26
+Number of variables                  27   ->       3
+j variable (26 values)                    ->   year
+xij variables:
+                  _1990 _1991 ... _2015   ->   _
+-----------------------------------------------------------------------------
+(note: file ../output/WorldEnergyConsumption.png not found)
+(file ../output/WorldEnergyConsumption.png written in PNG format)
+
+. 
+end of do-file
+
+ make.py ended: 2018-03-12 14:57:11

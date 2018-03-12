@@ -1,0 +1,164 @@
+
+ make.py started: 2018-03-12 13:48:33 C:\Users\giamb\Documents\GitHub\blowin_wind\analysis\2sls_plots\code 
+
+
+
+
+Execute:  StataSE-64 /e do "./figures.do"
+
+  ___  ____  ____  ____  ____ (R)
+ /__    /   ____/   /   ____/
+___/   /   /___/   /   /___/   15.0   Copyright 1985-2017 StataCorp LLC
+  Statistics/Data Analysis            StataCorp
+                                      4905 Lakeway Drive
+     Special Edition                  College Station, Texas 77845 USA
+                                      800-STATA-PC        http://www.stata.com
+                                      979-696-4600        stata@stata.com
+                                      979-696-4601 (fax)
+
+110-user Stata network perpetual license:
+       Serial number:  401506201178
+         Licensed to:  Brown University
+                       Brown University
+
+Notes:
+      1.  Stata is running in batch mode.
+      2.  Unicode is supported; see help unicode_advice.
+      3.  Maximum number of variables is set to 5000; see help set_maxvar.
+
+. do ./figures.do 
+
+. set more off
+
+. adopath + ../../../lib/stata/gslab_misc/ado
+  [1]  (BASE)      "C:\Program Files (x86)\Stata15\ado\base/"
+  [2]  (SITE)      "C:\Program Files (x86)\Stata15\ado\site/"
+  [3]              "."
+  [4]  (PERSONAL)  "c:\ado\personal/"
+  [5]  (PLUS)      "c:\ado\plus/"
+  [6]  (OLDPLACE)  "c:\ado/"
+  [7]              "../../../lib/stata/gslab_misc/ado"
+
+. adopath + ../../../lib/third_party/stata_tools
+  [1]  (BASE)      "C:\Program Files (x86)\Stata15\ado\base/"
+  [2]  (SITE)      "C:\Program Files (x86)\Stata15\ado\site/"
+  [3]              "."
+  [4]  (PERSONAL)  "c:\ado\personal/"
+  [5]  (PLUS)      "c:\ado\plus/"
+  [6]  (OLDPLACE)  "c:\ado/"
+  [7]              "../../../lib/stata/gslab_misc/ado"
+  [8]              "../../../lib/third_party/stata_tools"
+
+. preliminaries, loadglob("../../../lib/python/wind/input_params.txt")
+
+. 
+. program main
+  1.     local controls = "avg_income pop male_ratio white_ratio " + ///
+>                      "black_ratio asian_ratio near_dist elevation"
+  2. 
+.     use "${GoogleDrive}/stata/wind_prices_turbines.dta", clear
+  3.     gen lnp = log(p)
+  4.     gen delta_lnp = D.lnp
+  5. 
+.     label var wind_farm             "Probability wind farm in Zip Code"
+  6.     label var delta_lnp             "Monthly change in ZHVI"
+  7.     label var wind_zip_area_ratio   "Zip Code area with wind power capacity > 30%"
+  8. 
+.     binscatter delta_lnp wind_zip_area_ratio, ///
+>         xtitle(`: var label wind_zip_area_ratio') ytitle(`: var label delta_lnp')
+  9.     graph export "../output/price_change_wind_binsc.png", replace
+ 10. 
+.     * Residualize instrument
+.     reg wind_zip_area_ratio `controls'
+ 11.     predict inst_resid_adj, residuals
+ 12.     label var inst_resid_adj "Residualized Zip Code area with wind power capacity > 30%"
+ 13. 
+.     local inst_list = "wind_zip_area_ratio inst_resid_adj wind_zip_area_ratio inst_resid_adj"
+ 14.     local saving_list = "first_stage fist_stage_adj second_stage second_stage_adj"
+ 15.     local var_list = "wind_farm wind_farm delta_lnp delta_lnp"
+ 16.     local range_list = `""0 100" "-40 60" "0 100" "-40 60""'
+ 17. 
+.     forval col_index = 1/4 {
+ 18.         local inst : word `col_index' of `inst_list'
+ 19.         local saving : word `col_index' of `saving_list'
+ 20.         local vars : word `col_index' of `var_list'
+ 21.         local ranges : word `col_index' of `range_list'
+ 22. 
+.         build_2sls_plot, vars(`vars') inst(`inst') ranges(`ranges') saving(`saving')
+ 23.     }
+ 24. end
+
+. 
+. program build_2sls_plot
+  1.     syntax, vars(str) inst(str) ranges(str) saving(str) *
+  2. 
+.     preserve
+  3.         range points `ranges' 50
+  4. 
+.         lpoly `vars' `inst', degree(2) at(points) gen(`vars'_hat) se(`vars'_se) nograph
+  5. 
+.         local width_`vars': display %4.3f r(bwidth)
+  6.         gen `vars'_lb = `vars'_hat - 2*`vars'_se
+  7.         gen `vars'_ub = `vars'_hat + 2*`vars'_se
+  8.         
+.         line `vars'_lb `vars'_hat `vars'_ub points, ///
+>             lpattern(dash solid dash) legend(off) xtitle(`: var label `inst'') ///
+>             ytitle(`: var label `vars'') note("Notes: Bandwidth is `width_`vars''", span)
+  9.         graph export "../output/`saving'.png", replace
+ 10.     restore
+ 11. end
+
+. 
+. * Execute
+. main
+(360,291 missing values generated)
+(374,195 missing values generated)
+warning: nquantiles(20) was specified, but only 18 were generated. see help file under nquantiles() for explanation.
+(note: file ../output/price_change_wind_binsc.png not found)
+(file ../output/price_change_wind_binsc.png written in PNG format)
+
+      Source |       SS           df       MS      Number of obs   = 3,642,848
+-------------+----------------------------------   F(8, 3642839)   >  99999.00
+       Model |   719663992         8    89957999   Prob > F        =    0.0000
+    Residual |  2.3180e+09 3,642,839  636.327441   R-squared       =    0.2369
+-------------+----------------------------------   Adj R-squared   =    0.2369
+       Total |  3.0377e+09 3,642,847  833.881415   Root MSE        =    25.226
+
+------------------------------------------------------------------------------
+wind_zip_a~o |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+  avg_income |  -.1037093   .0003731  -277.96   0.000    -.1044406    -.102978
+         pop |  -.0003565   1.04e-06  -343.95   0.000    -.0003585   -.0003544
+  male_ratio |   125.5401   .6028362   208.25   0.000     124.3586    126.7217
+ white_ratio |   29.63438   .1917791   154.52   0.000      29.2585    30.01026
+ black_ratio |  -8.124554    .212121   -38.30   0.000    -8.540304   -7.708804
+ asian_ratio |  -14.14505   .3593825   -39.36   0.000    -14.84943   -13.44067
+   near_dist |   .0317195   .0000676   469.17   0.000      .031587     .031852
+   elevation |  -.0137024   .0000481  -284.87   0.000    -.0137967   -.0136081
+       _cons |  -54.85083   .3785244  -144.91   0.000    -55.59272   -54.10893
+------------------------------------------------------------------------------
+(3,642,798 missing values generated)
+(3,642,798 missing values generated)
+(3,642,798 missing values generated)
+(note: file ../output/first_stage.png not found)
+(file ../output/first_stage.png written in PNG format)
+(3,642,798 missing values generated)
+(3,642,798 missing values generated)
+(3,642,798 missing values generated)
+(note: file ../output/fist_stage_adj.png not found)
+(file ../output/fist_stage_adj.png written in PNG format)
+(3,642,798 missing values generated)
+(3,642,798 missing values generated)
+(3,642,798 missing values generated)
+(note: file ../output/second_stage.png not found)
+(file ../output/second_stage.png written in PNG format)
+(3,642,798 missing values generated)
+(3,642,798 missing values generated)
+(3,642,798 missing values generated)
+(note: file ../output/second_stage_adj.png not found)
+(file ../output/second_stage_adj.png written in PNG format)
+
+. 
+end of do-file
+
+ make.py ended: 2018-03-12 13:59:20

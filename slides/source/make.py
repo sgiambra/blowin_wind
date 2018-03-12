@@ -17,8 +17,20 @@ set_option(link_logs_dir = '../output')
 clear_dirs('../output', '../temp')
 start_make_logging()
 
-run_stata(program='analysis.do', executable='StataSE-64')
-run_stata(program='energy_figures.do', executable='StataSE-64')
+from gslab_fill.tablefill import tablefill
+from gslab_fill.textfill import textfill
+
+tablefill(
+  input = ('../../analysis/descriptive_regressions/output/tables.txt '
+           '../../analysis/covariates_balance/output/tables.txt'),
+  template = './breakfast.lyx',
+  output = '../output/breakfast_filled.lyx'
+  )
+
+# COMPILE (ORDER MATTERS)
+run_lyx(program = '../output/breakfast_filled')
+
+os.rename('../output/breakfast_filled.pdf', '../output/breakfast.pdf')
 
 end_make_logging()
 
