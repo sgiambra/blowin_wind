@@ -1,0 +1,3 @@
+Zip Codes with wind farms and price data: 123
+Zip Codes with wind farms but no price data: 948
+Zip Codes price data but no wind farms: 10443

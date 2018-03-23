@@ -1,0 +1,63 @@
+******************************************************
+
+            Roadmap for QGIS analysis
+               by Samuele Giambra
+
+******************************************************
+
+
+A- Merge wind power capacity data with Zip Codes (same steps with county)
+
+1. Load shapefiles:
+- G:/My Drive/research projects/wind/raw_data/wind/pot_wind_cap_080_current
+- G:/My Drive/research projects/wind/raw_data/us_geography/cb_2016_us_zcta510_500k
+
+2. Project layers
+- Right click on each layer -> Save as G:/My Drive/research projects/wind/gis_derived/projected/filename.shp
+	Use Coordinate reference system North America Albers Equal Area Conic
+
+3. Compute area of Zip Code
+- Right click on counties -> Toggle editing mode -> Open field calculator
+	Output field name(a_zip)
+	Output field type(Decimal number real)
+	Precision(5)
+	Expression($area/1000000)
+	-> Save
+
+4. Compute ratio area Zip Code with wind capacity >= 30%
+
+5. Intersect county shapefile with wind layer
+- Processing -> Toolbox -> Intersection
+	Input layer(wind)
+	Intersection layer(Zip Codes)
+	Input fields to keep(gid a30_ratio)
+
+6. Compute area of intersection (in km2) and export csv
+	save name(intersect_wind_zip.csv)
+
+
+B- Associate each wind turbine with closest Zip Code (same steps with county)
+
+1. Load shapefiles and xls:
+- G:/My Drive/research projects/wind/raw_data/us_geography/cb_2016_us_zcta510_500k
+- G:/My Drive/research projects/wind/raw_data/turbines/Natl_022018.gdb
+- G:/My Drive/research projects/wind/stata/zillow_zip.xls
+
+2. Select Zip Codes for which we have Zillow prices
+- Right click cb_2016_us_zcta510_500k -> Properties -> Joins -> Add new join -> Join layer(zillow_zip)
+- Right click cb_2016_us_zcta510_500k -> Open attribute table -> Filter where Zillow fields are null
+- Right click cb_2016_us_zcta510_500k -> Save as G:/My Drive/research projects/wind/gis_derived/projected/zipcode_with_zillowprice.shp
+	Use Coordinate reference system North America Albers Equal Area Conic
+
+3. Project turbines layer
+- Right click Natl_022018_determined with built date -> Save as G:/My Drive/research projects/wind/gis_derived/projected/turbines_builtdate.shp
+	Use Coordinate reference system North America Albers Equal Area Conic
+
+4. Find closest Zip Code to each turbine
+- Vector -> NNJoin ->
+	Input vector layer(turbines_builtdate)
+	Join vector layer(zipcode_with_zillowprice)
+	Output layer(turbines_dist_zipcode)
+
+5. Export csv
+- Right click turbines_dist_zipcode -> Save as -> G:/My Drive/research projects/wind/gis_derived/turbines_dist_zipcode.csv

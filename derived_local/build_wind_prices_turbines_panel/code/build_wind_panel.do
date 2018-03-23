@@ -4,10 +4,17 @@ adopath + ../../../lib/third_party/stata_tools
 preliminaries, loadglob("../../../lib/python/wind/input_params.txt")
 
 program main
+    local input_file_list = "Zip_MedianListingPricePerSqft_AllHomes " + ///
+                            "Zip_Listings_PriceCut_SeasAdj_AllHomes " + ///
+                            "Zip_PctOfListingsWithPriceReductions_AllHomes"
+
     build_wind
-    build_zillow
     build_wind_farms
-    build_wind_panel
+
+    foreach inpt in `input_file_list' {
+        build_zillow, input_file(`inpt') stub(Zip)
+        build_wind_panel, output_file(`inpt')
+    }
 end
 
 program build_wind
@@ -35,33 +42,6 @@ program build_wind
     export delimited using "${GoogleDrive}/stata/zip_wind_weighted.csv", replace
 end
 
-program build_zillow
-    import delimited "${GoogleDrive}/raw_data/zillow/prices/Zip_Zhvi_AllHomes.csv", clear
-    
-    foreach v of varlist v8-v269 {
-        local x: variable label `v'
-        local x: subinstr local x "-" "m"
-        local x p`x'
-        rename `v' `x'
-    }
-    *rename regionname zipcode
-    *merge 1:1 zipcode using "../temp/zip_zcta_xwalk.dta", ///
-    *    nogen keep(3) assert(1 2 3)
-    *drop zipcode
-    save_data "../temp/zillow_prices.dta", key(regionname) replace
-    
-    import delimited "${GoogleDrive}/gis_derived/zip_area.csv", ///
-        stringcol(1) clear
-    destring zcta5ce10, gen(regionname)
-    keep zcta5ce10 regionname
-    
-    merge 1:1 regionname using "../temp/zillow_prices.dta", ///
-        keep(3) assert(1 2 3) nogen
-    keep zcta5ce10 p2007m01
-    
-    export delimited using "${GoogleDrive}/stata/zillow_zip.csv", replace
-end
-
 program build_wind_farms
     import delimited "${GoogleDrive}/gis_derived/zip_turbines.csv", clear
     keep objectid_1 dtbuilt sprname zcta5ce10
@@ -85,15 +65,64 @@ program build_wind_farms
     save_data "../temp/turbines_zip.dta", key(regionname dt) replace
 end
 
+program build_zillow
+    syntax, input_file(str) stub(str) [export_prices(str)]
+
+    import delimited "${GoogleDrive}/raw_data/zillow/prices/`stub'/`input_file'.csv", clear
+    
+    qui ds v*
+    foreach v of varlist `r(varlist)' {
+        local x: variable label `v'
+        local x: subinstr local x "-" "m"
+        local x p`x'
+        rename `v' `x'
+    }
+
+    *rename regionname zipcode
+    *merge 1:1 zipcode using "../temp/zip_zcta_xwalk.dta", ///
+    *    nogen keep(3) assert(1 2 3)
+    *drop zipcode
+    
+    save_data "../temp/zillow_prices.dta", key(regionname) replace
+    
+    if "`export_prices'" == "True" {
+        import delimited "${GoogleDrive}/gis_derived/zip_area.csv", ///
+            stringcol(1) clear
+        destring zcta5ce10, gen(regionname)
+        keep zcta5ce10 regionname
+        
+        merge 1:1 regionname using "../temp/zillow_prices.dta", ///
+            keep(3) assert(1 2 3) nogen
+        keep zcta5ce10 p2010m08 p2012m08
+        gen price_diff = log(p2012m08) - log(p2010m08)
+        
+        export excel using "${GoogleDrive}/stata/zillow_zip.xls", replace
+    }
+end
+
 program build_wind_panel
+    syntax, output_file(str)
+
     use "../temp/zillow_prices.dta", clear
     reshape long p, i(regionname) j(date, string)
     gen dt = monthly(date,"YM")
     format dt %tm
     
     merge 1:1 regionname dt using "../temp/turbines_zip.dta", ///
-        assert(1 2 3) keep(1 3)
-    gen wind_farm = 1 if _merge == 3
+        assert(1 2 3) keep(1 2 3)
+
+    file open text using "../output/texttable_`output_file'.txt", write replace
+    
+    distinct regionname if _merge == 3
+    file write text ("Zip Codes with wind farms and price data: `r(ndistinct)'") _n
+    distinct regionname if _merge == 2
+    file write text ("Zip Codes with wind farms but no price data: `r(ndistinct)'") _n
+    distinct regionname if _merge == 1
+    file write text ("Zip Codes price data but no wind farms: `r(ndistinct)'")
+    
+    file close text
+
+    gen wind_farm = 1 if (_merge == 2 | _merge == 3)
     drop _merge
     
     bysort regionname (dt): carryforward aggr_turb_zip_month wind_farm, replace
@@ -107,7 +136,7 @@ program build_wind_panel
         nogen assert(1 2 3) keep(3)
         
     xtset regionname dt
-    save_data "${GoogleDrive}/stata/wind_prices_turbines.dta", ///
+    save_data "${GoogleDrive}/stata/`output_file'.dta", ///
         key(regionname dt) replace
 end
 
