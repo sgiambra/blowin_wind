@@ -13,11 +13,12 @@ from gslab_make.run_program import *
 #****************************************************
 # MAKE.PY STARTS
 #****************************************************
+google_drive = 'G:/My Drive/research projects/wind/stata/build_wind_panel'
+
 set_option(link_logs_dir = '../output')
-clear_dirs('../output', '../temp')
+clear_dirs('../output', '../temp', google_drive)
 start_make_logging()
 
-run_stata(program='build_controls.do', executable='StataSE-64')
 run_stata(program='build_wind_panel.do', executable='StataSE-64')
 
 end_make_logging()

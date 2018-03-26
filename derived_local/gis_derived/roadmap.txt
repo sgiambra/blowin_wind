@@ -17,7 +17,7 @@ A- Merge wind power capacity data with Zip Codes (same steps with county)
 	Use Coordinate reference system North America Albers Equal Area Conic
 
 3. Compute area of Zip Code
-- Right click on counties -> Toggle editing mode -> Open field calculator
+- Right click on zip codes -> Open attribute table -> Toggle editing mode -> Open field calculator
 	Output field name(a_zip)
 	Output field type(Decimal number real)
 	Precision(5)
@@ -26,14 +26,14 @@ A- Merge wind power capacity data with Zip Codes (same steps with county)
 
 4. Compute ratio area Zip Code with wind capacity >= 30%
 
-5. Intersect county shapefile with wind layer
+5. Intersect zip code shapefile with wind layer
 - Processing -> Toolbox -> Intersection
 	Input layer(wind)
 	Intersection layer(Zip Codes)
 	Input fields to keep(gid a30_ratio)
 
 6. Compute area of intersection (in km2) and export csv
-	save name(intersect_wind_zip.csv)
+	save name(gis_derived/intersect_wind_zip.csv)
 
 
 B- Associate each wind turbine with closest Zip Code (same steps with county)
