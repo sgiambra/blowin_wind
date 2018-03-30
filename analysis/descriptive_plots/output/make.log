@@ -1,10 +1,10 @@
 
- make.py started: 2018-03-26 13:14:25 C:\Users\giamb\Documents\GitHub\blowin_wind\analysis\descriptive_plots\code 
+ make.py started: 2018-03-30 16:32:04 C:\Users\giamb\Documents\GitHub\blowin_wind\analysis\descriptive_plots\code 
 
 
 
 
-Execute:  StataSE-64 /e do "./analysis.do"
+Execute:  StataSE-64 /e do "./figures.do"
 
   ___  ____  ____  ____  ____ (R)
  /__    /   ____/   /   ____/
@@ -26,7 +26,7 @@ Notes:
       2.  Unicode is supported; see help unicode_advice.
       3.  Maximum number of variables is set to 5000; see help set_maxvar.
 
-. do ./analysis.do 
+. do ./figures.do 
 
 . set more off
 
@@ -53,19 +53,28 @@ Notes:
 
 . 
 . program main
-  1.     local keep_every 1
+  1.     local keep_every 10
   2.     
 .     plot_annual_new_turbines
   3.     
 .     use "${GoogleDrive}/stata/build_wind_panel/wind_panel_zip_median_listing_sqft.dta", clear
-  4.     gen ln_p = log(p)
-  5.     label var ln_p "Median listing price per sqft (Log $1,000)"
+  4.     
+.     label var ln_p "Median listing price per sqft (ln $)"
+  5.     plot_prices_ts, geo(regionname) time(dt) ///
+>         saving(prices_ts_median_zip) stub("median listing price per sqft (ln $)")
   6. 
-.     plot_prices_ts
+.     use "${GoogleDrive}/stata/build_wind_panel/wind_panel_zip_zhvi.dta", clear
   7.     
-.     build_zillow_histogram if p <= 1000
-  8.     build_zillow_cdf if p <= 1000, keep_every(`keep_every')
-  9. end
+.     replace p = p/1000
+  8.     replace ln_p = log(p)
+  9.     label var ln_p "ZHVI (ln $1,000)"
+ 10.     plot_prices_ts, geo(regionname) time(dt) ///
+>         saving(prices_ts_zhvi_zip) stub("ZHVI (ln $1,000)")
+ 11.     build_prices_histogram if p <= 1000, saving(hist_zhvi_prices)
+ 12.     build_prices_cdf if p <= 1000, keep_every(`keep_every') saving(cdf_zhvi_prices)
+ 13. 
+.     validate_price_data
+ 14. end
 
 . 
 . program plot_annual_new_turbines
@@ -81,33 +90,43 @@ Notes:
 
 . 
 . program plot_prices_ts
-  1.     preserve
-  2.         bys regionname (dt): egen ever_wind_farm = max(wind_farm)
-  3.         collapse (mean) ln_p, by(ever_wind_farm dt)
-  4.         tsset ever_wind_farm dt
-  5.         
-.         label var ln_p "Median listing price per sqft (Log $1,000)"
-  6.         sum dt
-  7.         
+  1.     syntax, geo(str) time(str) saving(str) stub(str)
+  2. 
+.     if "`time'" == "dt" {
+  3.         local fmt "format(%tmMon-CCYY)"
+  4.         local xlab_step 30
+  5.     }
+  6.     if "`time'" == "year" {
+  7.         local xlab_step 5
+  8.     }
+  9. 
+.     preserve
+ 10.         bys `geo' (`time'): egen ever_wind_farm = max(wind_farm)
+ 11.         collapse (mean) ln_p, by(ever_wind_farm `time')
+ 12.         tsset ever_wind_farm `time'
+ 13.         
+.         label var ln_p "Average `stub'"
+ 14.         qui sum `time'
+ 15.         
 .         graph twoway (tsline ln_p if ever_wind_farm == 0, lpattern(dash) lcolor(gs3))  ///
->             (tsline ln_p if ever_wind_farm == 1, lcolor(gs3)), ytitle(`: var label p') ///
->             xtitle("") xlabel(`r(min)'(50)`r(max)', format(%tmMon-CCYY) labsize(3) angle(45))  ///
+>             (tsline ln_p if ever_wind_farm == 1, lcolor(gs3)), ytitle(`: var label ln_p') ///
+>             xtitle("") xlabel(`r(min)'(`xlab_step')`r(max)', `fmt' labsize(3) angle(45))  ///
 >             legend(label(1 "No wind farm") label(2 "Wind farm"))
-  8.         graph export "../output/prices_ts.png", replace
-  9.     restore
- 10. end
+ 16.         graph export "../output/`saving'.png", replace
+ 17.     restore
+ 18. end
 
 . 
-. program build_zillow_histogram
-  1.     syntax [if]
+. program build_prices_histogram
+  1.     syntax [if], saving(str)
   2. 
 .     histogram ln_p `if', percent
-  3.     graph export "../output/hist_zillow_prices.png", replace
+  3.     graph export "../output/`saving'.png", replace
   4. end
 
 . 
-. program build_zillow_cdf
-  1.     syntax [if], keep_every(int)
+. program build_prices_cdf
+  1.     syntax [if], keep_every(int) saving(str)
   2. 
 .     preserve
   3.         cumul ln_p `if', gen(c_prices)
@@ -115,9 +134,52 @@ Notes:
   5.         sort c_prices
   6.         keep if _n == 1 | mod(_n, `keep_every') == 0
   7.         line c_prices ln_p `if'
-  8.         graph export "../output/cdf_zillow_prices.png", replace
+  8.         graph export "../output/`saving'.png", replace
   9.     restore
  10. end
+
+. 
+. program validate_price_data
+  1.     use regionname p year using ///
+>         "${GoogleDrive}/stata/build_wind_panel/wind_panel_zip_median_listing_sqft.dta", clear
+  2.     avg_yearly_change p, stub(median_listing)
+  3. 
+.     use regionname p year using ///
+>         "${GoogleDrive}/stata/build_wind_panel/wind_panel_zip_zhvi.dta", clear
+  4.     replace p = p/1000
+  5.     avg_yearly_change p, stub(zhvi)
+  6. 
+.     use regionname year ln_p using ///
+>         "${GoogleDrive}/stata/build_wind_panel/wind_panel_zip_fhfa.dta", clear
+  7.     gen delta_ln_hpi = D.ln_p
+  8.     collapse delta_ln_hpi, by(year)
+  9. 
+.     merge 1:1 year using "../temp/zhvi_year", ///
+>         assert(1 2 3) keep(1 2 3) nogen
+ 10.     merge 1:1 year using "../temp/median_listing_year", ///
+>         assert(1 2 3) keep(1 2 3) nogen
+ 11. 
+.     tsset year
+ 12.     graph twoway (tsline delta_ln_hpi, lcolor(gs6))  ///
+>         (tsline delta_ln_median_listing, lpattern(dash) lcolor(navy)) ///
+>         (tsline delta_ln_zhvi, lpattern(shortdash_dot) lcolor(black)), ///
+>         ytitle("Average percentage change") legend( ///
+>             lab(1 "HPI") lab(2 "Median listing price") lab(3 "ZHVI"))
+ 13.     graph export "../output/validate_price_data.png", replace
+ 14. end
+
+. 
+. program avg_yearly_change
+  1.     syntax anything(name=price_var), stub(str)
+  2. 
+.     collapse `stub'_year = `price_var', by(regionname year)
+  3. 
+.     xtset regionname year
+  4.     gen ln_`stub'_year = log(`stub'_year)
+  5.     gen delta_ln_`stub' = D.ln_`stub'_year
+  6.     collapse delta_ln_`stub', by(year)
+  7.     save_data "../temp/`stub'_year", key(year) replace
+  8. end
 
 . 
 . * Execute
@@ -128,19 +190,91 @@ Notes:
        panel variable:  ever_wind_farm (strongly balanced)
         time variable:  dt, 2010m1 to 2018m1
                 delta:  1 month
+(note: file ../output/prices_ts_median_zip.png not found)
+(file ../output/prices_ts_median_zip.png written in PNG format)
+variable p was long now double
+(3,323,835 real changes made)
+(3,323,835 real changes made)
+       panel variable:  ever_wind_farm (strongly balanced)
+        time variable:  dt, 1996m4 to 2018m1
+                delta:  1 month
+(note: file ../output/prices_ts_zhvi_zip.png not found)
+(file ../output/prices_ts_zhvi_zip.png written in PNG format)
+(bin=65, start=2.8154087, width=.06295918)
+(note: file ../output/hist_zhvi_prices.png not found)
+(file ../output/hist_zhvi_prices.png written in PNG format)
+(2,991,451 observations deleted)
+(note: file ../output/cdf_zhvi_prices.png not found)
+(file ../output/cdf_zhvi_prices.png written in PNG format)
+       panel variable:  regionname (unbalanced)
+        time variable:  year, 2010 to 2018
+                delta:  1 unit
+(9,309 missing values generated)
+(data already sorted by year)
+  (0 bytes saved)
+==================================================================================================
+File: ../temp/median_listing_year
+Key: year
+==================================================================================================
+  9:2(73183):754619878:2737047359
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-          dt |        194         648    28.07245        600        696
-variable p not found
-(note: file ../output/prices_ts.png not found)
-(file ../output/prices_ts.png written in PNG format)
-(bin=58, start=2.8654757, width=.06969448)
-(note: file ../output/hist_zillow_prices.png not found)
-(file ../output/hist_zillow_prices.png written in PNG format)
-(0 observations deleted)
-(note: file ../output/cdf_zillow_prices.png not found)
-(file ../output/cdf_zillow_prices.png written in PNG format)
+        year |          9        2014    2.738613       2010       2018
+delta_ln_m~g |          8    .0187141    .0431099  -.0686881   .0617887
+
+
+
+
+(note: file ../temp/median_listing_year.dta not found)
+file ../temp/median_listing_year.dta saved
+variable p was long now double
+(3,323,835 real changes made)
+       panel variable:  regionname (unbalanced)
+        time variable:  year, 1996 to 2018
+                delta:  1 unit
+(14,082 missing values generated)
+(data already sorted by year)
+  (0 bytes saved)
+==================================================================================================
+File: ../temp/zhvi_year
+Key: year
+==================================================================================================
+  23:2(38665):4031534674:794865491
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+        year |         23        2007     6.78233       1996       2018
+delta_ln_z~i |         22     .031681    .0471383  -.0594326   .1033099
+
+
+
+
+(note: file ../temp/zhvi_year.dta not found)
+file ../temp/zhvi_year.dta saved
+(20,314 missing values generated)
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                            22
+        from master                        21  
+        from using                          1  
+
+    matched                                22  
+    -----------------------------------------
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                            35
+        from master                        35  
+        from using                          0  
+
+    matched                                 9  
+    -----------------------------------------
+        time variable:  year, 1975 to 2018
+                delta:  1 unit
+(note: file ../output/validate_price_data.png not found)
+(file ../output/validate_price_data.png written in PNG format)
 
 . 
 end of do-file
@@ -244,4 +378,4 @@ xij variables:
 . 
 end of do-file
 
- make.py ended: 2018-03-26 13:14:45
+ make.py ended: 2018-03-30 16:32:51

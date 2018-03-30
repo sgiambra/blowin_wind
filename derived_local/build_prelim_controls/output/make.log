@@ -1,0 +1,821 @@
+
+ make.py started: 2018-03-30 16:11:33 C:\Users\giamb\Documents\GitHub\blowin_wind\derived_local\build_prelim_controls\code 
+
+
+
+
+Execute:  StataSE-64 /e do "./build_zip_controls.do"
+
+  ___  ____  ____  ____  ____ (R)
+ /__    /   ____/   /   ____/
+___/   /   /___/   /   /___/   15.0   Copyright 1985-2017 StataCorp LLC
+  Statistics/Data Analysis            StataCorp
+                                      4905 Lakeway Drive
+     Special Edition                  College Station, Texas 77845 USA
+                                      800-STATA-PC        http://www.stata.com
+                                      979-696-4600        stata@stata.com
+                                      979-696-4601 (fax)
+
+110-user Stata network perpetual license:
+       Serial number:  401506201178
+         Licensed to:  Brown University
+                       Brown University
+
+Notes:
+      1.  Stata is running in batch mode.
+      2.  Unicode is supported; see help unicode_advice.
+      3.  Maximum number of variables is set to 5000; see help set_maxvar.
+
+. do ./build_zip_controls.do 
+
+. set more off
+
+. adopath + ../../../lib/stata/gslab_misc/ado
+  [1]  (BASE)      "C:\Program Files (x86)\Stata15\ado\base/"
+  [2]  (SITE)      "C:\Program Files (x86)\Stata15\ado\site/"
+  [3]              "."
+  [4]  (PERSONAL)  "c:\ado\personal/"
+  [5]  (PLUS)      "c:\ado\plus/"
+  [6]  (OLDPLACE)  "c:\ado/"
+  [7]              "../../../lib/stata/gslab_misc/ado"
+
+. adopath + ../../../lib/third_party/stata_tools
+  [1]  (BASE)      "C:\Program Files (x86)\Stata15\ado\base/"
+  [2]  (SITE)      "C:\Program Files (x86)\Stata15\ado\site/"
+  [3]              "."
+  [4]  (PERSONAL)  "c:\ado\personal/"
+  [5]  (PLUS)      "c:\ado\plus/"
+  [6]  (OLDPLACE)  "c:\ado/"
+  [7]              "../../../lib/stata/gslab_misc/ado"
+  [8]              "../../../lib/third_party/stata_tools"
+
+. preliminaries, loadglob("../../../lib/python/wind/input_params.txt")
+
+. 
+. program main
+  1.     buil_geo_controls
+  2.     
+.     use p0030001 p0030002 p0030003 p0030005 zcta5 using /// 
+>         "${GoogleDrive}/raw_data/zip_controls/census_2010_sf1/sf12010860us3.dta", clear
+  3.     
+.     destring zcta5, gen(regionname)
+  4.     rename (p0030001 p0030002 p0030003 p0030005) ///
+>         (pop white_pop black_pop asian_pop)
+  5. 
+.     gen white_ratio = white_pop / pop
+  6.     gen black_ratio = black_pop / pop
+  7.     gen asian_ratio = asian_pop / pop
+  8.     keep regionname pop white_ratio black_ratio asian_ratio
+  9. 
+.     save_data "../temp/pop_controls.dta", key(regionname) replace
+ 10.     
+.     use p0120001 p0120002 zcta5 using ///
+>         "${GoogleDrive}/raw_data/zip_controls/census_2010_sf1/sf12010860us4.dta", clear
+ 11.     
+.     destring zcta5, gen(regionname)
+ 12.     rename (p0120001 p0120002) (pop male)
+ 13.     
+.     gen male_ratio = male / pop
+ 14.     keep regionname male_ratio
+ 15.     
+.     merge 1:1 regionname using "../temp/pop_controls.dta", ///
+>         nogen assert(3) keep(3)
+ 16.     save_data "../temp/pop_controls.dta", key(regionname) replace
+ 17.     
+.     build_zip_zcta_xwalk
+ 18. 
+.     * Using income control we loose zipcodes. Need to look into this
+.     import delimited "${GoogleDrive}/raw_data/zip_controls/soi_tax/10zpallagi.csv", clear
+ 19.     keep zipcode n1 a00100
+ 20.     
+.     destring zipcode, replace
+ 21.     keep if zipcode != 0    
+ 22.     rename (n1 a00100) (returns adj_gr_income)
+ 23.     
+.     collapse (sum) returns adj_gr_income, by(zipcode)
+ 24.     gen avg_income = adj_gr_income / returns
+ 25.     merge 1:1 zipcode using "${GoogleDrive}/stata/zip_zcta_xwalk.dta", ///
+>         nogen keep(3) assert(1 2 3)
+ 26.     
+.     merge 1:1 regionname using "../temp/pop_controls.dta", ///
+>         nogen assert(2 3) keep(3)
+ 27.     merge 1:1 regionname using "../temp/zipcode_geo_controls.dta", ///
+>         nogen assert(1 2 3) keep(3)
+ 28.     save_data "${GoogleDrive}/stata/build_prelim_controls/zip_controls.dta", ///
+>         key(regionname) nopreserve replace
+ 29. end
+
+. 
+. program buil_geo_controls
+  1.     * Need to derive these from raw data again
+.     import delimited "G:\My Drive\brown\labor\project\wind\data\output\DistanceFromCoast.txt", clear
+  2.     rename zip_code regionname
+  3.     keep regionname near_dist
+  4.     replace near_dist = near_dist / 1000
+  5. 
+.     save_data "../temp/zipcode_geo_controls.dta", replace key(regionname)
+  6. 
+.     import delimited "G:\My Drive\brown\labor\project\wind\data\output\Elevation.txt", clear
+  7.     keep zip_code rastervalu
+  8.     rename (zip_code rastervalu) (regionname elevation)
+  9.     drop if elevation == -9999
+ 10. 
+.     merge 1:1 regionname using "../temp/zipcode_geo_controls.dta", ///
+>         nogen keep(3) assert(3)
+ 11.     save_data "../temp/zipcode_geo_controls.dta", replace key(regionname)
+ 12. end
+
+. 
+. program build_zip_zcta_xwalk
+  1.     import excel "${GoogleDrive}/raw_data/zipcode_zcta_xwalk/zip_to_zcta_2017.xlsx", ///
+>         sheet("Zip_to_ZCTA_2016") firstrow clear
+  2.     
+.     destring ZIP_CODE, gen(zipcode)
+  3.     destring ZCTA, gen(regionname)
+  4.     keep zipcode regionname
+  5.     
+.     save_data "${GoogleDrive}/stata/zip_zcta_xwalk.dta", key(zipcode) replace
+  6. end
+
+. 
+. * Execute
+. main
+(16 vars, 30,541 obs)
+(30,541 real changes made)
+(data now sorted by regionname)
+  (0 bytes saved)
+==================================================================================================
+File: ../temp/zipcode_geo_controls.dta
+Key: regionname
+==================================================================================================
+  30541:2(96736):2541073023:2924588329
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+  regionname |     30,541    49596.22    27563.81          1      99950
+   near_dist |     30,541    288.6336    299.4008   .0020966   5025.376
+
+
+
+
+(note: file ../temp/zipcode_geo_controls.dta not found)
+file ../temp/zipcode_geo_controls.dta saved
+(17 vars, 30,541 obs)
+(250 observations deleted)
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             0
+    matched                            30,291  
+    -----------------------------------------
+(data already sorted by regionname)
+  (0 bytes saved)
+==================================================================================================
+File: ../temp/zipcode_geo_controls.dta
+Key: regionname
+==================================================================================================
+  30291:3(52049):2246175711:2401438853
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+  regionname |     30,291    49540.31    27433.46          1      99950
+   elevation |     30,291    357.4269    436.4413        -69       3709
+   near_dist |     30,291    290.2878    294.5177   .0020966   1316.173
+
+
+
+
+file ../temp/zipcode_geo_controls.dta saved
+zcta5: all characters numeric; regionname generated as long
+(144 missing values generated)
+(144 missing values generated)
+(144 missing values generated)
+(data now sorted by regionname)
+  (0 bytes saved)
+==================================================================================================
+File: ../temp/pop_controls.dta
+Key: regionname
+==================================================================================================
+  33120:5(109971):802685851:2481006444
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+  regionname |     33,120    49666.33    27564.93        601      99929
+         pop |     33,120    9434.269    13753.94          0     113916
+ white_ratio |     32,976    .8322832    .2067993          0          1
+ black_ratio |     32,976    .0765716    .1575173          0          1
+ asian_ratio |     32,976    .0191248    .0501845          0          1
+
+
+
+
+(note: file ../temp/pop_controls.dta not found)
+file ../temp/pop_controls.dta saved
+zcta5: all characters numeric; regionname generated as long
+(144 missing values generated)
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             0
+    matched                            33,120  
+    -----------------------------------------
+(data already sorted by regionname)
+  (0 bytes saved)
+==================================================================================================
+File: ../temp/pop_controls.dta
+Key: regionname
+==================================================================================================
+  33120:6(99766):642207390:3097104632
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+  regionname |     33,120    49666.33    27564.93        601      99929
+  male_ratio |     32,976    .5018533    .0445299          0          1
+         pop |     33,120    9434.269    13753.94          0     113916
+ white_ratio |     32,976    .8322832    .2067993          0          1
+ black_ratio |     32,976    .0765716    .1575173          0          1
+-------------+---------------------------------------------------------
+ asian_ratio |     32,976    .0191248    .0501845          0          1
+
+
+
+
+file ../temp/pop_controls.dta saved
+ZIP_CODE: all characters numeric; zipcode generated as long
+ZCTA: all characters numeric; regionname generated as long
+(data now sorted by zipcode)
+  (0 bytes saved)
+==================================================================================================
+File: G:/My Drive/research projects/wind/stata/zip_zcta_xwalk.dta
+Key: zipcode
+==================================================================================================
+  41184:2(122201):1069770470:2172241517
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+     zipcode |     41,184    49588.09    27937.71        501      99950
+  regionname |     41,184    49555.32    27927.68        601      99929
+
+
+
+
+file G:/My Drive/research projects/wind/stata/zip_zcta_xwalk.dta saved
+(73 vars, 167,022 obs)
+zipcode already numeric; no replace
+(306 observations deleted)
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             0
+    matched                            27,781  
+    -----------------------------------------
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             0
+    matched                            27,781  
+    -----------------------------------------
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             0
+    matched                            27,511  
+    -----------------------------------------
+(data already sorted by regionname)
+  (0 bytes saved)
+==================================================================================================
+File: G:/My Drive/research projects/wind/stata/build_prelim_controls/zip_controls.dta
+Key: regionname
+==================================================================================================
+  27511:12(57840):2815889337:4162229602
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+  regionname |     27,511    48845.86    26922.72       1001      99835
+     zipcode |     27,511    48845.86    26922.72       1001      99835
+     returns |     27,511     4945.51     6475.98    87.0003      52607
+adj_gr_inc~e |     27,511    289628.5    474298.5       1706   1.17e+07
+  avg_income |     27,511    53.17259    38.25005   5.001689   2368.675
+-------------+---------------------------------------------------------
+  male_ratio |     27,511    .4992528     .029497   .1522716   .9701023
+         pop |     27,511    11048.73    14285.47          4     113916
+ white_ratio |     27,511    .8326477    .1972321   .0040855          1
+ black_ratio |     27,511    .0815186     .159848          0   .9825632
+ asian_ratio |     27,511     .020213    .0486299          0   .7158496
+-------------+---------------------------------------------------------
+   elevation |     27,511    331.3374    397.9725        -69       3631
+   near_dist |     27,511    279.3247    286.1438   .0020966   1316.173
+
+
+
+
+(note: file G:/My Drive/research projects/wind/stata/build_prelim_controls/zip_controls.dta not found)
+file G:/My Drive/research projects/wind/stata/build_prelim_controls/zip_controls.dta saved
+
+. 
+end of do-file
+
+
+Execute:  StataSE-64 /e do "./build_wind.do"
+
+  ___  ____  ____  ____  ____ (R)
+ /__    /   ____/   /   ____/
+___/   /   /___/   /   /___/   15.0   Copyright 1985-2017 StataCorp LLC
+  Statistics/Data Analysis            StataCorp
+                                      4905 Lakeway Drive
+     Special Edition                  College Station, Texas 77845 USA
+                                      800-STATA-PC        http://www.stata.com
+                                      979-696-4600        stata@stata.com
+                                      979-696-4601 (fax)
+
+110-user Stata network perpetual license:
+       Serial number:  401506201178
+         Licensed to:  Brown University
+                       Brown University
+
+Notes:
+      1.  Stata is running in batch mode.
+      2.  Unicode is supported; see help unicode_advice.
+      3.  Maximum number of variables is set to 5000; see help set_maxvar.
+
+. do ./build_wind.do 
+
+. set more off
+
+. adopath + ../../../lib/stata/gslab_misc/ado
+  [1]  (BASE)      "C:\Program Files (x86)\Stata15\ado\base/"
+  [2]  (SITE)      "C:\Program Files (x86)\Stata15\ado\site/"
+  [3]              "."
+  [4]  (PERSONAL)  "c:\ado\personal/"
+  [5]  (PLUS)      "c:\ado\plus/"
+  [6]  (OLDPLACE)  "c:\ado/"
+  [7]              "../../../lib/stata/gslab_misc/ado"
+
+. adopath + ../../../lib/third_party/stata_tools
+  [1]  (BASE)      "C:\Program Files (x86)\Stata15\ado\base/"
+  [2]  (SITE)      "C:\Program Files (x86)\Stata15\ado\site/"
+  [3]              "."
+  [4]  (PERSONAL)  "c:\ado\personal/"
+  [5]  (PLUS)      "c:\ado\plus/"
+  [6]  (OLDPLACE)  "c:\ado/"
+  [7]              "../../../lib/stata/gslab_misc/ado"
+  [8]              "../../../lib/third_party/stata_tools"
+
+. preliminaries, loadglob("../../../lib/python/wind/input_params.txt")
+
+. 
+. program main
+  1.     local precision_km = 1
+  2. 
+.     build_pot_wind_cap_zip, stub(2008) precision(`precision_km') output_csv(True)
+  3.     build_pot_wind_cap_zip, stub(current) precision(`precision_km')
+  4.     build_pot_wind_cap_zip, stub(near_fut) precision(`precision_km') wind_lab("near future")
+  5. 
+.     build_pot_wind_cap_tract, precision(`precision_km')
+  6. 
+.     validate_pot_wind_cap
+  7. end
+
+. 
+. program build_pot_wind_cap_zip
+  1.     syntax, stub(str) precision(int) [output_csv(str), wind_lab(str)]
+  2. 
+.     if "`wind_lab'" == "" {
+  3.         local wind_lab = "`stub'"
+  4.     }
+  5. 
+.     import delimited "${GoogleDrive}/gis_derived/intersect_wind_zip_`stub'.csv", clear
+  6.         
+.     bys zcta5ce10: egen validate_area = total(area_intersect)
+  7.     assert (abs(validate_area - a_zip) / a_zip <= `precision')
+  8.     drop validate_area
+  9.     
+.     gen wgt_area_intersect = a30_ratio*area_intersect
+ 10.     collapse a_zip (sum) tot_wgt_wind_zip = wgt_area_intersect, by(zcta5ce10)
+ 11.     gen pot_wind_cap_zip_area = (tot_wgt_wind_zip / a_zip)*100
+ 12.     gen regionname = zcta5ce10
+ 13.     replace pot_wind_cap_zip_area = 100 if pot_wind_cap_zip_area > 100
+ 14.     label var pot_wind_cap_zip_area "Weighted potential wind capacity, `wind_lab'"
+ 15.     
+.     save_data "${GoogleDrive}/stata/build_prelim_controls/pot_wind_cap_zip_`stub'.dta", ///
+>         key(regionname) replace
+ 16.     
+.     if "`output_csv'" == "True" {
+ 17.         replace pot_wind_cap_zip_area = round(pot_wind_cap_zip_area, .001)
+ 18.         export delimited using "${GoogleDrive}/stata/pot_wind_cap_zip_`stub'.csv", replace
+ 19.     }
+ 20. end
+
+. 
+. program build_pot_wind_cap_tract
+  1.     syntax, precision(int)
+  2. 
+.     import delimited "${GoogleDrive}/gis_derived/intersect_wind_tract_2008.csv", stringcols(4 5 6) clear
+  3.     gen tract_fip = state + county + tract
+  4.     keep if area_tract != 0
+  5. 
+.     bys tract_fip: egen validate_area = total(area_intersect)
+  6.     assert (abs(validate_area - area_tract) / area_tract <= `precision')
+  7.     drop validate_area
+  8. 
+.     gen wgt_area_intersect = a30_ratio*area_intersect
+  9.     collapse area_tract (sum) tot_wgt_wind_tract = wgt_area_intersect, by(tract_fip)
+ 10.     gen pot_wind_cap_tract_area = (tot_wgt_wind_tract / area_tract)*100
+ 11.     replace pot_wind_cap_tract_area = 100 if pot_wind_cap_tract_area > 100
+ 12.     label var pot_wind_cap_tract_area "Weighted potential wind capacity, 2008"
+ 13.     
+.     save_data "${GoogleDrive}/stata/build_prelim_controls/pot_wind_cap_tract_2008.dta", ///
+>         key(tract_fip) replace
+ 14. end
+
+. 
+. program validate_pot_wind_cap
+  1.     use "${GoogleDrive}/stata/build_prelim_controls/pot_wind_cap_zip_2008.dta", clear
+  2.     keep regionname pot_wind_cap_zip_area
+  3.     rename pot_wind_cap_zip_area pot_wind_cap_zip_area_2008
+  4. 
+.     foreach stub in current near_fut {
+  5.         merge 1:1 regionname using "${GoogleDrive}/stata/build_prelim_controls/pot_wind_cap_zip_`stub'.dta", ///
+>             nogen assert(3) keep(3) keepusing(pot_wind_cap_zip_area)
+  6.         rename pot_wind_cap_zip_area pot_wind_cap_zip_area_`stub'
+  7.     }
+  8.     
+.     foreach stub in current near_fut {
+  9.         binscatter pot_wind_cap_zip_area_`stub' pot_wind_cap_zip_area_2008, ///
+>             ytitle("`: var label pot_wind_cap_zip_area_`stub''") ///
+>             xtitle("`: var label pot_wind_cap_zip_area_2008'")
+ 10.         graph export "../output/pot_wind_cap_2008_`stub'.png", replace
+ 11.     }
+ 12. end
+
+. 
+. * Execute
+. main
+(9 vars, 107,675 obs)
+(9 real changes made)
+(data now sorted by regionname)
+  (0 bytes saved)
+==================================================================================================
+File: G:/My Drive/research projects/wind/stata/build_prelim_controls/pot_wind_cap_zip_2008.dta
+Key: regionname
+==================================================================================================
+  31180:5(119534):2256299373:3337729333
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+  regionname |     31,180    49218.19    26976.16       1001      99403
+   zcta5ce10 |     31,180    49218.19    26976.16       1001      99403
+       a_zip |     31,180    221.1302    432.4137     .00271   13476.87
+tot_wgt_wi~p |     31,180    63.50308      241.26          0   7285.144
+pot_wind_c~a |     31,180    17.57716    31.89022          0        100
+
+
+
+
+(note: file G:/My Drive/research projects/wind/stata/build_prelim_controls/pot_wind_cap_zip_2008.dta not found)
+file G:/My Drive/research projects/wind/stata/build_prelim_controls/pot_wind_cap_zip_2008.dta saved
+(17,170 real changes made)
+file G:/My Drive/research projects/wind/stata/pot_wind_cap_zip_2008.csv saved
+(8 vars, 107,675 obs)
+(31 real changes made)
+(data now sorted by regionname)
+  (0 bytes saved)
+==================================================================================================
+File: G:/My Drive/research projects/wind/stata/build_prelim_controls/pot_wind_cap_zip_current.dta
+Key: regionname
+==================================================================================================
+  31180:5(119534):844712411:2704932226
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+  regionname |     31,180    49218.19    26976.16       1001      99403
+   zcta5ce10 |     31,180    49218.19    26976.16       1001      99403
+       a_zip |     31,180    221.1302    432.4137     .00271   13476.87
+tot_wgt_wi~p |     31,180     101.003    277.3308          0   7824.183
+pot_wind_c~a |     31,180    33.76017    36.41488          0        100
+
+
+
+
+(note: file G:/My Drive/research projects/wind/stata/build_prelim_controls/pot_wind_cap_zip_current.dta not found)
+file G:/My Drive/research projects/wind/stata/build_prelim_controls/pot_wind_cap_zip_current.dta saved
+(9 vars, 107,675 obs)
+(43 real changes made)
+(data now sorted by regionname)
+  (0 bytes saved)
+==================================================================================================
+File: G:/My Drive/research projects/wind/stata/build_prelim_controls/pot_wind_cap_zip_near_fut.dta
+Key: regionname
+==================================================================================================
+  31180:5(119534):337577002:728174986
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+  regionname |     31,180    49218.19    26976.16       1001      99403
+   zcta5ce10 |     31,180    49218.19    26976.16       1001      99403
+       a_zip |     31,180    221.1302    432.4137     .00271   13476.87
+tot_wgt_wi~p |     31,180    119.9984    290.2832          0   7827.789
+pot_wind_c~a |     31,180    41.63142    36.11604          0        100
+
+
+
+
+(note: file G:/My Drive/research projects/wind/stata/build_prelim_controls/pot_wind_cap_zip_near_fut.dta not found)
+file G:/My Drive/research projects/wind/stata/build_prelim_controls/pot_wind_cap_zip_near_fut.dta saved
+(11 vars, 138,212 obs)
+(2 observations deleted)
+(2 real changes made)
+(data already sorted by tract_fip)
+  (0 bytes saved)
+==================================================================================================
+File: G:/My Drive/research projects/wind/stata/build_prelim_controls/pot_wind_cap_tract_2008.dta
+Key: tract_fip
+==================================================================================================
+  61668:4(52315):3505963991:3630031723
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+   tract_fip |          0
+  area_tract |     61,668    126.2931    602.6915       .015   24699.54
+tot_wgt_wi~t |     61,668    33.75186    278.4654          0   12224.52
+pot_wind_c~a |     61,668    6.935331    18.94894          0        100
+
+
+
+
+(note: file G:/My Drive/research projects/wind/stata/build_prelim_controls/pot_wind_cap_tract_2008.dta not found)
+file G:/My Drive/research projects/wind/stata/build_prelim_controls/pot_wind_cap_tract_2008.dta saved
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             0
+    matched                            31,180  
+    -----------------------------------------
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             0
+    matched                            31,180  
+    -----------------------------------------
+warning: nquantiles(20) was specified, but only 13 were generated. see help file under nquantiles() for explanation.
+(note: file ../output/pot_wind_cap_2008_current.png not found)
+(file ../output/pot_wind_cap_2008_current.png written in PNG format)
+warning: nquantiles(20) was specified, but only 13 were generated. see help file under nquantiles() for explanation.
+(note: file ../output/pot_wind_cap_2008_near_fut.png not found)
+(file ../output/pot_wind_cap_2008_near_fut.png written in PNG format)
+
+. 
+end of do-file
+
+
+Execute:  StataSE-64 /e do "./build_prices_xls.do"
+
+  ___  ____  ____  ____  ____ (R)
+ /__    /   ____/   /   ____/
+___/   /   /___/   /   /___/   15.0   Copyright 1985-2017 StataCorp LLC
+  Statistics/Data Analysis            StataCorp
+                                      4905 Lakeway Drive
+     Special Edition                  College Station, Texas 77845 USA
+                                      800-STATA-PC        http://www.stata.com
+                                      979-696-4600        stata@stata.com
+                                      979-696-4601 (fax)
+
+110-user Stata network perpetual license:
+       Serial number:  401506201178
+         Licensed to:  Brown University
+                       Brown University
+
+Notes:
+      1.  Stata is running in batch mode.
+      2.  Unicode is supported; see help unicode_advice.
+      3.  Maximum number of variables is set to 5000; see help set_maxvar.
+
+. do ./build_prices_xls.do 
+
+. set more off
+
+. adopath + ../../../lib/stata/gslab_misc/ado
+  [1]  (BASE)      "C:\Program Files (x86)\Stata15\ado\base/"
+  [2]  (SITE)      "C:\Program Files (x86)\Stata15\ado\site/"
+  [3]              "."
+  [4]  (PERSONAL)  "c:\ado\personal/"
+  [5]  (PLUS)      "c:\ado\plus/"
+  [6]  (OLDPLACE)  "c:\ado/"
+  [7]              "../../../lib/stata/gslab_misc/ado"
+
+. adopath + ../../../lib/third_party/stata_tools
+  [1]  (BASE)      "C:\Program Files (x86)\Stata15\ado\base/"
+  [2]  (SITE)      "C:\Program Files (x86)\Stata15\ado\site/"
+  [3]              "."
+  [4]  (PERSONAL)  "c:\ado\personal/"
+  [5]  (PLUS)      "c:\ado\plus/"
+  [6]  (OLDPLACE)  "c:\ado/"
+  [7]              "../../../lib/stata/gslab_misc/ado"
+  [8]              "../../../lib/third_party/stata_tools"
+
+. preliminaries, loadglob("../../../lib/python/wind/input_params.txt")
+
+. 
+. program main
+  1.     build_zillow, input_file("Zip_MedianListingPricePerSqft_AllHomes")
+  2. end
+
+. 
+. program build_zillow
+  1.     syntax, input_file(str)
+  2. 
+.     import delimited "${GoogleDrive}/raw_data/house_prices/zillow/Zip/`input_file'.csv", clear
+  3.     
+.     qui ds v*
+  4.     foreach v of varlist `r(varlist)' {
+  5.         local x: variable label `v'
+  6.         local x: subinstr local x "-" "m"
+  7.         local x p`x'
+  8.         rename `v' `x'
+  9.     }
+ 10. 
+.     rename regionname zipcode
+ 11.     merge 1:1 zipcode using "${GoogleDrive}/stata/zip_zcta_xwalk.dta", ///
+>         nogen keep(3) assert(1 2 3)
+ 12.     drop zipcode
+ 13. 
+.     collapse (mean) p* (first) city state metro countyname, by(regionname) 
+ 14.     save_data "../temp/zillow_prices.dta", ///
+>         key(regionname) nopreserve replace
+ 15.     
+.     import delimited "${GoogleDrive}/gis_derived/zip_area.csv", ///
+>         stringcol(1) clear
+ 16.     destring zcta5ce10, gen(regionname)
+ 17.     keep zcta5ce10 regionname
+ 18.     
+.     merge 1:1 regionname using "../temp/zillow_prices.dta", ///
+>         keep(3) assert(1 2 3) nogen
+ 19.     keep zcta5ce10 p2010m08 p2012m08
+ 20.     gen price_diff = log(p2012m08) - log(p2010m08)
+ 21.     
+.     export excel using "${GoogleDrive}/stata/zillow_zip.xls", replace
+ 22. end
+
+. 
+. * Execute
+. main
+(103 vars, 10,443 obs)
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             0
+    matched                            10,443  
+    -----------------------------------------
+(data already sorted by regionname)
+  (0 bytes saved)
+==================================================================================================
+File: ../temp/zillow_prices.dta
+Key: regionname
+==================================================================================================
+  10425:102(50088):15465485:1890956078
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+  regionname |     10,425    48803.64    29755.72       1001      99901
+    p2010m01 |      6,288    153.8871    102.4592   31.05058   1474.956
+    p2010m02 |      6,349    153.5347     102.673   31.43939    1384.84
+    p2010m03 |      6,410    153.1467    102.7833   32.46753   1331.531
+    p2010m04 |      6,474    152.5275    102.3365   32.75862   1374.885
+-------------+---------------------------------------------------------
+    p2010m05 |      6,515    151.7135    101.7521   30.07804   1405.405
+    p2010m06 |      6,537    150.8835    101.1664   29.74026   1448.226
+    p2010m07 |      6,549    150.0341    100.3799    28.9903   1472.135
+    p2010m08 |      6,559    149.6196    100.2855   27.76428   1467.854
+    p2010m09 |      6,572    148.4154    99.36857   29.63362   1364.324
+-------------+---------------------------------------------------------
+    p2010m10 |      6,584    146.9911    98.58546   28.76712   1364.324
+    p2010m11 |      6,591    145.8497      98.179   27.75717   1353.081
+    p2010m12 |      6,598    143.9957     97.5407   28.76712   1368.364
+    p2011m01 |      6,604    142.3758    96.86598   28.08989   1364.324
+    p2011m02 |      6,625    141.1407    95.24951   27.01422    1360.88
+-------------+---------------------------------------------------------
+    p2011m03 |      6,648    141.6066     96.6036   26.40845   1420.744
+    p2011m04 |      6,680    141.4123    97.75116   26.96981   1434.311
+    p2011m05 |      6,704    141.9431    98.26874   27.16348   1426.554
+    p2011m06 |      6,718     141.593      97.627   26.43069   1454.414
+    p2011m07 |      6,730    140.9917    97.54924   26.06505    1436.17
+-------------+---------------------------------------------------------
+    p2011m08 |      6,735     140.275    96.82664      24.95   1410.694
+    p2011m09 |      6,740    139.3351    96.57103   25.05611   1412.732
+    p2011m10 |      6,748    138.1007    96.19963    26.7094   1436.837
+    p2011m11 |      6,754    136.4525    95.96101   24.54909   1465.813
+    p2011m12 |      6,762    135.0325    95.67624   24.00252   1497.598
+-------------+---------------------------------------------------------
+    p2012m01 |      6,774     135.157    96.24707   21.93287   1470.588
+    p2012m02 |      6,801    135.1746    96.39211   22.50118   1539.528
+    p2012m03 |      6,826    136.4626    98.62047   24.79475   1529.221
+    p2012m04 |      6,863    137.1685    99.20379    24.1544   1558.908
+    p2012m05 |      6,896    138.0256    100.5998   24.48454   1618.672
+-------------+---------------------------------------------------------
+    p2012m06 |      6,927    138.2355    101.0328   24.51513   1613.687
+    p2012m07 |      6,945    137.9225    100.7553   24.68815   1623.489
+    p2012m08 |      6,953    137.7819    100.9363   24.58987   1652.835
+    p2012m09 |      6,963    137.5865    100.3539    24.2892   1701.718
+    p2012m10 |      6,974     138.138    102.1948   23.65184   1726.938
+-------------+---------------------------------------------------------
+    p2012m11 |      7,003    142.3091    106.0278   24.12565   1852.606
+    p2012m12 |      7,205    141.2668    105.9884    22.7993   1878.133
+    p2013m01 |      7,253    141.5957    106.9119   21.84599    2046.53
+    p2013m02 |      7,306    143.0508    108.5808   22.73026   1996.154
+    p2013m03 |      7,384    144.4984    109.5806   20.67362   1979.294
+-------------+---------------------------------------------------------
+    p2013m04 |      7,443    146.5692    111.7347   19.74172   1966.667
+    p2013m05 |      7,499    148.0668    113.2018   20.06881   1966.667
+    p2013m06 |      7,568    149.0015    114.4718   21.32282   2068.474
+    p2013m07 |      7,638    149.5712    115.0171   21.75295   1940.639
+    p2013m08 |      7,736     149.712     116.371   22.08175   1999.412
+-------------+---------------------------------------------------------
+    p2013m09 |      7,848    150.7253    118.2364   21.84711   2003.861
+    p2013m10 |      8,056    151.0504    119.5663   23.95085   1997.331
+    p2013m11 |      8,826    150.5499    118.7413   25.34666   2026.037
+    p2013m12 |      8,861    151.0007    120.3007   25.24605    2052.28
+    p2014m01 |      8,916    151.1092    121.4536   24.49517   2092.857
+-------------+---------------------------------------------------------
+    p2014m02 |      8,968    152.6692    124.2124   26.50822   2304.741
+    p2014m03 |      9,047      154.09     126.881   19.25241    2325.41
+    p2014m04 |      9,107     155.751    127.5071   19.80075   2332.334
+    p2014m05 |      9,145    156.7241    128.0572   18.98413   2332.334
+    p2014m06 |      9,170    157.2876    127.7627    17.5574   2309.558
+-------------+---------------------------------------------------------
+    p2014m07 |      9,203    157.8708    130.8674   17.79762    2285.49
+    p2014m08 |      9,221    158.0587    131.2349   18.40278   2365.591
+    p2014m09 |      9,233    158.3174     133.262   19.80198    2374.86
+    p2014m10 |      9,241     158.073    133.5217   20.44678   2369.003
+    p2014m11 |      9,255    157.5048     133.525   17.99679   2379.037
+-------------+---------------------------------------------------------
+    p2014m12 |      9,279    157.5409    135.8479   17.60476   2415.827
+    p2015m01 |      9,308    158.6428      137.53   20.44678   2393.214
+    p2015m02 |      9,371     160.391    139.2683   19.73441   2516.067
+    p2015m03 |      9,438    161.6347    139.9109   19.73441   2464.986
+    p2015m04 |      9,493    162.8772    142.7043   19.80057   2448.979
+-------------+---------------------------------------------------------
+    p2015m05 |      9,543    164.4782    147.0683    20.8194   2614.317
+    p2015m06 |      9,586    164.9177    146.9285   22.79435   2593.904
+    p2015m07 |      9,619    165.1083    147.4547   22.22222   2590.294
+    p2015m08 |      9,635     165.649    148.4115   22.10448   2671.082
+    p2015m09 |      9,656    166.0933    150.1284   21.73867   2630.662
+-------------+---------------------------------------------------------
+    p2015m10 |      9,677    166.1762    150.7551   21.25919   2794.624
+    p2015m11 |      9,696    166.6441    152.9216   22.56944   2799.423
+    p2015m12 |      9,728    166.7278    154.4014   22.04157   2795.562
+    p2016m01 |      9,783     167.334    156.9532   23.08333   2795.562
+    p2016m02 |      9,844     168.449     157.948   20.81818   2767.997
+-------------+---------------------------------------------------------
+    p2016m03 |      9,928    169.4465    155.4346   20.69444   2604.492
+    p2016m04 |     10,007    171.0575    157.3508   22.59036   2653.033
+    p2016m05 |     10,069    171.9521    156.0692   22.00065   2534.685
+    p2016m06 |     10,115    172.4982    156.4145   22.35666   2587.519
+    p2016m07 |     10,142    173.0528    157.8992    22.1869    2538.95
+-------------+---------------------------------------------------------
+    p2016m08 |     10,175    172.9924    158.9124    21.0084   2582.953
+    p2016m09 |     10,200    173.3778    159.1399   20.24648   2642.811
+    p2016m10 |     10,222    173.6291    159.5433   18.66732   2662.037
+    p2016m11 |     10,245    173.7702    160.3571   18.84058   2662.037
+    p2016m12 |     10,273    173.6001    161.3292   18.24817   2655.889
+-------------+---------------------------------------------------------
+    p2017m01 |     10,332    173.9341    161.4124   19.43005   2621.536
+    p2017m02 |     10,425    175.3206     162.527     21.125   2587.612
+    p2017m03 |     10,425    177.0374    162.6176   21.92418   2599.225
+    p2017m04 |     10,425    178.8523    162.8455   21.68259   2600.365
+    p2017m05 |     10,425    180.2342    162.8737   22.37592   2650.667
+-------------+---------------------------------------------------------
+    p2017m06 |     10,425    181.1014    163.2362   21.22836   2650.667
+    p2017m07 |     10,425    181.6999    163.7171   21.66146   2725.755
+    p2017m08 |     10,425    182.0058    164.2539   20.07762   2671.756
+    p2017m09 |     10,425    182.3884    163.9822   20.07762       2670
+    p2017m10 |     10,425    182.5953    164.1359   18.91361   2647.868
+-------------+---------------------------------------------------------
+    p2017m11 |     10,425    182.9921    165.4737   21.20066   2612.918
+    p2017m12 |     10,425    183.2486    166.7487   21.24306   2619.234
+    p2018m01 |     10,425    183.9506    167.9656   19.23077   2667.672
+        city |          0
+       state |          0
+-------------+---------------------------------------------------------
+       metro |          0
+  countyname |          0
+
+
+
+
+(note: file ../temp/zillow_prices.dta not found)
+file ../temp/zillow_prices.dta saved
+(6 vars, 33,144 obs)
+zcta5ce10: all characters numeric; regionname generated as long
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             0
+    matched                            10,425  
+    -----------------------------------------
+(3,866 missing values generated)
+file G:/My Drive/research projects/wind/stata/zillow_zip.xls saved
+
+. 
+end of do-file
+
+ make.py ended: 2018-03-30 16:12:10

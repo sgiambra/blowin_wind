@@ -6,7 +6,7 @@
 ******************************************************
 
 
-A- Merge wind power capacity data with Zip Codes (same steps with county)
+A- Merge wind power capacity data with Zip Codes (same steps with county or census tract)
 
 1. Load shapefiles:
 - G:/My Drive/research projects/wind/raw_data/wind/pot_wind_cap_080_current
@@ -24,7 +24,7 @@ A- Merge wind power capacity data with Zip Codes (same steps with county)
 	Expression($area/1000000)
 	-> Save
 
-4. Compute ratio area Zip Code with wind capacity >= 30%
+4. Compute ratio area wind capacity >= 30%
 
 5. Intersect zip code shapefile with wind layer
 - Processing -> Toolbox -> Intersection
@@ -36,7 +36,20 @@ A- Merge wind power capacity data with Zip Codes (same steps with county)
 	save name(gis_derived/intersect_wind_zip.csv)
 
 
-B- Associate each wind turbine with closest Zip Code (same steps with county)
+A.a- Merge Census tract shapefiles
+(This is needed if geography is split into separate shapefiles)
+
+1. Load all shapefiles in G:/My Drive/research projects/wind/raw_data/us_geography/census_tracts
+
+2. Merge
+- Processing -> Toolbox -> Merge vector layers
+	Input layers(all states)
+	Destination CRS(North America Albers Equal Area Conic)
+
+3. Compute area census tract (see A-3)
+
+
+B- Associate each wind turbine with closest Zip Code (same steps with county or census tract)
 
 1. Load shapefiles and xls:
 - G:/My Drive/research projects/wind/raw_data/us_geography/cb_2016_us_zcta510_500k
@@ -61,3 +74,17 @@ B- Associate each wind turbine with closest Zip Code (same steps with county)
 
 5. Export csv
 - Right click turbines_dist_zipcode -> Save as -> G:/My Drive/research projects/wind/gis_derived/turbines_dist_zipcode.csv
+
+
+B-a Alternative: associate turbine within Zip Code
+
+1. Same as before
+
+2. Same as 3. before
+
+3. Processing -> Toolbox -> Add polygon attributes to points
+	Points(turbines_builtdate)
+	Polygones(zipcode)
+	Attribute(geo_id)
+
+4. Export csv

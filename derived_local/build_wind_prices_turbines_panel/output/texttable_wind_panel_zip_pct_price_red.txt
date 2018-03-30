@@ -1,3 +1,0 @@
-Zip Codes with wind farms and price data: 141
-Zip Codes with wind farms but no price data: 0
-Zip Codes price data but no wind farms: 10083
