@@ -30,26 +30,22 @@ program build_wind_farms
     gen dt = mofd(date)
     format dt %tm
     gen year = year(date)
-    keep if year > 1930 & year < 5000
+    keep if year > 1930 & year <= 2018
     
     drop if missing(agldet)
     qui sum agldet, det
     keep if agldet > `r(p1)'
-    bys zcta5ce10 dt: gen new_turbines_zip_month = _N
 
     save_data "${GoogleDrive}/stata/build_wind_panel/new_turbines_zip.dta", ///
         key(objectid_1) nopreserve replace
 
-    collapse (mean) agldet new_turbines_zip_month, by(zcta5ce10 dt)
-    
+    collapse (count) new_turbines_zip_month = objectid_1, by(zcta5ce10 dt)
     bys zcta5ce10 (dt): gen aggr_turb_zip_month = sum(new_turbines_zip_month)
-    gen sum_agldet = agldet*new_turbines_zip_month
-    bys zcta5ce10 (dt): gen aggr_sum_agldet = sum(sum_agldet)
-    gen avg_agldet = aggr_sum_agldet/aggr_turb_zip_month
-    drop agldet sum_agldet aggr_sum_agldet
-
     rename zcta5ce10 regionname
     save_data "../temp/turbines_zip.dta", key(regionname dt) replace
+
+    collapse (sum) new_turb_us_month = new_turbines_zip_month, by(dt)
+    save_data "../temp/new_turbines_us_month.dta", key(dt) replace
 end
 
 program build_zillow
@@ -96,16 +92,25 @@ program build_wind_panel_zip_month
         & aggr_turb_zip_month >= `farm_threshold'
     drop _merge
     
-    bysort regionname (dt): carryforward aggr_turb_zip_month wind_farm avg_agldet, replace
-    foreach var in new_turbines_zip_month aggr_turb_zip_month wind_farm avg_agldet {
+    bysort regionname (dt): carryforward aggr_turb_zip_month wind_farm, replace
+    foreach var in new_turbines_zip_month aggr_turb_zip_month wind_farm {
         replace `var' = 0 if `var' == .
     }
+    egen wind_farm_event = min(cond(wind_farm == 1, ///
+        dt, .)), by(regionname)
     drop if ln_p == .
 
     xtset regionname dt
 
     merge m:1 regionname using "${GoogleDrive}/stata/build_prelim_controls/`wind_file'.dta", ///
         nogen assert(1 2 3) keep(3)
+    merge m:1 dt using "../temp/new_turbines_us_month.dta", ///
+        nogen assert(1 2 3) keep(1 3)
+
+    replace new_turb_us_month = 0 if new_turb_us_month == .
+    gen new_turb_rmd_us_month = new_turb_us_month - new_turbines_zip_month
+    gen subventions_pot_wind_cap = pot_wind_cap_zip_area*new_turb_rmd_us_month
+    
     save_data "${GoogleDrive}/stata/build_wind_panel/`output_file'.dta", ///
         key(regionname dt) replace
 
