@@ -4,38 +4,46 @@ adopath + ../../../lib/third_party/stata_tools
 preliminaries, loadglob("../../../lib/python/wind/input_params.txt")
 
 program main
-    local controls = "avg_income pop male_ratio white_ratio " + ///
-                     "black_ratio asian_ratio near_dist elevation"
+    local controls "i.year"
 
-    use "${GoogleDrive}/stata/wind_prices_turbines.dta", clear
-    gen lnp = log(p)
-    gen delta_lnp = D.lnp
+    foreach stub in "zip" "tract" {
+        use "${GoogleDrive}/stata/build_wind_panel/wind_panel_`stub'_fhfa.dta", clear
 
-    label var wind_farm             "Probability wind farm in Zip Code"
-    label var delta_lnp             "Monthly change in ZHVI"
-    label var wind_zip_area_ratio   "Zip Code area with wind power capacity > 30%"
+        gen delta_lnp      = D.ln_p
+        gen delta_turbines = D.aggr_turb_`stub'_year
 
-    binscatter delta_lnp wind_zip_area_ratio, ///
-        xtitle(`: var label wind_zip_area_ratio') ytitle(`: var label delta_lnp')
-    graph export "../output/price_change_wind_binsc.png", replace
+        label var delta_turbines                "Yearly new installed turbines"
+        label var delta_lnp                     "Yearly HPI change"
+        label var first_us_turb_pot_wind_cap    "Area with wind power capacity > 30% x time first turbine US"
 
-    * Residualize instrument
-    reg wind_zip_area_ratio `controls'
-    predict inst_resid_adj, residuals
-    label var inst_resid_adj "Residualized Zip Code area with wind power capacity > 30%"
+        binscatter delta_lnp first_us_turb_pot_wind_cap, ///
+            xtitle(`: var label first_us_turb_pot_wind_cap') ytitle(`: var label delta_lnp')
+        graph export "../output/price_change_wind_binsc_`stub'.png", replace
 
-    local inst_list = "wind_zip_area_ratio inst_resid_adj wind_zip_area_ratio inst_resid_adj"
-    local saving_list = "first_stage fist_stage_adj second_stage second_stage_adj"
-    local var_list = "wind_farm wind_farm delta_lnp delta_lnp"
-    local range_list = `""0 100" "-40 60" "0 100" "-40 60""'
+        * Residualize instrument
+        reg first_us_turb_pot_wind_cap `controls'
+        predict first_us_turb_pot_wind_cap_adj, residuals
+        label var first_us_turb_pot_wind_cap_adj "Residualized area with wind power capacity > 30% x time first turbine US"
 
-    forval col_index = 1/4 {
-        local inst : word `col_index' of `inst_list'
-        local saving : word `col_index' of `saving_list'
-        local vars : word `col_index' of `var_list'
-        local ranges : word `col_index' of `range_list'
+        foreach type in "" "_adj" {
+            qui sum first_us_turb_pot_wind_cap`type', det
+            local rng_min`type' = `r(p1)'
+            local rng_max`type' = `r(p99)'
+        }
 
-        build_2sls_plot, vars(`vars') inst(`inst') ranges(`ranges') saving(`saving')
+        local inst_list   = "first_us_turb_pot_wind_cap first_us_turb_pot_wind_cap_adj first_us_turb_pot_wind_cap first_us_turb_pot_wind_cap_adj"
+        local saving_list = "first_stage_`stub' fist_stage_adj_`stub' second_stage_`stub' second_stage_adj_`stub'"
+        local var_list    = "delta_turbines delta_turbines delta_lnp delta_lnp"
+        local range_list  = `""`rng_min' `rng_max'" "`rng_min_adj' `rng_max_adj'" "`rng_min' `rng_max'" "`rng_min_adj' `rng_max_adj'""'
+
+        forval col_index = 1/4 {
+            local inst   : word `col_index' of `inst_list'
+            local saving : word `col_index' of `saving_list'
+            local vars   : word `col_index' of `var_list'
+            local ranges : word `col_index' of `range_list'
+
+            build_2sls_plot, vars(`vars') inst(`inst') ranges(`ranges') saving(`saving')
+        }
     }
 end
 

@@ -5,19 +5,31 @@ adopath + ../../../lib/third_party/stata_tools
 preliminaries, loadglob("../../../lib/python/wind/input_params.txt")
 
 program main
-    use "../temp/event_panel_month.dta", clear
-    prepare_factor_info relative_ev_month if relevant_time_period
+    local input_file_list = "wind_panel_zip_median_listing_sqft " + ///
+                            "wind_panel_zip_zhvi"
+
+    foreach inpt in `input_file_list' {
+        use "../temp/`inpt'_event_panel.dta", clear
+        prepare_factor_info relative_ev_month if relevant_time_period
+        local reg_opts = r(reg_opts)
+
+        make_event_study_plot, depvar(ln_p) time(dt) geo(regionname) ///
+            stub(month) saving(event_study_`inpt') `reg_opts'
+    }
+
+    use "../temp/wind_panel_tract_fhfa_event_panel.dta", clear
+    prepare_factor_info relative_ev_year if relevant_time_period
     local reg_opts = r(reg_opts)
 
-    make_event_study_plot, depvar(ln_p) time(dt) stub(month) ///
-        saving(wind_farm_event) `reg_opts'
+    make_event_study_plot, depvar(ln_p) time(year) geo(tract_fip) ///
+        saving(event_study_wind_panel_tract_fhfa) `reg_opts'
 
-    use "../temp/event_panel_qtr.dta", clear
-    prepare_factor_info relative_ev_qtr if relevant_time_period
+    use "../temp/wind_panel_zip_fhfa_event_panel.dta", clear
+    prepare_factor_info relative_ev_year if relevant_time_period
     local reg_opts = r(reg_opts)
 
-    make_event_study_plot, depvar(ln_p) time(qtr) stub(qtr) ///
-        saving(wind_farm_event) `reg_opts'
+    make_event_study_plot, depvar(ln_p) time(year) geo(regionname) ///
+        saving(event_study_wind_panel_zip_fhfa) `reg_opts'
 end
 
 program prepare_factor_info, rclass
@@ -34,16 +46,20 @@ program prepare_factor_info, rclass
 end
 
 program make_event_study_plot
-    syntax, depvar(str) time(str) factor_levels(str) num_factor_levels(str) ///
+    syntax, depvar(str) time(str) geo(str) factor_levels(str) num_factor_levels(str) ///
         median_factor_value(str) base_factor_value(str) saving(str) * [stub(str)]
 
+    if "`stub'" == "" {
+        local stub = "`time'"
+    }
+
     areg `depvar' ib`base_factor_value'.relative_ev_`stub'_reggroups i.`time', ///
-        absorb(regionname) vce(cluster regionname)
+        absorb(`geo') vce(robust)
 
     plot_event_study i(1/`num_factor_levels')bn.relative_ev_`stub'_reggroups, ///
         label(`factor_levels') center xtitle(`: var label relative_ev_`stub'_reggroups') ///
         ytitle(`: var label `depvar'') xlabel(minmax `median_factor_value', value)      ///
-        saving(../output/`saving'_`stub'.png) `options'
+        saving("../output/`saving'_`stub'.png") `options'
 end
 
 * Execute

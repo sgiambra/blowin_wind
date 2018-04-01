@@ -1,5 +1,5 @@
 
- make.py started: 2018-03-30 16:32:04 C:\Users\giamb\Documents\GitHub\blowin_wind\analysis\descriptive_plots\code 
+ make.py started: 2018-04-01 11:16:15 C:\Users\giamb\Documents\GitHub\blowin_wind\analysis\descriptive_plots\code 
 
 
 
@@ -184,7 +184,7 @@ Notes:
 . 
 . * Execute
 . main
-(109 observations deleted)
+(108 observations deleted)
 (note: file ../output/annual_new_turbines.png not found)
 (file ../output/annual_new_turbines.png written in PNG format)
        panel variable:  ever_wind_farm (strongly balanced)
@@ -378,4 +378,4 @@ xij variables:
 . 
 end of do-file
 
- make.py ended: 2018-03-30 16:32:51
+ make.py ended: 2018-04-01 11:17:02

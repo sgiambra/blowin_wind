@@ -1,5 +1,5 @@
 
- make.py started: 2018-03-12 13:48:33 C:\Users\giamb\Documents\GitHub\blowin_wind\analysis\2sls_plots\code 
+ make.py started: 2018-04-01 10:53:40 C:\Users\giamb\Documents\GitHub\blowin_wind\analysis\2sls_plots\code 
 
 
 
@@ -53,40 +53,48 @@ Notes:
 
 . 
 . program main
-  1.     local controls = "avg_income pop male_ratio white_ratio " + ///
->                      "black_ratio asian_ratio near_dist elevation"
+  1.     local controls "i.year"
   2. 
-.     use "${GoogleDrive}/stata/wind_prices_turbines.dta", clear
-  3.     gen lnp = log(p)
-  4.     gen delta_lnp = D.lnp
-  5. 
-.     label var wind_farm             "Probability wind farm in Zip Code"
-  6.     label var delta_lnp             "Monthly change in ZHVI"
-  7.     label var wind_zip_area_ratio   "Zip Code area with wind power capacity > 30%"
-  8. 
-.     binscatter delta_lnp wind_zip_area_ratio, ///
->         xtitle(`: var label wind_zip_area_ratio') ytitle(`: var label delta_lnp')
-  9.     graph export "../output/price_change_wind_binsc.png", replace
- 10. 
-.     * Residualize instrument
-.     reg wind_zip_area_ratio `controls'
- 11.     predict inst_resid_adj, residuals
- 12.     label var inst_resid_adj "Residualized Zip Code area with wind power capacity > 30%"
- 13. 
-.     local inst_list = "wind_zip_area_ratio inst_resid_adj wind_zip_area_ratio inst_resid_adj"
- 14.     local saving_list = "first_stage fist_stage_adj second_stage second_stage_adj"
- 15.     local var_list = "wind_farm wind_farm delta_lnp delta_lnp"
- 16.     local range_list = `""0 100" "-40 60" "0 100" "-40 60""'
- 17. 
-.     forval col_index = 1/4 {
- 18.         local inst : word `col_index' of `inst_list'
- 19.         local saving : word `col_index' of `saving_list'
- 20.         local vars : word `col_index' of `var_list'
- 21.         local ranges : word `col_index' of `range_list'
- 22. 
-.         build_2sls_plot, vars(`vars') inst(`inst') ranges(`ranges') saving(`saving')
- 23.     }
- 24. end
+.     foreach stub in "zip" "tract" {
+  3.         use "${GoogleDrive}/stata/build_wind_panel/wind_panel_`stub'_fhfa.dta", clear
+  4. 
+.         gen delta_lnp      = D.ln_p
+  5.         gen delta_turbines = D.aggr_turb_`stub'_year
+  6. 
+.         label var delta_turbines                "Yearly new installed turbines"
+  7.         label var delta_lnp                     "Yearly HPI change"
+  8.         label var first_us_turb_pot_wind_cap    "Area with wind power capacity > 30% x time first turbine US"
+  9. 
+.         binscatter delta_lnp first_us_turb_pot_wind_cap, ///
+>             xtitle(`: var label first_us_turb_pot_wind_cap') ytitle(`: var label delta_lnp')
+ 10.         graph export "../output/price_change_wind_binsc_`stub'.png", replace
+ 11. 
+.         * Residualize instrument
+.         reg first_us_turb_pot_wind_cap `controls'
+ 12.         predict first_us_turb_pot_wind_cap_adj, residuals
+ 13.         label var first_us_turb_pot_wind_cap_adj "Residualized area with wind power capacity > 30% x time first turbine US"
+ 14. 
+.         foreach type in "" "_adj" {
+ 15.             qui sum first_us_turb_pot_wind_cap`type', det
+ 16.             local rng_min`type' = `r(p1)'
+ 17.             local rng_max`type' = `r(p99)'
+ 18.         }
+ 19. 
+.         local inst_list   = "first_us_turb_pot_wind_cap first_us_turb_pot_wind_cap_adj first_us_turb_pot_wind_cap first_us_turb_pot_wind_cap_adj"
+ 20.         local saving_list = "first_stage_`stub' fist_stage_adj_`stub' second_stage_`stub' second_stage_adj_`stub'"
+ 21.         local var_list    = "delta_turbines delta_turbines delta_lnp delta_lnp"
+ 22.         local range_list  = `""`rng_min' `rng_max'" "`rng_min_adj' `rng_max_adj'" "`rng_min' `rng_max'" "`rng_min_adj' `rng_max_adj'""'
+ 23. 
+.         forval col_index = 1/4 {
+ 24.             local inst   : word `col_index' of `inst_list'
+ 25.             local saving : word `col_index' of `saving_list'
+ 26.             local vars   : word `col_index' of `var_list'
+ 27.             local ranges : word `col_index' of `range_list'
+ 28. 
+.             build_2sls_plot, vars(`vars') inst(`inst') ranges(`ranges') saving(`saving')
+ 29.         }
+ 30.     }
+ 31. end
 
 . 
 . program build_2sls_plot
@@ -111,54 +119,172 @@ Notes:
 . 
 . * Execute
 . main
-(360,291 missing values generated)
-(374,195 missing values generated)
-warning: nquantiles(20) was specified, but only 18 were generated. see help file under nquantiles() for explanation.
-(note: file ../output/price_change_wind_binsc.png not found)
-(file ../output/price_change_wind_binsc.png written in PNG format)
+(20,314 missing values generated)
+(20,314 missing values generated)
+warning: nquantiles(20) was specified, but only 9 were generated. see help file under nquantiles() for explanation.
+(note: file ../output/price_change_wind_binsc_zip.png not found)
+(file ../output/price_change_wind_binsc_zip.png written in PNG format)
 
-      Source |       SS           df       MS      Number of obs   = 3,642,848
--------------+----------------------------------   F(8, 3642839)   >  99999.00
-       Model |   719663992         8    89957999   Prob > F        =    0.0000
-    Residual |  2.3180e+09 3,642,839  636.327441   R-squared       =    0.2369
--------------+----------------------------------   Adj R-squared   =    0.2369
-       Total |  3.0377e+09 3,642,847  833.881415   Root MSE        =    25.226
+      Source |       SS           df       MS      Number of obs   =   462,406
+-------------+----------------------------------   F(42, 462363)   =    733.21
+       Model |  11750396.8        42  279771.353   Prob > F        =    0.0000
+    Residual |   176423068   462,363   381.56831   R-squared       =    0.0624
+-------------+----------------------------------   Adj R-squared   =    0.0624
+       Total |   188173465   462,405  406.945135   Root MSE        =    19.534
 
 ------------------------------------------------------------------------------
-wind_zip_a~o |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+first_us_t~p |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
-  avg_income |  -.1037093   .0003731  -277.96   0.000    -.1044406    -.102978
-         pop |  -.0003565   1.04e-06  -343.95   0.000    -.0003585   -.0003544
-  male_ratio |   125.5401   .6028362   208.25   0.000     124.3586    126.7217
- white_ratio |   29.63438   .1917791   154.52   0.000      29.2585    30.01026
- black_ratio |  -8.124554    .212121   -38.30   0.000    -8.540304   -7.708804
- asian_ratio |  -14.14505   .3593825   -39.36   0.000    -14.84943   -13.44067
-   near_dist |   .0317195   .0000676   469.17   0.000      .031587     .031852
-   elevation |  -.0137024   .0000481  -284.87   0.000    -.0137967   -.0136081
-       _cons |  -54.85083   .3785244  -144.91   0.000    -55.59272   -54.10893
+        year |
+       1976  |   3.70e-10   1.049404     0.00   1.000      -2.0568      2.0568
+       1977  |   3.70e-10   .9825274     0.00   1.000    -1.925723    1.925723
+       1978  |   3.70e-10   .9642422     0.00   1.000    -1.889885    1.889885
+       1979  |   3.70e-10    .942691     0.00   1.000    -1.847645    1.847645
+       1980  |   3.70e-10   .9435688     0.00   1.000    -1.849366    1.849366
+       1981  |   3.70e-10   .9551711     0.00   1.000    -1.872106    1.872106
+       1982  |   3.70e-10   .9561623     0.00   1.000    -1.874049    1.874049
+       1983  |   3.70e-10   .9400484     0.00   1.000    -1.842466    1.842466
+       1984  |   3.70e-10    .936707     0.00   1.000    -1.835917    1.835917
+       1985  |   3.70e-10   .9270921     0.00   1.000    -1.817072    1.817072
+       1986  |   3.71e-10   .9147421     0.00   1.000    -1.792866    1.792866
+       1987  |   3.71e-10   .9143615     0.00   1.000     -1.79212     1.79212
+       1988  |   3.71e-10   .9142873     0.00   1.000    -1.791975    1.791975
+       1989  |   3.71e-10   .9138252     0.00   1.000    -1.791069    1.791069
+       1990  |   3.71e-10   .9132642     0.00   1.000     -1.78997     1.78997
+       1991  |   3.71e-10   .9111714     0.00   1.000    -1.785868    1.785868
+       1992  |   3.70e-10   .9069843     0.00   1.000    -1.777661    1.777661
+       1993  |   3.70e-10   .9052668     0.00   1.000    -1.774295    1.774295
+       1994  |   3.70e-10   .9052258     0.00   1.000    -1.774215    1.774215
+       1995  |   3.70e-10   .9051325     0.00   1.000    -1.774032    1.774032
+       1996  |   3.70e-10   .9045786     0.00   1.000    -1.772946    1.772946
+       1997  |   3.70e-10   .9043631     0.00   1.000    -1.772524    1.772524
+       1998  |   9.384492   .9020864    10.40   0.000     7.616431    11.15255
+       1999  |   9.440488   .9019283    10.47   0.000     7.672737    11.20824
+       2000  |   9.368797   .9020211    10.39   0.000     7.600863    11.13673
+       2001  |   10.14708   .9004497    11.27   0.000     8.382223    11.91193
+       2002  |   10.60955   .8998532    11.79   0.000     8.845863    12.37323
+       2003  |   11.19113   .8990153    12.45   0.000     9.429087    12.95317
+       2004  |   11.17761   .8990239    12.43   0.000     9.415552    12.93967
+       2005  |   11.12617   .8990379    12.38   0.000     9.364081    12.88825
+       2006  |   11.12976    .899034    12.38   0.000     9.367678    12.89184
+       2007  |   11.11746   .8989711    12.37   0.000     9.355506    12.87942
+       2008  |   11.05647   .8990036    12.30   0.000     9.294454    12.81849
+       2009  |   11.20974   .8988592    12.47   0.000     9.448003    12.97148
+       2010  |   11.20594   .8988744    12.47   0.000     9.444174    12.96771
+       2011  |   11.18589    .898918    12.44   0.000     9.424043    12.94775
+       2012  |   11.19067   .8988387    12.45   0.000     9.428973    12.95236
+       2013  |   11.18053   .8988683    12.44   0.000     9.418781    12.94229
+       2014  |   10.82542   .8995157    12.03   0.000     9.062393    12.58844
+       2015  |    10.9186   .8994406    12.14   0.000     9.155729    12.68148
+       2016  |   10.89245   .8993975    12.11   0.000     9.129656    12.65524
+       2017  |   10.68445   .8998136    11.87   0.000     8.920843    12.44806
+             |
+       _cons |  -3.70e-10     .88607    -0.00   1.000     -1.73667     1.73667
 ------------------------------------------------------------------------------
-(3,642,798 missing values generated)
-(3,642,798 missing values generated)
-(3,642,798 missing values generated)
-(note: file ../output/first_stage.png not found)
-(file ../output/first_stage.png written in PNG format)
-(3,642,798 missing values generated)
-(3,642,798 missing values generated)
-(3,642,798 missing values generated)
-(note: file ../output/fist_stage_adj.png not found)
-(file ../output/fist_stage_adj.png written in PNG format)
-(3,642,798 missing values generated)
-(3,642,798 missing values generated)
-(3,642,798 missing values generated)
-(note: file ../output/second_stage.png not found)
-(file ../output/second_stage.png written in PNG format)
-(3,642,798 missing values generated)
-(3,642,798 missing values generated)
-(3,642,798 missing values generated)
-(note: file ../output/second_stage_adj.png not found)
-(file ../output/second_stage_adj.png written in PNG format)
+(462,356 missing values generated)
+(462,356 missing values generated)
+(462,356 missing values generated)
+(note: file ../output/first_stage_zip.png not found)
+(file ../output/first_stage_zip.png written in PNG format)
+(462,356 missing values generated)
+(462,356 missing values generated)
+(462,356 missing values generated)
+(note: file ../output/fist_stage_adj_zip.png not found)
+(file ../output/fist_stage_adj_zip.png written in PNG format)
+(462,356 missing values generated)
+(462,356 missing values generated)
+(462,356 missing values generated)
+(note: file ../output/second_stage_zip.png not found)
+(file ../output/second_stage_zip.png written in PNG format)
+(462,356 missing values generated)
+(462,356 missing values generated)
+(462,356 missing values generated)
+(note: file ../output/second_stage_adj_zip.png not found)
+(file ../output/second_stage_adj_zip.png written in PNG format)
+(59,333 missing values generated)
+(59,333 missing values generated)
+warning: nquantiles(20) was specified, but only 8 were generated. see help file under nquantiles() for explanation.
+(note: file ../output/price_change_wind_binsc_tract.png not found)
+(file ../output/price_change_wind_binsc_tract.png written in PNG format)
+
+      Source |       SS           df       MS      Number of obs   = 1,206,888
+-------------+----------------------------------   F(42, 1206845)  =   1059.57
+       Model |  9966290.82        42  237292.639   Prob > F        =    0.0000
+    Residual |   270276019 1,206,845  223.952554   R-squared       =    0.0356
+-------------+----------------------------------   Adj R-squared   =    0.0355
+       Total |   280242310 1,206,887  232.202609   Root MSE        =    14.965
+
+------------------------------------------------------------------------------
+first_us_t~p |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        year |
+       1976  |  -2.47e-10   2.769248    -0.00   1.000    -5.427632    5.427632
+       1977  |  -2.46e-10   2.618961    -0.00   1.000    -5.133075    5.133075
+       1978  |  -2.46e-10     2.5969    -0.00   1.000    -5.089835    5.089835
+       1979  |  -2.46e-10   2.582232    -0.00   1.000    -5.061087    5.061087
+       1980  |  -2.46e-10   2.583411    -0.00   1.000    -5.063399    5.063399
+       1981  |  -2.46e-10   2.594862    -0.00   1.000    -5.085842    5.085842
+       1982  |  -2.46e-10   2.598554    -0.00   1.000    -5.093078    5.093078
+       1983  |  -2.46e-10   2.582019    -0.00   1.000     -5.06067     5.06067
+       1984  |  -2.46e-10    2.58052    -0.00   1.000    -5.057731    5.057731
+       1985  |  -2.46e-10   2.574059    -0.00   1.000    -5.045069    5.045069
+       1986  |  -2.47e-10   2.569014    -0.00   1.000    -5.035181    5.035181
+       1987  |  -2.47e-10   2.568925    -0.00   1.000    -5.035005    5.035005
+       1988  |  -2.47e-10   2.568915    -0.00   1.000    -5.034986    5.034986
+       1989  |  -2.47e-10   2.568823    -0.00   1.000    -5.034806    5.034806
+       1990  |  -2.47e-10   2.568731    -0.00   1.000    -5.034625    5.034625
+       1991  |  -2.46e-10   2.568462    -0.00   1.000    -5.034098    5.034098
+       1992  |  -2.45e-10   2.567981    -0.00   1.000    -5.033155    5.033155
+       1993  |  -2.45e-10   2.567823    -0.00   1.000    -5.032845    5.032845
+       1994  |  -2.45e-10    2.56782    -0.00   1.000     -5.03284     5.03284
+       1995  |  -2.45e-10   2.567824    -0.00   1.000    -5.032847    5.032847
+       1996  |  -2.45e-10   2.567783    -0.00   1.000    -5.032767    5.032767
+       1997  |  -2.45e-10   2.567772    -0.00   1.000    -5.032745    5.032745
+       1998  |   5.774445   2.567626     2.25   0.025     .7419858     10.8069
+       1999  |   5.816284   2.567614     2.27   0.023     .7838482    10.84872
+       2000  |   5.818378   2.567625     2.27   0.023     .7859215    10.85084
+       2001  |   6.171292   2.567526     2.40   0.016     1.139028    11.20356
+       2002  |   6.301606   2.567485     2.45   0.014     1.269424    11.33379
+       2003  |   6.466115   2.567432     2.52   0.012     1.434036    11.49819
+       2004  |   6.472968   2.567432     2.52   0.012     1.440889    11.50505
+       2005  |   6.482511   2.567433     2.52   0.012      1.45043    11.51459
+       2006  |   6.510936   2.567435     2.54   0.011     1.478851    11.54302
+       2007  |   6.494416   2.567428     2.53   0.011     1.462345    11.52649
+       2008  |   6.487028   2.567433     2.53   0.012     1.454948    11.51911
+       2009  |   6.606191   2.567442     2.57   0.010     1.574093    11.63829
+       2010  |   6.602505   2.567446     2.57   0.010     1.570399    11.63461
+       2011  |     6.6214   2.567447     2.58   0.010     1.589291    11.65351
+       2012  |   6.525815   2.567429     2.54   0.011     1.493741    11.55789
+       2013  |    6.53075    2.56743     2.54   0.011     1.498674    11.56283
+       2014  |   6.630667   2.567491     2.58   0.010     1.598471    11.66286
+       2015  |   6.660514   2.567493     2.59   0.009     1.628315    11.69271
+       2016  |   6.637365    2.56749     2.59   0.010     1.605171    11.66956
+       2017  |   6.662054   2.567519     2.59   0.009     1.629804     11.6943
+             |
+       _cons |   2.47e-10   2.566484     0.00   1.000    -5.030221    5.030221
+------------------------------------------------------------------------------
+(1,206,838 missing values generated)
+(1,206,838 missing values generated)
+(1,206,838 missing values generated)
+(note: file ../output/first_stage_tract.png not found)
+(file ../output/first_stage_tract.png written in PNG format)
+(1,206,838 missing values generated)
+(1,206,838 missing values generated)
+(1,206,838 missing values generated)
+(note: file ../output/fist_stage_adj_tract.png not found)
+(file ../output/fist_stage_adj_tract.png written in PNG format)
+(1,206,838 missing values generated)
+(1,206,838 missing values generated)
+(1,206,838 missing values generated)
+(note: file ../output/second_stage_tract.png not found)
+(file ../output/second_stage_tract.png written in PNG format)
+(1,206,838 missing values generated)
+(1,206,838 missing values generated)
+(1,206,838 missing values generated)
+(note: file ../output/second_stage_adj_tract.png not found)
+(file ../output/second_stage_adj_tract.png written in PNG format)
 
 . 
 end of do-file
 
- make.py ended: 2018-03-12 13:59:20
+ make.py ended: 2018-04-01 10:57:44
