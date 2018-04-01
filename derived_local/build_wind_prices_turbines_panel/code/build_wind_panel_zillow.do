@@ -110,6 +110,10 @@ program build_wind_panel_zip_month
     replace new_turb_us_month = 0 if new_turb_us_month == .
     gen new_turb_rmd_us_month = new_turb_us_month - new_turbines_zip_month
     gen subventions_pot_wind_cap = pot_wind_cap_zip_area*new_turb_rmd_us_month
+
+    qui sum dt if new_turb_us_month > 0
+    gen first_us_turb_pot_wind_cap = pot_wind_cap_zip_area if dt >= `r(min)'
+    replace first_us_turb_pot_wind_cap = 0 if first_us_turb_pot_wind_cap == .
     
     save_data "${GoogleDrive}/stata/build_wind_panel/`output_file'.dta", ///
         key(regionname dt) replace

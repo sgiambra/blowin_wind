@@ -1,5 +1,5 @@
 
- make.py started: 2018-03-12 11:48:06 C:\Users\giamb\Documents\GitHub\blowin_wind\analysis\descriptive_regressions\code 
+ make.py started: 2018-04-01 10:01:40 C:\Users\giamb\Documents\GitHub\blowin_wind\analysis\descriptive_regressions\code 
 
 
 
@@ -54,137 +54,143 @@ Notes:
 . 
 . program main
   1.     local table_file    "../output/tables.txt"
-  2.     local cluster_vars  "regionname dt"
-  3.     local endog         "wind_farm"
-  4.     local instr         "wind_zip_area_ratio"
+  2.     local depvar        "D.ln_p"
+  3.     local instr         "first_us_turb_pot_wind_cap"
+  4. 
+.     use "${GoogleDrive}/stata/build_wind_panel/wind_panel_tract_fhfa.dta", clear
   5. 
-.     use "${GoogleDrive}/stata/wind_prices_turbines.dta", clear
-  6.     gen ln_p = ln(p)
-  7.     
-.     build_descriptive_table, endog(`endog') instr(`instr') ///
->         cluster(`cluster_vars')
-  8.     matrix fs_table = r(fs_col)
-  9.     matrix ols_block = r(ols_col)
- 10.     matrix tsls_block = r(tsls_col)
- 11. 
-.     local controls_list = "avg_income pop male_ratio white_ratio " + ///
->                           "black_ratio asian_ratio near_dist elevation"
- 12. 
-.     build_descriptive_table, endog(`endog') instr(`instr') ///
->         controls(`controls_list') cluster(`cluster_vars')
- 13.     matrix fs_table = (fs_table, r(fs_col))
- 14.     matrix ols_block = (ols_block, r(ols_col))
- 15.     matrix tsls_block = (tsls_block, r(tsls_col))
+.     build_descriptive_table, depvar(`depvar') endog("D.aggr_turb_tract_year") ///
+>             instr(`instr') time_fe(year) cluster(tract_fip)
+  6.     matrix fs_table  = r(fs_col)
+  7.     matrix ols_table = r(ols_col)
+  8.     matrix iv_table  = r(iv_col)
+  9. 
+.     use "${GoogleDrive}/stata/build_wind_panel/wind_panel_zip_fhfa.dta", clear
+ 10. 
+.     build_descriptive_table, depvar(`depvar') endog("D.aggr_turb_zip_year") ///
+>             instr(`instr') time_fe(year) cluster(regionname)
+ 11.     matrix fs_table  = (fs_table, r(fs_col))
+ 12.     matrix ols_table = (ols_table, r(ols_col))
+ 13.     matrix iv_table  = (iv_table, r(iv_col))
+ 14. 
+.     foreach file in "wind_panel_zip_median_listing_sqft" "wind_panel_zip_zhvi" {
+ 15.         use "${GoogleDrive}/stata/build_wind_panel/`file'.dta", clear
  16. 
-.     matrix iv_table = (ols_block, tsls_block)
- 17. 
+.         build_descriptive_table, depvar(`depvar') endog("D.aggr_turb_zip_month") ///
+>             instr(`instr') time_fe(dt) cluster(regionname)
+ 17.         matrix fs_table  = (nullmat(fs_table), r(fs_col))
+ 18.         matrix ols_table = (nullmat(ols_table), r(ols_col))
+ 19.         matrix iv_table  = (nullmat(iv_table), r(iv_col))
+ 20.     }
+ 21. 
 .     matrix_to_txt, saving(`table_file') mat(fs_table) ///
 >         format(%20.5f) title(<tab:descr_fs>) replace
- 18.     matrix_to_txt, saving(`table_file') mat(iv_table) ///
+ 22.     matrix_to_txt, saving(`table_file') mat(ols_table) ///
+>         format(%20.5f) title(<tab:descr_ols>) append
+ 23.     matrix_to_txt, saving(`table_file') mat(iv_table) ///
 >         format(%20.5f) title(<tab:descr_iv>) append
- 19. end
+ 24. end
 
 . 
 . program build_descriptive_table, rclass
-  1.     syntax, endog(str) instr(str) [controls(str) *]
+  1.     syntax, depvar(str) endog(str) instr(str) time_fe(str) [controls(str) *]
   2. 
-.     local obs    = "e(N_clust1) \ e(N)"
+.     local obs    = "e(N_clust) \ e(N)"
   3.     local ss_est = "_b[`endog'] \ _se[`endog']"
   4.     local fs_est = "_b[`instr'] \ _se[`instr']"
   5. 
-.     reghdfe `endog' `instr' `controls', absorb(dt) `options'
+.     reghdfe `endog' `instr' `controls', absorb(`time_fe') `options'
   6.     matrix fs_col = (`fs_est' \ `obs')
   7. 
-.     reghdfe D.ln_p `controls' `endog', absorb(dt) `options'
+.     reghdfe `depvar' `controls' `endog', absorb(`time_fe') `options'
   8.     matrix ols_col = (`ss_est' \ `obs')
-  9.     reghdfe D.ln_p `controls' (`endog' = `instr'), absorb(dt) `options'
- 10.     matrix tsls_col = (`ss_est' \ `obs')
+  9.     reghdfe `depvar' `controls' (`endog' = `instr'), absorb(`time_fe') `options'
+ 10.     matrix iv_col = (`ss_est' \ `obs')
  11. 
-.     return matrix fs_col = fs_col
+.     return matrix fs_col  = fs_col
  12.     return matrix ols_col = ols_col
- 13.     return matrix tsls_col = tsls_col
+ 13.     return matrix iv_col  = iv_col
  14. end
 
 . 
 . * Execute
 . main
-(360,291 missing values generated)
 (converged in 1 iterations)
 
-HDFE Linear regression                            Number of obs   =  3,642,848
-Absorbing 1 HDFE group                            F(   1,    261) =      99.60
+HDFE Linear regression                            Number of obs   =  1,147,555
+Absorbing 1 HDFE group                            F(   1,  46730) =     107.83
 Statistics robust to heteroskedasticity           Prob > F        =     0.0000
-                                                  R-squared       =     0.0225
-                                                  Adj R-squared   =     0.0224
-Number of clusters (regionname) =     13,904      Within R-sq.    =     0.0149
-Number of clusters (dt)      =        262         Root MSE        =     0.0814
+                                                  R-squared       =     0.0030
+                                                  Adj R-squared   =     0.0030
+                                                  Within R-sq.    =     0.0028
+Number of clusters (tract_fip) =     46,731       Root MSE        =     1.1495
 
-                               (Std. Err. adjusted for 262 clusters in regionname dt)
--------------------------------------------------------------------------------------
-                    |               Robust
-          wind_farm |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
---------------------+----------------------------------------------------------------
-wind_zip_area_ratio |   .0003469   .0000348     9.98   0.000     .0002785    .0004154
--------------------------------------------------------------------------------------
+                                       (Std. Err. adjusted for 46,731 clusters in tract_fip)
+--------------------------------------------------------------------------------------------
+                           |               Robust
+    D.aggr_turb_tract_year |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+---------------------------+----------------------------------------------------------------
+first_us_turb_pot_wind_cap |   .0040051   .0003857    10.38   0.000     .0032492    .0047611
+--------------------------------------------------------------------------------------------
 
 Absorbed degrees of freedom:
-----------------------------------------------------------------------+
-        Absorbed FE |  Num. Coefs.  =   Categories  -   Redundant     | 
---------------------+-------------------------------------------------|
-                 dt |            0             262            262 *   | 
-----------------------------------------------------------------------+
-* = fixed effect nested within cluster; treated as redundant for DoF computation
+-----------------------------------------------------------------------------+
+               Absorbed FE |  Num. Coefs.  =   Categories  -   Redundant     | 
+---------------------------+-------------------------------------------------|
+                      year |           42              42              0     | 
+-----------------------------------------------------------------------------+
 (converged in 1 iterations)
 
-HDFE Linear regression                            Number of obs   =  3,268,653
-Absorbing 1 HDFE group                            F(   1,    260) =       5.45
-Statistics robust to heteroskedasticity           Prob > F        =     0.0203
-                                                  R-squared       =     0.1532
-                                                  Adj R-squared   =     0.1532
-Number of clusters (regionname) =     13,904      Within R-sq.    =     0.0000
-Number of clusters (dt)      =        261         Root MSE        =     0.0095
+HDFE Linear regression                            Number of obs   =  1,147,555
+Absorbing 1 HDFE group                            F(   1,  46730) =       8.75
+Statistics robust to heteroskedasticity           Prob > F        =     0.0031
+                                                  R-squared       =     0.3047
+                                                  Adj R-squared   =     0.3047
+                                                  Within R-sq.    =     0.0000
+Number of clusters (tract_fip) =     46,731       Root MSE        =     0.0684
 
-                        (Std. Err. adjusted for 261 clusters in regionname dt)
-------------------------------------------------------------------------------
-             |               Robust
-      D.ln_p |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
--------------+----------------------------------------------------------------
-   wind_farm |  -.0003619    .000155    -2.33   0.020    -.0006671   -.0000567
-------------------------------------------------------------------------------
+                                 (Std. Err. adjusted for 46,731 clusters in tract_fip)
+--------------------------------------------------------------------------------------
+                     |               Robust
+              D.ln_p |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+---------------------+----------------------------------------------------------------
+aggr_turb_tract_year |
+                 D1. |    .000158   .0000534     2.96   0.003     .0000533    .0002627
+--------------------------------------------------------------------------------------
 
 Absorbed degrees of freedom:
----------------------------------------------------------------+
- Absorbed FE |  Num. Coefs.  =   Categories  -   Redundant     | 
--------------+-------------------------------------------------|
-          dt |            0             261            261 *   | 
----------------------------------------------------------------+
-* = fixed effect nested within cluster; treated as redundant for DoF computation
+-----------------------------------------------------------------------+
+         Absorbed FE |  Num. Coefs.  =   Categories  -   Redundant     | 
+---------------------+-------------------------------------------------|
+                year |           42              42              0     | 
+-----------------------------------------------------------------------+
 (converged in 1 iterations)
 
 HDFE IV (2SLS) estimation
 -------------------------
 
 Estimates efficient for homoskedasticity only
-Statistics robust to heteroskedasticity and clustering on regionname and dt
+Statistics robust to heteroskedasticity and clustering on tract_fip
 
-Number of clusters (regionname) =  13904              Number of obs =  3268653
-Number of clusters (dt) =          261                F(  1,   260) =    20.98
+Number of clusters (tract_fip) =  46731               Number of obs =  1147555
+                                                      F(  1, 46730) =    92.16
                                                       Prob > F      =   0.0000
-Total (centered) SS     =  292.6877383                Centered R2   =   0.0769
-Total (uncentered) SS   =  292.6877383                Uncentered R2 =        .
-Residual SS             =  319.0801816                Root MSE      =  .009881
+Total (centered) SS     =  5374.819198                Centered R2   =   0.1978
+Total (uncentered) SS   =  5374.819198                Uncentered R2 =        .
+Residual SS             =  6201.507109                Root MSE      =   .07351
 
-------------------------------------------------------------------------------
-             |               Robust
-      D.ln_p |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
--------------+----------------------------------------------------------------
-   wind_farm |  -.0340894   .0074428    -4.58   0.000    -.0487451   -.0194336
-------------------------------------------------------------------------------
-Underidentification test (Kleibergen-Paap rk LM statistic):             68.842
+--------------------------------------------------------------------------------------
+                     |               Robust
+              D.ln_p |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+---------------------+----------------------------------------------------------------
+aggr_turb_tract_year |
+                 D1. |  -.0231604   .0024126    -9.60   0.000    -.0278891   -.0184317
+--------------------------------------------------------------------------------------
+Underidentification test (Kleibergen-Paap rk LM statistic):            103.181
                                                    Chi-sq(1) P-val =    0.0000
 ------------------------------------------------------------------------------
-Weak identification test (Cragg-Donald Wald F statistic):              5.5e+04
-                         (Kleibergen-Paap rk Wald F statistic):        106.249
+Weak identification test (Cragg-Donald Wald F statistic):             3165.953
+                         (Kleibergen-Paap rk Wald F statistic):        107.828
 Stock-Yogo weak ID test critical values: 10% maximal IV size             16.38
                                          15% maximal IV size              8.96
                                          20% maximal IV size              6.66
@@ -195,117 +201,92 @@ NB: Critical values are for Cragg-Donald F statistic and i.i.d. errors.
 Hansen J statistic (overidentification test of all instruments):         0.000
                                                  (equation exactly identified)
 ------------------------------------------------------------------------------
-Instrumented:         wind_farm
-Excluded instruments: wind_zip_area_ratio
+Instrumented:         D.aggr_turb_tract_year
+Excluded instruments: first_us_turb_pot_wind_cap
 ------------------------------------------------------------------------------
 
 Absorbed degrees of freedom:
----------------------------------------------------------------+
- Absorbed FE |  Num. Coefs.  =   Categories  -   Redundant     | 
--------------+-------------------------------------------------|
-          dt |            0             261            261 *   | 
----------------------------------------------------------------+
-* = fixed effect nested within cluster; treated as redundant for DoF computation
+-----------------------------------------------------------------------+
+         Absorbed FE |  Num. Coefs.  =   Categories  -   Redundant     | 
+---------------------+-------------------------------------------------|
+                year |           42              42              0     | 
+-----------------------------------------------------------------------+
 (converged in 1 iterations)
 
-HDFE Linear regression                            Number of obs   =  3,642,848
-Absorbing 1 HDFE group                            F(   9,    261) =      12.49
+HDFE Linear regression                            Number of obs   =    442,092
+Absorbing 1 HDFE group                            F(   1,  16785) =      95.15
 Statistics robust to heteroskedasticity           Prob > F        =     0.0000
-                                                  R-squared       =     0.0251
-                                                  Adj R-squared   =     0.0250
-Number of clusters (regionname) =     13,904      Within R-sq.    =     0.0175
-Number of clusters (dt)      =        262         Root MSE        =     0.0813
+                                                  R-squared       =     0.0048
+                                                  Adj R-squared   =     0.0047
+                                                  Within R-sq.    =     0.0041
+Number of clusters (regionname) =     16,786      Root MSE        =     1.4320
 
-                               (Std. Err. adjusted for 262 clusters in regionname dt)
--------------------------------------------------------------------------------------
-                    |               Robust
-          wind_farm |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
---------------------+----------------------------------------------------------------
-wind_zip_area_ratio |   .0003701   .0000371     9.99   0.000     .0002971     .000443
-         avg_income |  -3.20e-06   5.48e-06    -0.58   0.559     -.000014    7.58e-06
-                pop |   4.41e-09   2.96e-08     0.15   0.882    -5.39e-08    6.27e-08
-         male_ratio |    .008843   .0262647     0.34   0.737    -.0428748    .0605607
-        white_ratio |  -.0183512   .0071075    -2.58   0.010    -.0323465    -.004356
-        black_ratio |  -.0161068   .0069126    -2.33   0.021    -.0297184   -.0024952
-        asian_ratio |  -.0109994   .0104254    -1.06   0.292    -.0315281    .0095293
-          near_dist |  -.0000125   2.64e-06    -4.73   0.000    -.0000177   -7.30e-06
-          elevation |   .0000136   2.06e-06     6.61   0.000     9.56e-06    .0000177
--------------------------------------------------------------------------------------
+                                      (Std. Err. adjusted for 16,786 clusters in regionname)
+--------------------------------------------------------------------------------------------
+                           |               Robust
+      D.aggr_turb_zip_year |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+---------------------------+----------------------------------------------------------------
+first_us_turb_pot_wind_cap |   .0047065   .0004825     9.75   0.000     .0037608    .0056522
+--------------------------------------------------------------------------------------------
 
 Absorbed degrees of freedom:
-----------------------------------------------------------------------+
-        Absorbed FE |  Num. Coefs.  =   Categories  -   Redundant     | 
---------------------+-------------------------------------------------|
-                 dt |            0             262            262 *   | 
-----------------------------------------------------------------------+
-* = fixed effect nested within cluster; treated as redundant for DoF computation
+-----------------------------------------------------------------------------+
+               Absorbed FE |  Num. Coefs.  =   Categories  -   Redundant     | 
+---------------------------+-------------------------------------------------|
+                      year |           42              42              0     | 
+-----------------------------------------------------------------------------+
 (converged in 1 iterations)
 
-HDFE Linear regression                            Number of obs   =  3,268,653
-Absorbing 1 HDFE group                            F(   9,    260) =      19.52
-Statistics robust to heteroskedasticity           Prob > F        =     0.0000
-                                                  R-squared       =     0.1570
-                                                  Adj R-squared   =     0.1569
-Number of clusters (regionname) =     13,904      Within R-sq.    =     0.0044
-Number of clusters (dt)      =        261         Root MSE        =     0.0094
+HDFE Linear regression                            Number of obs   =    442,092
+Absorbing 1 HDFE group                            F(   1,  16785) =       2.36
+Statistics robust to heteroskedasticity           Prob > F        =     0.1243
+                                                  R-squared       =     0.2976
+                                                  Adj R-squared   =     0.2975
+                                                  Within R-sq.    =     0.0000
+Number of clusters (regionname) =     16,786      Root MSE        =     0.0616
 
-                        (Std. Err. adjusted for 261 clusters in regionname dt)
-------------------------------------------------------------------------------
-             |               Robust
-      D.ln_p |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
--------------+----------------------------------------------------------------
-  avg_income |   5.73e-06   7.17e-07     7.99   0.000     4.32e-06    7.14e-06
-         pop |   5.85e-09   2.59e-09     2.26   0.025     7.47e-10    1.09e-08
-  male_ratio |    .001221   .0006371     1.92   0.056    -.0000336    .0024757
- white_ratio |  -.0033589   .0008969    -3.75   0.000    -.0051249   -.0015928
- black_ratio |  -.0041048   .0009145    -4.49   0.000    -.0059056    -.002304
- asian_ratio |   .0024814   .0008155     3.04   0.003     .0008756    .0040872
-   near_dist |  -6.13e-07   3.63e-07    -1.69   0.092    -1.33e-06    1.01e-07
-   elevation |   4.26e-08   1.30e-07     0.33   0.744    -2.14e-07    2.99e-07
-   wind_farm |  -.0001892   .0001509    -1.25   0.211    -.0004864     .000108
-------------------------------------------------------------------------------
+                              (Std. Err. adjusted for 16,786 clusters in regionname)
+------------------------------------------------------------------------------------
+                   |               Robust
+            D.ln_p |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------------+----------------------------------------------------------------
+aggr_turb_zip_year |
+               D1. |   .0001041   .0000677     1.54   0.124    -.0000286    .0002369
+------------------------------------------------------------------------------------
 
 Absorbed degrees of freedom:
----------------------------------------------------------------+
- Absorbed FE |  Num. Coefs.  =   Categories  -   Redundant     | 
--------------+-------------------------------------------------|
-          dt |            0             261            261 *   | 
----------------------------------------------------------------+
-* = fixed effect nested within cluster; treated as redundant for DoF computation
+---------------------------------------------------------------------+
+       Absorbed FE |  Num. Coefs.  =   Categories  -   Redundant     | 
+-------------------+-------------------------------------------------|
+              year |           42              42              0     | 
+---------------------------------------------------------------------+
 (converged in 1 iterations)
 
 HDFE IV (2SLS) estimation
 -------------------------
 
 Estimates efficient for homoskedasticity only
-Statistics robust to heteroskedasticity and clustering on regionname and dt
+Statistics robust to heteroskedasticity and clustering on regionname
 
-Number of clusters (regionname) =  13904              Number of obs =  3268653
-Number of clusters (dt) =          261                F(  9,   260) =    24.65
+Number of clusters (regionname) =  16786              Number of obs =   442092
+                                                      F(  1, 16785) =    55.03
                                                       Prob > F      =   0.0000
-Total (centered) SS     =  292.6877383                Centered R2   =   0.1271
-Total (uncentered) SS   =  292.6877383                Uncentered R2 =        .
-Residual SS             =  301.7119297                Root MSE      =  .009608
+Total (centered) SS     =  1679.781612                Centered R2   =   0.2615
+Total (uncentered) SS   =  1679.781612                Uncentered R2 =        .
+Residual SS             =  1766.027372                Root MSE      =   .06321
 
-------------------------------------------------------------------------------
-             |               Robust
-      D.ln_p |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
--------------+----------------------------------------------------------------
-   wind_farm |  -.0213217   .0046245    -4.61   0.000     -.030428   -.0122154
-  avg_income |   4.79e-06   6.96e-07     6.87   0.000     3.42e-06    6.16e-06
-         pop |   2.97e-09   2.51e-09     1.18   0.238    -1.97e-09    7.92e-09
-  male_ratio |   .0024172    .000874     2.77   0.006     .0006962    .0041383
- white_ratio |  -.0034754   .0009263    -3.75   0.000    -.0052993   -.0016514
- black_ratio |  -.0045077   .0009753    -4.62   0.000    -.0064281   -.0025873
- asian_ratio |   .0022083   .0008806     2.51   0.013     .0004743    .0039423
-   near_dist |  -6.44e-07   3.72e-07    -1.73   0.084    -1.38e-06    8.72e-08
-   elevation |   2.37e-07   1.61e-07     1.47   0.143    -8.06e-08    5.55e-07
-------------------------------------------------------------------------------
-Underidentification test (Kleibergen-Paap rk LM statistic):             69.158
+------------------------------------------------------------------------------------
+                   |               Robust
+            D.ln_p |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------------+----------------------------------------------------------------
+aggr_turb_zip_year |
+               D1. |  -.0096308   .0012982    -7.42   0.000    -.0121755   -.0070862
+------------------------------------------------------------------------------------
+Underidentification test (Kleibergen-Paap rk LM statistic):             90.277
                                                    Chi-sq(1) P-val =    0.0000
 ------------------------------------------------------------------------------
-Weak identification test (Cragg-Donald Wald F statistic):              4.8e+04
-                         (Kleibergen-Paap rk Wald F statistic):        105.292
+Weak identification test (Cragg-Donald Wald F statistic):             1826.205
+                         (Kleibergen-Paap rk Wald F statistic):         95.154
 Stock-Yogo weak ID test critical values: 10% maximal IV size             16.38
                                          15% maximal IV size              8.96
                                          20% maximal IV size              6.66
@@ -316,22 +297,211 @@ NB: Critical values are for Cragg-Donald F statistic and i.i.d. errors.
 Hansen J statistic (overidentification test of all instruments):         0.000
                                                  (equation exactly identified)
 ------------------------------------------------------------------------------
-Instrumented:         wind_farm
-Included instruments: avg_income pop male_ratio white_ratio black_ratio
-                      asian_ratio near_dist elevation
-Excluded instruments: wind_zip_area_ratio
+Instrumented:         D.aggr_turb_zip_year
+Excluded instruments: first_us_turb_pot_wind_cap
 ------------------------------------------------------------------------------
 
 Absorbed degrees of freedom:
----------------------------------------------------------------+
- Absorbed FE |  Num. Coefs.  =   Categories  -   Redundant     | 
--------------+-------------------------------------------------|
-          dt |            0             261            261 *   | 
----------------------------------------------------------------+
-* = fixed effect nested within cluster; treated as redundant for DoF computation
+---------------------------------------------------------------------+
+       Absorbed FE |  Num. Coefs.  =   Categories  -   Redundant     | 
+-------------------+-------------------------------------------------|
+              year |           42              42              0     | 
+---------------------------------------------------------------------+
+(converged in 1 iterations)
+
+HDFE Linear regression                            Number of obs   =    722,194
+Absorbing 1 HDFE group                            F(   1,   9308) =      23.15
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.0019
+                                                  Adj R-squared   =     0.0017
+                                                  Within R-sq.    =     0.0017
+Number of clusters (regionname) =      9,309      Root MSE        =     0.2382
+
+                                       (Std. Err. adjusted for 9,309 clusters in regionname)
+--------------------------------------------------------------------------------------------
+                           |               Robust
+     D.aggr_turb_zip_month |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+---------------------------+----------------------------------------------------------------
+first_us_turb_pot_wind_cap |   .0006276   .0001304     4.81   0.000     .0003719    .0008833
+--------------------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------------------------------+
+               Absorbed FE |  Num. Coefs.  =   Categories  -   Redundant     | 
+---------------------------+-------------------------------------------------|
+                        dt |           96              96              0     | 
+-----------------------------------------------------------------------------+
+(converged in 1 iterations)
+
+HDFE Linear regression                            Number of obs   =    722,194
+Absorbing 1 HDFE group                            F(   1,   9308) =       0.29
+Statistics robust to heteroskedasticity           Prob > F        =     0.5895
+                                                  R-squared       =     0.0414
+                                                  Adj R-squared   =     0.0413
+                                                  Within R-sq.    =     0.0000
+Number of clusters (regionname) =      9,309      Root MSE        =     0.0296
+
+                                (Std. Err. adjusted for 9,309 clusters in regionname)
+-------------------------------------------------------------------------------------
+                    |               Robust
+             D.ln_p |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+--------------------+----------------------------------------------------------------
+aggr_turb_zip_month |
+                D1. |   .0000823   .0001525     0.54   0.590    -.0002167    .0003812
+-------------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+----------------------------------------------------------------------+
+        Absorbed FE |  Num. Coefs.  =   Categories  -   Redundant     | 
+--------------------+-------------------------------------------------|
+                 dt |           96              96              0     | 
+----------------------------------------------------------------------+
+(converged in 1 iterations)
+
+HDFE IV (2SLS) estimation
+-------------------------
+
+Estimates efficient for homoskedasticity only
+Statistics robust to heteroskedasticity and clustering on regionname
+
+Number of clusters (regionname) =   9309              Number of obs =   722194
+                                                      F(  1,  9308) =     3.80
+                                                      Prob > F      =   0.0513
+Total (centered) SS     =  633.3612313                Centered R2   =   0.0393
+Total (uncentered) SS   =  633.3612313                Uncentered R2 =        .
+Residual SS             =  634.7323552                Root MSE      =   .02965
+
+-------------------------------------------------------------------------------------
+                    |               Robust
+             D.ln_p |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+--------------------+----------------------------------------------------------------
+aggr_turb_zip_month |
+                D1. |  -.0056985   .0029235    -1.95   0.051    -.0114293    .0000322
+-------------------------------------------------------------------------------------
+Underidentification test (Kleibergen-Paap rk LM statistic):             21.998
+                                                   Chi-sq(1) P-val =    0.0000
+------------------------------------------------------------------------------
+Weak identification test (Cragg-Donald Wald F statistic):             1212.612
+                         (Kleibergen-Paap rk Wald F statistic):         23.148
+Stock-Yogo weak ID test critical values: 10% maximal IV size             16.38
+                                         15% maximal IV size              8.96
+                                         20% maximal IV size              6.66
+                                         25% maximal IV size              5.53
+Source: Stock-Yogo (2005).  Reproduced by permission.
+NB: Critical values are for Cragg-Donald F statistic and i.i.d. errors.
+------------------------------------------------------------------------------
+Hansen J statistic (overidentification test of all instruments):         0.000
+                                                 (equation exactly identified)
+------------------------------------------------------------------------------
+Instrumented:         D.aggr_turb_zip_month
+Excluded instruments: first_us_turb_pot_wind_cap
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+----------------------------------------------------------------------+
+        Absorbed FE |  Num. Coefs.  =   Categories  -   Redundant     | 
+--------------------+-------------------------------------------------|
+                 dt |           96              96              0     | 
+----------------------------------------------------------------------+
+(converged in 1 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,309,753
+Absorbing 1 HDFE group                            F(   1,  14081) =      63.22
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.0016
+                                                  Adj R-squared   =     0.0015
+                                                  Within R-sq.    =     0.0014
+Number of clusters (regionname) =     14,082      Root MSE        =     0.2628
+
+                                      (Std. Err. adjusted for 14,082 clusters in regionname)
+--------------------------------------------------------------------------------------------
+                           |               Robust
+     D.aggr_turb_zip_month |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+---------------------------+----------------------------------------------------------------
+first_us_turb_pot_wind_cap |   .0005199   .0000654     7.95   0.000     .0003918    .0006481
+--------------------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------------------------------+
+               Absorbed FE |  Num. Coefs.  =   Categories  -   Redundant     | 
+---------------------------+-------------------------------------------------|
+                        dt |          261             261              0     | 
+-----------------------------------------------------------------------------+
+(converged in 1 iterations)
+
+HDFE Linear regression                            Number of obs   =  3,309,753
+Absorbing 1 HDFE group                            F(   1,  14081) =       0.61
+Statistics robust to heteroskedasticity           Prob > F        =     0.4361
+                                                  R-squared       =     0.1540
+                                                  Adj R-squared   =     0.1539
+                                                  Within R-sq.    =     0.0000
+Number of clusters (regionname) =     14,082      Root MSE        =     0.0095
+
+                               (Std. Err. adjusted for 14,082 clusters in regionname)
+-------------------------------------------------------------------------------------
+                    |               Robust
+             D.ln_p |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+--------------------+----------------------------------------------------------------
+aggr_turb_zip_month |
+                D1. |  -.0000219   .0000282    -0.78   0.436    -.0000771    .0000333
+-------------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+----------------------------------------------------------------------+
+        Absorbed FE |  Num. Coefs.  =   Categories  -   Redundant     | 
+--------------------+-------------------------------------------------|
+                 dt |          261             261              0     | 
+----------------------------------------------------------------------+
+(converged in 1 iterations)
+
+HDFE IV (2SLS) estimation
+-------------------------
+
+Estimates efficient for homoskedasticity only
+Statistics robust to heteroskedasticity and clustering on regionname
+
+Number of clusters (regionname) =  14082              Number of obs =  3309753
+                                                      F(  1, 14081) =    58.46
+                                                      Prob > F      =   0.0000
+Total (centered) SS     =  297.8514765                Centered R2   =  -0.1776
+Total (uncentered) SS   =  297.8514765                Uncentered R2 =        .
+Residual SS             =  414.6062156                Root MSE      =   .01119
+
+-------------------------------------------------------------------------------------
+                    |               Robust
+             D.ln_p |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+--------------------+----------------------------------------------------------------
+aggr_turb_zip_month |
+                D1. |  -.0226055   .0029565    -7.65   0.000    -.0284006   -.0168103
+-------------------------------------------------------------------------------------
+Underidentification test (Kleibergen-Paap rk LM statistic):             59.840
+                                                   Chi-sq(1) P-val =    0.0000
+------------------------------------------------------------------------------
+Weak identification test (Cragg-Donald Wald F statistic):             4489.228
+                         (Kleibergen-Paap rk Wald F statistic):         63.221
+Stock-Yogo weak ID test critical values: 10% maximal IV size             16.38
+                                         15% maximal IV size              8.96
+                                         20% maximal IV size              6.66
+                                         25% maximal IV size              5.53
+Source: Stock-Yogo (2005).  Reproduced by permission.
+NB: Critical values are for Cragg-Donald F statistic and i.i.d. errors.
+------------------------------------------------------------------------------
+Hansen J statistic (overidentification test of all instruments):         0.000
+                                                 (equation exactly identified)
+------------------------------------------------------------------------------
+Instrumented:         D.aggr_turb_zip_month
+Excluded instruments: first_us_turb_pot_wind_cap
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+----------------------------------------------------------------------+
+        Absorbed FE |  Num. Coefs.  =   Categories  -   Redundant     | 
+--------------------+-------------------------------------------------|
+                 dt |          261             261              0     | 
+----------------------------------------------------------------------+
 (note: file ../output/tables.txt not found)
 
 . 
 end of do-file
 
- make.py ended: 2018-03-12 12:07:17
+ make.py ended: 2018-04-01 10:03:08

@@ -102,6 +102,10 @@ program merge_turbine_wind
     replace new_turb_us_year = 0 if new_turb_us_year == .
     gen new_turb_rmd_us_year = new_turb_us_year - new_turbines_`stub'_year
     gen subventions_pot_wind_cap = pot_wind_cap_`stub'_area*new_turb_rmd_us_year
+
+    qui sum year if new_turb_us_year > 0
+    gen first_us_turb_pot_wind_cap = pot_wind_cap_`stub'_area if year >= `r(min)'
+    replace first_us_turb_pot_wind_cap = 0 if first_us_turb_pot_wind_cap == .
     
     if "`geo'" == "tract_fip" {
         destring `geo', replace

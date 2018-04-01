@@ -1,5 +1,5 @@
 
- make.py started: 2018-03-31 12:18:03 C:\Users\giamb\Documents\GitHub\blowin_wind\derived_local\build_wind_prices_turbines_panel\code 
+ make.py started: 2018-04-01 09:48:57 C:\Users\giamb\Documents\GitHub\blowin_wind\derived_local\build_wind_prices_turbines_panel\code 
 
 
 
@@ -162,15 +162,19 @@ Notes:
 .     replace new_turb_us_month = 0 if new_turb_us_month == .
  20.     gen new_turb_rmd_us_month = new_turb_us_month - new_turbines_zip_month
  21.     gen subventions_pot_wind_cap = pot_wind_cap_zip_area*new_turb_rmd_us_month
- 22.     
+ 22. 
+.     qui sum dt if new_turb_us_month > 0
+ 23.     gen first_us_turb_pot_wind_cap = pot_wind_cap_zip_area if dt >= `r(min)'
+ 24.     replace first_us_turb_pot_wind_cap = 0 if first_us_turb_pot_wind_cap == .
+ 25.     
 .     save_data "${GoogleDrive}/stata/build_wind_panel/`output_file'.dta", ///
 >         key(regionname dt) replace
- 23. 
+ 26. 
 .     merge m:1 regionname using "${GoogleDrive}/stata/build_prelim_controls/zip_controls.dta", ///
 >         nogen assert(1 2 3) keep(3)
- 24.     save_data "${GoogleDrive}/stata/build_wind_panel/`output_file'_controls.dta", ///
+ 27.     save_data "${GoogleDrive}/stata/build_wind_panel/`output_file'_controls.dta", ///
 >         key(regionname dt) replace
- 25. end
+ 28. end
 
 . 
 . * Execute
@@ -333,6 +337,7 @@ wind_farm:  (6,157 real changes made)
     matched                           731,503  
     -----------------------------------------
 (0 real changes made)
+(0 real changes made)
 (data now sorted by regionname dt)
   variable county_nbr was float now int
   variable state_nbr was float now byte
@@ -348,7 +353,7 @@ wind_farm:  (6,157 real changes made)
 File: G:/My Drive/research projects/wind/stata/build_wind_panel/wind_panel_zip_median_listing_sqft.dta
 Key: regionname dt
 ==================================================================================================
-  731503:23(34908):2057635630:2340188249
+  731503:24(102513):2632370615:656104730
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
@@ -379,6 +384,7 @@ pot_wind_c~a |    731,503    5.666911    15.56485          0   97.61828
 new_turb_u~h |    731,503    286.3624    207.9923          3        908
 new_turb_r~h |    731,503    286.3594     207.991          2        908
 subvention~p |    731,503     1634.91    5688.588          0    88637.4
+first_us_t~p |    731,503    5.666911    15.56485          0   97.61828
 
 
 
@@ -406,7 +412,7 @@ file G:/My Drive/research projects/wind/stata/build_wind_panel/wind_panel_zip_me
 File: G:/My Drive/research projects/wind/stata/build_wind_panel/wind_panel_zip_median_listing_sqft_controls.dta
 Key: regionname dt
 ==================================================================================================
-  721507:34(39669):1844266272:3400447461
+  721507:35(83213):3281085601:2536734799
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
@@ -437,15 +443,16 @@ pot_wind_c~a |    721,507    5.632256    15.54105          0   97.61828
 new_turb_u~h |    721,507    286.3404     207.978          3        908
 new_turb_r~h |    721,507    286.3374    207.9766          2        908
 subvention~p |    721,507    1624.718    5678.279          0    88637.4
+first_us_t~p |    721,507    5.632256    15.54105          0   97.61828
      zipcode |    721,507    46425.57    29303.76       1001      99403
-     returns |    721,507    10242.52    6725.762    95.0004      48032
 -------------+---------------------------------------------------------
+     returns |    721,507    10242.52    6725.762    95.0004      48032
 adj_gr_inc~e |    721,507    644207.5    592773.4       4631   1.17e+07
   avg_income |    721,507    64.44501    50.94624   19.38318   2368.675
   male_ratio |    721,507    .4901355    .0196874   .2033244   .7593152
          pop |    721,507    22641.95    14758.92        141     111086
- white_ratio |    721,507    .8012329    .1717644    .004805   .9929078
 -------------+---------------------------------------------------------
+ white_ratio |    721,507    .8012329    .1717644    .004805   .9929078
  black_ratio |    721,507    .0935822    .1398738          0   .9805999
  asian_ratio |    721,507     .034087    .0546897          0    .708819
    elevation |    721,507    289.4646    432.4477        -14       3631
@@ -545,6 +552,8 @@ wind_farm:  (15,175 real changes made)
     matched                         2,818,251  
     -----------------------------------------
 (505,584 real changes made)
+(328,523 missing values generated)
+(328,523 real changes made)
 (data now sorted by regionname dt)
   variable county_nbr was float now int
   variable state_nbr was float now byte
@@ -559,7 +568,7 @@ wind_farm:  (15,175 real changes made)
 File: G:/My Drive/research projects/wind/stata/build_wind_panel/wind_panel_zip_zhvi.dta
 Key: regionname dt
 ==================================================================================================
-  3323835:23(34908):3819219094:3904505567
+  3323835:24(102513):3896130463:1899323510
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
@@ -590,6 +599,7 @@ pot_wind_c~a |  3,323,835    7.774777    19.45988          0     99.751
 new_turb_u~h |  3,323,835    175.7189    199.5748          0        908
 new_turb_r~h |  3,323,835    175.7157    199.5716          0        908
 subvention~p |  3,323,835    1440.002    5638.878          0   90573.91
+first_us_t~p |  3,323,835     7.09332    18.75307          0     99.751
 
 
 
@@ -616,7 +626,7 @@ file G:/My Drive/research projects/wind/stata/build_wind_panel/wind_panel_zip_zh
 File: G:/My Drive/research projects/wind/stata/build_wind_panel/wind_panel_zip_zhvi_controls.dta
 Key: regionname dt
 ==================================================================================================
-  3282991:34(39669):106751098:3035564098
+  3282991:35(83213):1311771974:3884615158
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
@@ -647,15 +657,16 @@ pot_wind_c~a |  3,282,991    7.777682    19.49688          0     99.751
 new_turb_u~h |  3,282,991    175.7032    199.5711          0        908
 new_turb_r~h |  3,282,991       175.7    199.5678          0        908
 subvention~p |  3,282,991    1439.936    5646.674          0   90573.91
+first_us_t~p |  3,282,991    7.094865    18.78727          0     99.751
      zipcode |  3,282,991     45189.9     28890.5       1001      99362
-     returns |  3,282,991    7556.044    6925.865   116.0004      48032
 -------------+---------------------------------------------------------
+     returns |  3,282,991    7556.044    6925.865   116.0004      48032
 adj_gr_inc~e |  3,282,991      453319    515267.8       4639    9043505
   avg_income |  3,282,991    59.16858    39.19361   17.00462   984.9697
   male_ratio |  3,282,991    .4940328     .022935   .2033244   .8176447
          pop |  3,282,991    16719.71    15245.67        172     111086
- white_ratio |  3,282,991    .8162662    .1918051    .004805   .9978271
 -------------+---------------------------------------------------------
+ white_ratio |  3,282,991    .8162662    .1918051    .004805   .9978271
  black_ratio |  3,282,991    .0866989    .1538532          0   .9805999
  asian_ratio |  3,282,991    .0293201    .0575355          0   .7044285
    elevation |  3,282,991     275.414    373.1111        -37       3630
@@ -822,15 +833,19 @@ Notes:
 .     replace new_turb_us_year = 0 if new_turb_us_year == .
  15.     gen new_turb_rmd_us_year = new_turb_us_year - new_turbines_`stub'_year
  16.     gen subventions_pot_wind_cap = pot_wind_cap_`stub'_area*new_turb_rmd_us_year
- 17.     
+ 17. 
+.     qui sum year if new_turb_us_year > 0
+ 18.     gen first_us_turb_pot_wind_cap = pot_wind_cap_`stub'_area if year >= `r(min)'
+ 19.     replace first_us_turb_pot_wind_cap = 0 if first_us_turb_pot_wind_cap == .
+ 20.     
 .     if "`geo'" == "tract_fip" {
- 18.         destring `geo', replace
- 19.     }
- 20. 
+ 21.         destring `geo', replace
+ 22.     }
+ 23. 
 .     xtset `geo' year
- 21.     save_data "${GoogleDrive}/stata/build_wind_panel/wind_panel_`stub'_fhfa.dta", ///
+ 24.     save_data "${GoogleDrive}/stata/build_wind_panel/wind_panel_`stub'_fhfa.dta", ///
 >         key(`geo' year) replace
- 22. end
+ 25. end
 
 . 
 . * Execute
@@ -947,6 +962,8 @@ wind_farm:  (1,562 real changes made)
     matched                           877,017  
     -----------------------------------------
 (329,871 real changes made)
+(329,871 missing values generated)
+(329,871 real changes made)
 tract_fip: all characters numeric; replaced as double
        panel variable:  tract_fip (unbalanced)
         time variable:  year, 1975 to 2017, but with gaps
@@ -960,7 +977,7 @@ tract_fip: all characters numeric; replaced as double
 File: G:/My Drive/research projects/wind/stata/build_wind_panel/wind_panel_tract_fhfa.dta
 Key: tract_fip year
 ==================================================================================================
-  1206888:18(61115):2339240333:1519464095
+  1206888:19(56570):3906368116:3468367673
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
@@ -985,6 +1002,7 @@ pot_wind_c~a |  1,206,888    5.844712    16.48583          0        100
 new_turb_u~r |  1,206,888     1713.02    1915.376          0       6017
 new_turb_r~r |  1,206,888    1713.004    1915.358          0       6017
 subvention~p |  1,206,888    11237.74    47516.34          0     601700
+first_us_t~p |  1,206,888    4.670725     15.2382          0        100
 
 
 
@@ -1076,6 +1094,8 @@ wind_farm:  (1,557 real changes made)
     matched                           316,542  
     -----------------------------------------
 (145,864 real changes made)
+(145,864 missing values generated)
+(145,864 real changes made)
        panel variable:  regionname (unbalanced)
         time variable:  year, 1975 to 2017, but with gaps
                 delta:  1 unit
@@ -1089,7 +1109,7 @@ wind_farm:  (1,557 real changes made)
 File: G:/My Drive/research projects/wind/stata/build_wind_panel/wind_panel_zip_fhfa.dta
 Key: regionname year
 ==================================================================================================
-  462406:18(103392):825485408:453316151
+  462406:19(33311):498550376:2473418045
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
@@ -1114,6 +1134,7 @@ pot_wind_c~a |    462,406    9.421557    21.82958          0   99.77184
 new_turb_u~r |    462,406    1532.807    1790.703          0       5623
 new_turb_r~r |    462,406    1532.773    1790.665          0       5623
 subvention~p |    462,406    16890.86    59842.56          0   561017.1
+first_us_t~p |    462,406    7.390979    20.17288          0   99.77184
 
 
 
@@ -1136,7 +1157,7 @@ file G:/My Drive/research projects/wind/stata/build_wind_panel/wind_panel_zip_fh
 File: G:/My Drive/research projects/wind/stata/build_wind_panel/wind_panel_zip_fhfa_controls.dta
 Key: regionname year
 ==================================================================================================
-  458508:29(28051):428700645:2791506073
+  458508:30(23504):1376711429:3101398870
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
@@ -1161,15 +1182,16 @@ pot_wind_c~a |    458,508    9.425494    21.86772          0   99.77184
 new_turb_u~r |    458,508    1531.253    1790.401          0       5623
 new_turb_r~r |    458,508    1531.219    1790.363          0       5623
 subvention~p |    458,508     16889.5    59924.27          0   561017.1
+first_us_t~p |    458,508     7.39148    20.20392          0   99.77184
      zipcode |    458,508    48367.58    28483.79       1001      99403
-     returns |    458,508     8263.12    7092.419   126.0004      48032
 -------------+---------------------------------------------------------
+     returns |    458,508     8263.12    7092.419   126.0004      48032
 adj_gr_inc~e |    458,508    490993.7      515127       4639    7993263
   avg_income |    458,508    59.06938    36.06182   18.67605   984.9697
   male_ratio |    458,508    .4931536    .0208519   .3355115   .8176447
          pop |    458,508    18310.52    15658.86        217     111086
- white_ratio |    458,508    .8130158    .1894981    .004805   .9963663
 -------------+---------------------------------------------------------
+ white_ratio |    458,508    .8130158    .1894981    .004805   .9963663
  black_ratio |    458,508    .0875155    .1522614          0   .9805999
  asian_ratio |    458,508    .0303095    .0583887          0    .708819
    elevation |    458,508    283.5866    384.8405        -37       3630
@@ -1184,4 +1206,4 @@ file G:/My Drive/research projects/wind/stata/build_wind_panel/wind_panel_zip_fh
 . 
 end of do-file
 
- make.py ended: 2018-03-31 12:27:49
+ make.py ended: 2018-04-01 09:59:09
