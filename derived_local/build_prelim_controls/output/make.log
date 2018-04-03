@@ -1,5 +1,5 @@
 
- make.py started: 2018-03-30 16:11:33 C:\Users\giamb\Documents\GitHub\blowin_wind\derived_local\build_prelim_controls\code 
+ make.py started: 2018-04-02 16:03:27 C:\Users\giamb\Documents\GitHub\blowin_wind\derived_local\build_prelim_controls\code 
 
 
 
@@ -617,11 +617,12 @@ Notes:
 
 . 
 . program main
-  1.     build_zillow, input_file("Zip_MedianListingPricePerSqft_AllHomes")
-  2. end
+  1.     build_zillow_xls, input_file("Zip_MedianListingPricePerSqft_AllHomes")
+  2.     build_fhfa_xls
+  3. end
 
 . 
-. program build_zillow
+. program build_zillow_xls
   1.     syntax, input_file(str)
   2. 
 .     import delimited "${GoogleDrive}/raw_data/house_prices/zillow/Zip/`input_file'.csv", clear
@@ -655,6 +656,22 @@ Notes:
  21.     
 .     export excel using "${GoogleDrive}/stata/zillow_zip.xls", replace
  22. end
+
+. 
+. program build_fhfa_xls
+  1.     import excel "${GoogleDrive}/raw_data/house_prices/fhfa/HPI_AT_BDL_ZIP5.xlsx", ///
+>         sheet("ZIP5") cellrange(A7:F517721) firstrow clear
+  2.     rename (FiveDigitZIPCode Year HPIwith2000base) (zcta5ce10 year hpi2000)
+  3.     keep zcta5ce10 year hpi2000
+  4. 
+.     destring year hpi2000, replace
+  5.     keep if year == 2000 | year == 2005
+  6. 
+.     bys zcta5ce10 (year): gen hpi_diff = hpi2000[_n] - hpi2000[_n-1]
+  7.     keep if hpi_diff != .
+  8.     
+.     export excel using "${GoogleDrive}/stata/fhfa_zip.xls", replace
+  9. end
 
 . 
 . * Execute
@@ -814,8 +831,15 @@ zcta5ce10: all characters numeric; regionname generated as long
     -----------------------------------------
 (3,866 missing values generated)
 file G:/My Drive/research projects/wind/stata/zillow_zip.xls saved
+year: all characters numeric; replaced as int
+hpi2000: all characters numeric; replaced as double
+(58360 missing values generated)
+(485,013 observations deleted)
+(18,024 missing values generated)
+(18,024 observations deleted)
+file G:/My Drive/research projects/wind/stata/fhfa_zip.xls saved
 
 . 
 end of do-file
 
- make.py ended: 2018-03-30 16:12:10
+ make.py ended: 2018-04-02 16:04:46

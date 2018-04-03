@@ -4,10 +4,11 @@ adopath + ../../../lib/third_party/stata_tools
 preliminaries, loadglob("../../../lib/python/wind/input_params.txt")
 
 program main
-    build_zillow, input_file("Zip_MedianListingPricePerSqft_AllHomes")
+    build_zillow_xls, input_file("Zip_MedianListingPricePerSqft_AllHomes")
+    build_fhfa_xls
 end
 
-program build_zillow
+program build_zillow_xls
     syntax, input_file(str)
 
     import delimited "${GoogleDrive}/raw_data/house_prices/zillow/Zip/`input_file'.csv", clear
@@ -40,6 +41,21 @@ program build_zillow
     gen price_diff = log(p2012m08) - log(p2010m08)
     
     export excel using "${GoogleDrive}/stata/zillow_zip.xls", replace
+end
+
+program build_fhfa_xls
+    import excel "${GoogleDrive}/raw_data/house_prices/fhfa/HPI_AT_BDL_ZIP5.xlsx", ///
+        sheet("ZIP5") cellrange(A7:F517721) firstrow clear
+    rename (FiveDigitZIPCode Year HPIwith2000base) (zcta5ce10 year hpi2000)
+    keep zcta5ce10 year hpi2000
+
+    destring year hpi2000, replace
+    keep if year == 2000 | year == 2005
+
+    bys zcta5ce10 (year): gen hpi_diff = hpi2000[_n] - hpi2000[_n-1]
+    keep if hpi_diff != .
+    
+    export excel using "${GoogleDrive}/stata/fhfa_zip.xls", replace
 end
 
 * Execute

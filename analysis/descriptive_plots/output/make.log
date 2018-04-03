@@ -1,5 +1,5 @@
 
- make.py started: 2018-04-01 11:16:15 C:\Users\giamb\Documents\GitHub\blowin_wind\analysis\descriptive_plots\code 
+ make.py started: 2018-04-01 19:55:25 C:\Users\giamb\Documents\GitHub\blowin_wind\analysis\descriptive_plots\code 
 
 
 
@@ -149,24 +149,30 @@ Notes:
   4.     replace p = p/1000
   5.     avg_yearly_change p, stub(zhvi)
   6. 
-.     use regionname year ln_p using ///
->         "${GoogleDrive}/stata/build_wind_panel/wind_panel_zip_fhfa.dta", clear
-  7.     gen delta_ln_hpi = D.ln_p
-  8.     collapse delta_ln_hpi, by(year)
-  9. 
-.     merge 1:1 year using "../temp/zhvi_year", ///
+.     foreach stub in zip tract {
+  7.         use "${GoogleDrive}/stata/build_wind_panel/wind_panel_`stub'_fhfa.dta", clear
+  8.         gen delta_ln_hpi_`stub' = D.ln_p
+  9.         collapse delta_ln_hpi_`stub', by(year)
+ 10.         save_data "../temp/fhfa_`stub'_year", key(year) replace
+ 11.     }
+ 12. 
+.     use  "../temp/fhfa_tract_year", clear
+ 13.     merge 1:1 year using "../temp/fhfa_zip_year", ///
+>         assert(1 2 3) keep(1 2 3) nogen 
+ 14.     merge 1:1 year using "../temp/zhvi_year", ///
 >         assert(1 2 3) keep(1 2 3) nogen
- 10.     merge 1:1 year using "../temp/median_listing_year", ///
+ 15.     merge 1:1 year using "../temp/median_listing_year", ///
 >         assert(1 2 3) keep(1 2 3) nogen
- 11. 
+ 16. 
 .     tsset year
- 12.     graph twoway (tsline delta_ln_hpi, lcolor(gs6))  ///
+ 17.     graph twoway (tsline delta_ln_hpi_zip, lcolor(gs6))  ///
+>         (tsline delta_ln_hpi_tract, lpattern(dot) lcolor(dkgreen) lwidth(medthick)) ///
 >         (tsline delta_ln_median_listing, lpattern(dash) lcolor(navy)) ///
 >         (tsline delta_ln_zhvi, lpattern(shortdash_dot) lcolor(black)), ///
 >         ytitle("Average percentage change") legend( ///
->             lab(1 "HPI") lab(2 "Median listing price") lab(3 "ZHVI"))
- 13.     graph export "../output/validate_price_data.png", replace
- 14. end
+>             lab(1 "BDL-Zip") lab(2 "BDL-CT") lab(3 "Median listing price") lab(4 "ZHVI"))
+ 18.     graph export "../output/validate_price_data.png", replace
+ 19. end
 
 . 
 . program avg_yearly_change
@@ -253,6 +259,49 @@ delta_ln_z~i |         22     .031681    .0471383  -.0594326   .1033099
 (note: file ../temp/zhvi_year.dta not found)
 file ../temp/zhvi_year.dta saved
 (20,314 missing values generated)
+(data already sorted by year)
+  (0 bytes saved)
+==================================================================================================
+File: ../temp/fhfa_zip_year
+Key: year
+==================================================================================================
+  43:2(100423):4060523294:1744149671
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+        year |         43        1996    12.55654       1975       2017
+delta_ln_h~p |         42    .0424562    .0422924  -.0639449    .139801
+
+
+
+
+(note: file ../temp/fhfa_zip_year.dta not found)
+file ../temp/fhfa_zip_year.dta saved
+(59,333 missing values generated)
+(data already sorted by year)
+  (0 bytes saved)
+==================================================================================================
+File: ../temp/fhfa_tract_year
+Key: year
+==================================================================================================
+  43:2(84978):667960858:3229169485
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+        year |         43        1996    12.55654       1975       2017
+delta_ln_h~t |         42     .047096    .0505312  -.0781108   .1639114
+
+
+
+
+(note: file ../temp/fhfa_tract_year.dta not found)
+file ../temp/fhfa_tract_year.dta saved
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             0
+    matched                                43  
+    -----------------------------------------
 
     Result                           # of obs.
     -----------------------------------------
@@ -378,4 +427,4 @@ xij variables:
 . 
 end of do-file
 
- make.py ended: 2018-04-01 11:17:02
+ make.py ended: 2018-04-01 19:56:15

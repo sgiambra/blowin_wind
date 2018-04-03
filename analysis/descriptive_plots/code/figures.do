@@ -95,22 +95,28 @@ program validate_price_data
     replace p = p/1000
     avg_yearly_change p, stub(zhvi)
 
-    use regionname year ln_p using ///
-        "${GoogleDrive}/stata/build_wind_panel/wind_panel_zip_fhfa.dta", clear
-    gen delta_ln_hpi = D.ln_p
-    collapse delta_ln_hpi, by(year)
+    foreach stub in zip tract {
+        use "${GoogleDrive}/stata/build_wind_panel/wind_panel_`stub'_fhfa.dta", clear
+        gen delta_ln_hpi_`stub' = D.ln_p
+        collapse delta_ln_hpi_`stub', by(year)
+        save_data "../temp/fhfa_`stub'_year", key(year) replace
+    }
 
+    use  "../temp/fhfa_tract_year", clear
+    merge 1:1 year using "../temp/fhfa_zip_year", ///
+        assert(1 2 3) keep(1 2 3) nogen 
     merge 1:1 year using "../temp/zhvi_year", ///
         assert(1 2 3) keep(1 2 3) nogen
     merge 1:1 year using "../temp/median_listing_year", ///
         assert(1 2 3) keep(1 2 3) nogen
 
     tsset year
-    graph twoway (tsline delta_ln_hpi, lcolor(gs6))  ///
+    graph twoway (tsline delta_ln_hpi_zip, lcolor(gs6))  ///
+        (tsline delta_ln_hpi_tract, lpattern(dot) lcolor(dkgreen) lwidth(medthick)) ///
         (tsline delta_ln_median_listing, lpattern(dash) lcolor(navy)) ///
         (tsline delta_ln_zhvi, lpattern(shortdash_dot) lcolor(black)), ///
         ytitle("Average percentage change") legend( ///
-            lab(1 "HPI") lab(2 "Median listing price") lab(3 "ZHVI"))
+            lab(1 "BDL-Zip") lab(2 "BDL-CT") lab(3 "Median listing price") lab(4 "ZHVI"))
     graph export "../output/validate_price_data.png", replace
 end
 

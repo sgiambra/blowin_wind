@@ -4,12 +4,12 @@ adopath + ../../../lib/third_party/stata_tools
 preliminaries, loadglob("../../../lib/python/wind/input_params.txt")
 
 program main
-    local table_file "../output/tables.txt"
-    local excluded_controls = "pop male_ratio white_ratio asian_ratio"
-    local controls = "avg_income black_ratio elevation near_dist"
-    local inst = "wind_zip_area_ratio"
+    local table_file        = "../output/tables.txt"
+    local excluded_controls = "male_ratio white_ratio black_ratio asian_ratio"
+    local controls          = "avg_income pop elevation near_dist"
+    local inst              = "first_us_turb_pot_wind_cap"
 
-    use "${GoogleDrive}/stata/wind_prices_turbines.dta", clear
+    use "${GoogleDrive}/stata/build_wind_panel/wind_panel_zip_fhfa_controls.dta", clear
 
     bys regionname: egen ever_wind_farm = max(wind_farm)
     duplicates drop regionname, force

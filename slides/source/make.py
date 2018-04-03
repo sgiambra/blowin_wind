@@ -23,14 +23,14 @@ from gslab_fill.textfill import textfill
 tablefill(
   input = ('../../analysis/descriptive_regressions/output/tables.txt '
            '../../analysis/covariates_balance/output/tables.txt'),
-  template = './breakfast.lyx',
-  output = '../output/breakfast_filled.lyx'
+  template = './slides.lyx',
+  output = '../output/slides_filled.lyx'
   )
 
 # COMPILE (ORDER MATTERS)
-run_lyx(program = '../output/breakfast_filled')
+run_lyx(program = '../output/slides_filled')
 
-os.rename('../output/breakfast_filled.pdf', '../output/breakfast.pdf')
+os.rename('../output/slides_filled.pdf', '../output/slides.pdf')
 
 end_make_logging()
 
