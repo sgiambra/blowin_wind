@@ -365,7 +365,7 @@ beamerbutton{ZHVI}}
 \begin_layout Itemize
 
 \size small
-Median selling price per square foot for all houses
+Median listing price per square foot for all houses
 \end_layout
 
 \begin_layout Itemize
@@ -3211,8 +3211,8 @@ Look further into heterogeneous effects
 
 \begin_layout Itemize
 Use as control locations where projects about wind turbines are in the early
- stages of the permitting process (no decision on whether they are hazard
- or not has been made yet)
+ stages of the permitting process (decision on whether they are hazard or
+ not has not been made yet)
 \end_layout
 
 \begin_layout Itemize
