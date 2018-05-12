@@ -1,38 +1,39 @@
 
- make.py started: 2018-04-01 17:34:32 C:\Users\giamb\Documents\GitHub\blowin_wind\analysis\covariates_balance\code 
+ make.py started: 2018-05-08 17:48:15 C:\Users\giamb\Documents\GitHub\blowin_wind\analysis\covariates_balance\code 
 
 
 
 
-Execute:  StataSE-64 /e do "./analysis.do"
+Execute:  StataMP-64 /e do "./analysis.do"
 
   ___  ____  ____  ____  ____ (R)
  /__    /   ____/   /   ____/
 ___/   /   /___/   /   /___/   15.0   Copyright 1985-2017 StataCorp LLC
   Statistics/Data Analysis            StataCorp
                                       4905 Lakeway Drive
-     Special Edition                  College Station, Texas 77845 USA
+     MP - Parallel Edition            College Station, Texas 77845 USA
                                       800-STATA-PC        http://www.stata.com
                                       979-696-4600        stata@stata.com
                                       979-696-4601 (fax)
 
-110-user Stata network perpetual license:
-       Serial number:  401506201178
-         Licensed to:  Brown University
-                       Brown University
+Single-user 32-core Stata perpetual license:
+       Serial number:  501506205566
+         Licensed to:  KU Leuven FEB (CES)
+                       KU Leuven
 
 Notes:
       1.  Stata is running in batch mode.
       2.  Unicode is supported; see help unicode_advice.
-      3.  Maximum number of variables is set to 5000; see help set_maxvar.
+      3.  More than 2 billion observations are allowed; see help obs_advice.
+      4.  Maximum number of variables is set to 5000; see help set_maxvar.
 
 . do ./analysis.do 
 
 . set more off
 
 . adopath + ../../../lib/stata/gslab_misc/ado
-  [1]  (BASE)      "C:\Program Files (x86)\Stata15\ado\base/"
-  [2]  (SITE)      "C:\Program Files (x86)\Stata15\ado\site/"
+  [1]  (BASE)      "C:\Stata15\ado\base/"
+  [2]  (SITE)      "C:\Stata15\ado\site/"
   [3]              "."
   [4]  (PERSONAL)  "c:\ado\personal/"
   [5]  (PLUS)      "c:\ado\plus/"
@@ -40,8 +41,8 @@ Notes:
   [7]              "../../../lib/stata/gslab_misc/ado"
 
 . adopath + ../../../lib/third_party/stata_tools
-  [1]  (BASE)      "C:\Program Files (x86)\Stata15\ado\base/"
-  [2]  (SITE)      "C:\Program Files (x86)\Stata15\ado\site/"
+  [1]  (BASE)      "C:\Stata15\ado\base/"
+  [2]  (SITE)      "C:\Stata15\ado\site/"
   [3]              "."
   [4]  (PERSONAL)  "c:\ado\personal/"
   [5]  (PLUS)      "c:\ado\plus/"
@@ -54,56 +55,63 @@ Notes:
 . 
 . program main
   1.     local table_file        = "../output/tables.txt"
-  2.     local excluded_controls = "male_ratio white_ratio black_ratio asian_ratio"
-  3.     local controls          = "avg_income pop elevation near_dist"
-  4.     local inst              = "first_us_turb_pot_wind_cap"
-  5. 
+  2.     local controls          = "avg_income pop elevation near_dist male_ratio " + ///
+>                               "white_ratio black_ratio asian_ratio first_us_turb_pot_wind_cap"
+  3.     local inst              = "first_us_turb_pot_wind_cap"
+  4. 
 .     use "${GoogleDrive}/stata/build_wind_panel/wind_panel_zip_fhfa_controls.dta", clear
-  6. 
+  5. 
 .     bys regionname: egen ever_wind_farm = max(wind_farm)
-  7.     duplicates drop regionname, force
-  8.     
+  6.     duplicates drop regionname, force
+  7.     
 .     foreach control in `controls' {
-  9.         local c_est = "_b[`inst'] \ _se[`inst']"
- 10.         
+  8.         local c_est = "_b[`inst'] \ _se[`inst']"
+  9.         
 .         sum `control'
- 11.         matrix sample_means = (nullmat(sample_means) \ r(mean) \ r(sd))
- 12. 
+ 10.         matrix sample_means = (nullmat(sample_means) \ r(mean) \ r(sd))
+ 11. 
 .         ttest `control', by(ever_wind_farm) unequal
- 13.         cap matrix drop no_windfarm_means windfarm_means diff
- 14.         matrix no_windfarm_means = (r(mu_1) \ r(sd_1))
- 15.         matrix windfarm_means = (r(mu_2) \ r(sd_2))
- 16.         matrix diff = (r(mu_2) - r(mu_1) \ r(se))
- 17.         matrix by_windfarm_means = (nullmat(by_windfarm_means) \ (windfarm_means, no_windfarm_means, diff))
- 18.         
-.         reg `control' `inst'
- 19.         matrix reg_means = (nullmat(reg_means) \ `c_est')
- 20.         
-.         local resid_controls: list controls- control
- 21.         reg `control' `inst' `resid_controls'
- 22.         matrix reg_control_means = (nullmat(reg_control_means) \ `c_est')
- 23.     }
- 24.     sample_sizes
- 25.     matrix sample_size = r(sample_size)
- 26. 
-.     *matrix TABLE = ((sample_means, by_windfarm_means, ///
->     *                 reg_means, reg_control_means) \ sample_size)
-.     matrix TABLE_SLIDE = ((sample_means, by_windfarm_means) \ sample_size)
- 27. 
-.     matrix_to_txt, saving(`table_file') mat(TABLE_SLIDE) ///
->         format(%20.5f) title(<tab:cov_balance_slide>) replace
- 28. end
+ 12.         cap matrix drop no_windfarm_means windfarm_means diff
+ 13.         matrix no_windfarm_means = (r(mu_1) \ r(sd_1))
+ 14.         matrix windfarm_means = (r(mu_2) \ r(sd_2))
+ 15.         matrix diff = (r(mu_2) - r(mu_1) \ r(se))
+ 16.         matrix by_windfarm_means = (nullmat(by_windfarm_means) \ (windfarm_means, no_windfarm_means, diff))
+ 17.         
+.         if "`control'" != "`inst'" {
+ 18.             reg `control' `inst'
+ 19.             matrix reg_means = (nullmat(reg_means) \ `c_est')
+ 20.             
+.             local resid_controls: list controls- control
+ 21.             reg `control' `inst' `resid_controls'
+ 22.             matrix reg_control_means = (nullmat(reg_control_means) \ `c_est')
+ 23.         }
+ 24.         else {
+ 25.             matrix reg_means = (nullmat(reg_means) \ . \ .)
+ 26.             matrix reg_control_means = (nullmat(reg_control_means) \ . \ .)
+ 27.         }
+ 28.         
+.     }
+ 29.     sample_sizes
+ 30.     matrix sample_size = r(sample_size)
+ 31. 
+.     matrix TABLE = ((sample_means, by_windfarm_means, ///
+>                      reg_means, reg_control_means) \ sample_size)
+ 32.     *matrix TABLE_SLIDE = ((sample_means, by_windfarm_means) \ sample_size)
+. 
+.     matrix_to_txt, saving(`table_file') mat(TABLE) ///
+>         format(%20.5f) title(<tab:cov_balance>) replace
+ 33. end
 
 . 
 . program sample_sizes, rclass
-  1.     count
+  1.     qui count
   2.     scalar N = r(N)
-  3.     count if ever_wind_farm == 1
+  3.     qui count if ever_wind_farm == 1
   4.     scalar wind_farm_N = r(N)
-  5.     count if ever_wind_farm == 0
+  5.     qui count if ever_wind_farm == 0
   6.     scalar no_wind_farm_N = r(N)
   7. 
-.     matrix sample_size = (N, wind_farm_N, no_wind_farm_N, N)
+.     matrix sample_size = (N, wind_farm_N, no_wind_farm_N, N, N, N)
   8.     return matrix sample_size = sample_size
   9. end
 
@@ -149,22 +157,28 @@ Ho: diff = 0                     Satterthwaite's degrees of freedom =   350.03
 first_us_turb_pot_wind_cap |  -.1048458   .0138082    -7.59   0.000    -.1319114   -.0777802
                      _cons |   57.02859   .2764307   206.30   0.000     56.48676    57.57043
 --------------------------------------------------------------------------------------------
+note: first_us_turb_pot_wind_cap omitted because of collinearity
 
       Source |       SS           df       MS      Number of obs   =    16,618
--------------+----------------------------------   F(4, 16613)     =     59.14
-       Model |  274532.271         4  68633.0678   Prob > F        =    0.0000
-    Residual |  19279055.3    16,613  1160.48006   R-squared       =    0.0140
--------------+----------------------------------   Adj R-squared   =    0.0138
-       Total |  19553587.5    16,617  1176.72188   Root MSE        =    34.066
+-------------+----------------------------------   F(8, 16609)     =    328.43
+       Model |  2670775.66         8  333846.958   Prob > F        =    0.0000
+    Residual |  16882811.9    16,609  1016.48575   R-squared       =    0.1366
+-------------+----------------------------------   Adj R-squared   =    0.1362
+       Total |  19553587.5    16,617  1176.72188   Root MSE        =    31.882
 
 --------------------------------------------------------------------------------------------
                 avg_income |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 ---------------------------+----------------------------------------------------------------
-first_us_turb_pot_wind_cap |  -.0536944   .0146331    -3.67   0.000    -.0823768    -.025012
-                       pop |   4.74e-06   .0000185     0.26   0.797    -.0000314    .0000409
-                 elevation |   .0042488   .0009356     4.54   0.000     .0024148    .0060827
-                 near_dist |  -.0169923   .0013763   -12.35   0.000      -.01969   -.0142946
-                     _cons |   59.29957   .4725743   125.48   0.000     58.37328    60.22587
+first_us_turb_pot_wind_cap |  -.0823049   .0137575    -5.98   0.000     -.109271   -.0553387
+                       pop |   4.22e-06   .0000206     0.20   0.838    -.0000362    .0000446
+                 elevation |   .0034407    .000899     3.83   0.000     .0016785    .0052029
+                 near_dist |  -.0109607   .0013008    -8.43   0.000    -.0135103   -.0084111
+                male_ratio |  -118.2043   11.99801    -9.85   0.000    -141.7217   -94.68694
+               white_ratio |   83.01403   3.698105    22.45   0.000     75.76535    90.26271
+               black_ratio |   40.72083   4.146709     9.82   0.000     32.59283    48.84882
+               asian_ratio |   262.4915   6.914477    37.96   0.000     248.9384    276.0446
+first_us_turb_pot_wind_cap |          0  (omitted)
+                     _cons |   38.32468      7.505     5.11   0.000     23.61408    53.03528
 --------------------------------------------------------------------------------------------
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
@@ -201,22 +215,28 @@ Ho: diff = 0                     Satterthwaite's degrees of freedom =  278.511
 first_us_turb_pot_wind_cap |   -179.114    5.79439   -30.91   0.000    -190.4717   -167.7564
                      _cons |   16046.79   115.9994   138.34   0.000     15819.42    16274.16
 --------------------------------------------------------------------------------------------
+note: first_us_turb_pot_wind_cap omitted because of collinearity
 
       Source |       SS           df       MS      Number of obs   =    16,618
--------------+----------------------------------   F(4, 16613)     =    270.89
-       Model |  2.2218e+11         4  5.5546e+10   Prob > F        =    0.0000
-    Residual |  3.4065e+12    16,613   205047987   R-squared       =    0.0612
--------------+----------------------------------   Adj R-squared   =    0.0610
-       Total |  3.6286e+12    16,617   218369442   Root MSE        =     14319
+-------------+----------------------------------   F(8, 16609)     =   1067.08
+       Model |  1.2319e+12         8  1.5399e+11   Prob > F        =    0.0000
+    Residual |  2.3968e+12    16,609   144305131   R-squared       =    0.3395
+-------------+----------------------------------   Adj R-squared   =    0.3392
+       Total |  3.6286e+12    16,617   218369442   Root MSE        =     12013
 
 --------------------------------------------------------------------------------------------
                        pop |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 ---------------------------+----------------------------------------------------------------
-first_us_turb_pot_wind_cap |  -178.8985   5.994896   -29.84   0.000    -190.6491   -167.1479
-                avg_income |   .8380515   3.261249     0.26   0.797    -5.554346    7.230449
-                 elevation |  -3.769482   .3924412    -9.61   0.000    -4.538709   -3.000255
-                 near_dist |   1.444041   .5810599     2.49   0.013     .3051011     2.58298
-                     _cons |   16779.43   244.7706    68.55   0.000     16299.66    17259.21
+first_us_turb_pot_wind_cap |  -107.3981   5.121807   -20.97   0.000    -117.4374   -97.35879
+                avg_income |   .5984975     2.9236     0.20   0.838    -5.132071    6.329066
+                 elevation |  -1.648968   .3386484    -4.87   0.000    -2.312755   -.9851808
+                 near_dist |   2.507589   .4907632     5.11   0.000     1.545641    3.469537
+                male_ratio |  -107395.7   4456.583   -24.10   0.000      -116131   -98660.28
+               white_ratio |  -59938.32   1335.704   -44.87   0.000    -62556.44    -57320.2
+               black_ratio |  -42038.57   1532.606   -27.43   0.000    -45042.64    -39034.5
+               asian_ratio |   20567.08   2711.236     7.59   0.000     15252.77     25881.4
+first_us_turb_pot_wind_cap |          0  (omitted)
+                     _cons |   121358.3   2668.704    45.47   0.000     116127.3    126589.2
 --------------------------------------------------------------------------------------------
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
@@ -253,22 +273,28 @@ Ho: diff = 0                     Satterthwaite's degrees of freedom =  268.583
 first_us_turb_pot_wind_cap |    1.29163   .1542895     8.37   0.000     .9892057    1.594054
                      _cons |   287.4944   3.088764    93.08   0.000     281.4401    293.5487
 --------------------------------------------------------------------------------------------
+note: first_us_turb_pot_wind_cap omitted because of collinearity
 
       Source |       SS           df       MS      Number of obs   =    16,618
--------------+----------------------------------   F(4, 16613)     =   3510.37
-       Model |  1.1191e+09         4   279772930   Prob > F        =    0.0000
-    Residual |  1.3240e+09    16,613   79699.028   R-squared       =    0.4581
--------------+----------------------------------   Adj R-squared   =    0.4579
-       Total |  2.4431e+09    16,617  147026.038   Root MSE        =    282.31
+-------------+----------------------------------   F(8, 16609)     =   1960.67
+       Model |  1.1866e+09         8   148328339   Prob > F        =    0.0000
+    Residual |  1.2565e+09    16,609  75652.0536   R-squared       =    0.4857
+-------------+----------------------------------   Adj R-squared   =    0.4855
+       Total |  2.4431e+09    16,617  147026.038   Root MSE        =    275.05
 
 --------------------------------------------------------------------------------------------
                  elevation |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 ---------------------------+----------------------------------------------------------------
-first_us_turb_pot_wind_cap |  -2.197015   .1201129   -18.29   0.000    -2.432449   -1.961581
-                avg_income |   .2917947   .0642561     4.54   0.000     .1658459    .4177435
-                       pop |  -.0014651   .0001525    -9.61   0.000    -.0017641   -.0011662
-                 near_dist |   .9919535   .0084883   116.86   0.000     .9753155    1.008592
-                     _cons |   86.04274   5.424828    15.86   0.000      75.4095    96.67598
+first_us_turb_pot_wind_cap |  -2.348105   .1174084   -20.00   0.000    -2.578238   -2.117972
+                avg_income |   .2560747   .0669109     3.83   0.000     .1249222    .3872271
+                       pop |  -.0008645   .0001775    -4.87   0.000    -.0012125   -.0005165
+                 near_dist |   .9539127   .0084662   112.67   0.000      .937318    .9705074
+                male_ratio |   1258.866   103.3482    12.18   0.000     1056.293     1461.44
+               white_ratio |  -391.0215   32.24144   -12.13   0.000    -454.2181   -327.8248
+               black_ratio |  -695.1317   35.46958   -19.60   0.000    -764.6559   -625.6075
+               asian_ratio |  -560.2653   62.03317    -9.03   0.000     -681.857   -438.6737
+first_us_turb_pot_wind_cap |          0  (omitted)
+                     _cons |  -139.2201   64.78742    -2.15   0.032    -266.2104   -12.22988
 --------------------------------------------------------------------------------------------
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
@@ -305,29 +331,285 @@ Ho: diff = 0                     Satterthwaite's degrees of freedom =  266.761
 first_us_turb_pot_wind_cap |   3.283229   .1046175    31.38   0.000     3.078168     3.48829
                      _cons |   210.0116   2.094365   100.27   0.000     205.9064    214.1168
 --------------------------------------------------------------------------------------------
+note: first_us_turb_pot_wind_cap omitted because of collinearity
 
       Source |       SS           df       MS      Number of obs   =    16,618
--------------+----------------------------------   F(4, 16613)     =   3952.60
-       Model |   577759559         4   144439890   Prob > F        =    0.0000
-    Residual |   607088889    16,613  36543.0018   R-squared       =    0.4876
--------------+----------------------------------   Adj R-squared   =    0.4875
-       Total |  1.1848e+09    16,617   71303.391   Root MSE        =    191.16
+-------------+----------------------------------   F(8, 16609)     =   2035.95
+       Model |   586635687         8  73329460.9   Prob > F        =    0.0000
+    Residual |   598212761    16,609  36017.3858   R-squared       =    0.4951
+-------------+----------------------------------   Adj R-squared   =    0.4949
+       Total |  1.1848e+09    16,617   71303.391   Root MSE        =    189.78
 
 --------------------------------------------------------------------------------------------
                  near_dist |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 ---------------------------+----------------------------------------------------------------
-first_us_turb_pot_wind_cap |   2.685761   .0794609    33.80   0.000     2.530009    2.841512
-                avg_income |  -.5350805   .0433387   -12.35   0.000     -.620029    -.450132
-                       pop |   .0002574   .0001036     2.49   0.013     .0000544    .0004603
-                 elevation |   .4548231    .003892   116.86   0.000     .4471944    .4624518
-                     _cons |   105.6378   3.609163    29.27   0.000     98.56341    112.7121
+first_us_turb_pot_wind_cap |   2.707501   .0792432    34.17   0.000     2.552175    2.862826
+                avg_income |   -.388374   .0460901    -8.43   0.000    -.4787154   -.2980325
+                       pop |   .0006259   .0001225     5.11   0.000     .0003858     .000866
+                 elevation |   .4541508   .0040307   112.67   0.000     .4462502    .4620514
+                male_ratio |  -502.2257   71.52143    -7.02   0.000    -642.4153   -362.0361
+               white_ratio |  -15.36216   22.34439    -0.69   0.492    -59.15955    28.43524
+               black_ratio |  -5.984313   24.75514    -0.24   0.809    -54.50703     42.5384
+               asian_ratio |   -456.313    42.7612   -10.67   0.000    -540.1295   -372.4965
+first_us_turb_pot_wind_cap |          0  (omitted)
+                     _cons |   364.7421   44.61952     8.17   0.000      277.283    452.2011
 --------------------------------------------------------------------------------------------
-  16,618
-  262
-  16,356
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+  male_ratio |     16,618    .4950087    .0219563   .3355115   .8176447
+
+Two-sample t test with unequal variances
+------------------------------------------------------------------------------
+   Group |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+       0 |  16,356    .4949033    .0001714    .0219228    .4945673    .4952393
+       1 |     262    .5015877    .0014248    .0230628     .498782    .5043933
+---------+--------------------------------------------------------------------
+combined |  16,618    .4950087    .0001703    .0219563    .4946748    .4953425
+---------+--------------------------------------------------------------------
+    diff |           -.0066844    .0014351               -.0095099   -.0038589
+------------------------------------------------------------------------------
+    diff = mean(0) - mean(1)                                      t =  -4.6578
+Ho: diff = 0                     Satterthwaite's degrees of freedom =  268.609
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(T < t) = 0.0000         Pr(|T| > |t|) = 0.0000          Pr(T > t) = 1.0000
+
+      Source |       SS           df       MS      Number of obs   =    16,618
+-------------+----------------------------------   F(1, 16616)     =    159.80
+       Model |  .076306888         1  .076306888   Prob > F        =    0.0000
+    Residual |  7.93442572    16,616  .000477517   R-squared       =    0.0095
+-------------+----------------------------------   Adj R-squared   =    0.0095
+       Total |   8.0107326    16,617  .000482081   Root MSE        =    .02185
+
+--------------------------------------------------------------------------------------------
+                male_ratio |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+---------------------------+----------------------------------------------------------------
+first_us_turb_pot_wind_cap |   .0001114   8.81e-06    12.64   0.000     .0000941    .0001287
+                     _cons |    .494392   .0001764  2802.78   0.000     .4940462    .4947377
+--------------------------------------------------------------------------------------------
+note: first_us_turb_pot_wind_cap omitted because of collinearity
+
+      Source |       SS           df       MS      Number of obs   =    16,618
+-------------+----------------------------------   F(8, 16609)     =    292.92
+       Model |  .990485072         8  .123810634   Prob > F        =    0.0000
+    Residual |  7.02024753    16,609  .000422677   R-squared       =    0.1236
+-------------+----------------------------------   Adj R-squared   =    0.1232
+       Total |   8.0107326    16,617  .000482081   Root MSE        =    .02056
+
+--------------------------------------------------------------------------------------------
+                male_ratio |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+---------------------------+----------------------------------------------------------------
+first_us_turb_pot_wind_cap |   .0000485   8.87e-06     5.46   0.000     .0000311    .0000659
+                avg_income |  -.0000492   4.99e-06    -9.85   0.000    -.0000589   -.0000394
+                       pop |  -3.15e-07   1.31e-08   -24.10   0.000    -3.40e-07   -2.89e-07
+                 elevation |   7.03e-06   5.77e-07    12.18   0.000     5.90e-06    8.17e-06
+                 near_dist |  -5.89e-06   8.39e-07    -7.02   0.000    -7.54e-06   -4.25e-06
+               white_ratio |  -.0475313   .0023923   -19.87   0.000    -.0522206   -.0428421
+               black_ratio |  -.0728193   .0026215   -27.78   0.000    -.0779578   -.0676809
+               asian_ratio |  -.0525306   .0046303   -11.35   0.000    -.0616064   -.0434548
+first_us_turb_pot_wind_cap |          0  (omitted)
+                     _cons |    .548238   .0023155   236.77   0.000     .5436994    .5527766
+--------------------------------------------------------------------------------------------
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+ white_ratio |     16,618    .8285884    .1869083    .004805   .9963663
+
+Two-sample t test with unequal variances
+------------------------------------------------------------------------------
+   Group |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+       0 |  16,356    .8272883    .0014675    .1876832    .8244118    .8301649
+       1 |     262    .9097464    .0062275    .1008016    .8974838     .922009
+---------+--------------------------------------------------------------------
+combined |  16,618    .8285884    .0014499    .1869083    .8257464    .8314303
+---------+--------------------------------------------------------------------
+    diff |           -.0824581    .0063981               -.0950506   -.0698656
+------------------------------------------------------------------------------
+    diff = mean(0) - mean(1)                                      t = -12.8879
+Ho: diff = 0                     Satterthwaite's degrees of freedom =  290.778
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(T < t) = 0.0000         Pr(|T| > |t|) = 0.0000          Pr(T > t) = 1.0000
+
+      Source |       SS           df       MS      Number of obs   =    16,618
+-------------+----------------------------------   F(1, 16616)     =    565.08
+       Model |  19.0927403         1  19.0927403   Prob > F        =    0.0000
+    Residual |  561.417356    16,616  .033787756   R-squared       =    0.0329
+-------------+----------------------------------   Adj R-squared   =    0.0328
+       Total |  580.510096    16,617  .034934711   Root MSE        =    .18381
+
+--------------------------------------------------------------------------------------------
+               white_ratio |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+---------------------------+----------------------------------------------------------------
+first_us_turb_pot_wind_cap |   .0017619   .0000741    23.77   0.000     .0016166    .0019071
+                     _cons |   .8188338   .0014838   551.86   0.000     .8159254    .8217422
+--------------------------------------------------------------------------------------------
+note: first_us_turb_pot_wind_cap omitted because of collinearity
+
+      Source |       SS           df       MS      Number of obs   =    16,618
+-------------+----------------------------------   F(8, 16609)     =  14630.95
+       Model |  508.372321         8  63.5465401   Prob > F        =    0.0000
+    Residual |  72.1377756    16,609  .004343294   R-squared       =    0.8757
+-------------+----------------------------------   Adj R-squared   =    0.8757
+       Total |  580.510096    16,617  .034934711   Root MSE        =     .0659
+
+--------------------------------------------------------------------------------------------
+               white_ratio |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+---------------------------+----------------------------------------------------------------
+first_us_turb_pot_wind_cap |   .0000967   .0000285     3.40   0.001     .0000409    .0001525
+                avg_income |   .0003547   .0000158    22.45   0.000     .0003237    .0003857
+                       pop |  -1.80e-06   4.02e-08   -44.87   0.000    -1.88e-06   -1.73e-06
+                 elevation |  -.0000224   1.85e-06   -12.13   0.000    -.0000261   -.0000188
+                 near_dist |  -1.85e-06   2.69e-06    -0.69   0.492    -7.13e-06    3.43e-06
+                male_ratio |  -.4884166   .0245829   -19.87   0.000    -.5366017   -.4402315
+               black_ratio |  -.9990653   .0037153  -268.91   0.000    -1.006348   -.9917829
+               asian_ratio |  -1.252211   .0112961  -110.85   0.000    -1.274353   -1.230069
+first_us_turb_pot_wind_cap |          0  (omitted)
+                     _cons |   1.197415   .0124386    96.27   0.000     1.173034    1.221796
+--------------------------------------------------------------------------------------------
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+ black_ratio |     16,618    .0832457    .1519521          0   .9805999
+
+Two-sample t test with unequal variances
+------------------------------------------------------------------------------
+   Group |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+       0 |  16,356    .0842978    .0011952    .1528551    .0819551    .0866406
+       1 |     262     .017566    .0024158    .0391031     .012809    .0223229
+---------+--------------------------------------------------------------------
+combined |  16,618    .0832457    .0011787    .1519521    .0809353    .0855562
+---------+--------------------------------------------------------------------
+    diff |            .0667319    .0026953                .0614333    .0720304
+------------------------------------------------------------------------------
+    diff = mean(0) - mean(1)                                      t =  24.7587
+Ho: diff = 0                     Satterthwaite's degrees of freedom =  404.022
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(T < t) = 1.0000         Pr(|T| > |t|) = 0.0000          Pr(T > t) = 0.0000
+
+      Source |       SS           df       MS      Number of obs   =    16,618
+-------------+----------------------------------   F(1, 16616)     =    324.93
+       Model |  7.35909986         1  7.35909986   Prob > F        =    0.0000
+    Residual |  376.317912    16,616  .022647924   R-squared       =    0.0192
+-------------+----------------------------------   Adj R-squared   =    0.0191
+       Total |  383.677012    16,617  .023089427   Root MSE        =    .15049
+
+--------------------------------------------------------------------------------------------
+               black_ratio |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+---------------------------+----------------------------------------------------------------
+first_us_turb_pot_wind_cap |  -.0010938   .0000607   -18.03   0.000    -.0012128   -.0009749
+                     _cons |   .0893017   .0012148    73.51   0.000     .0869206    .0916829
+--------------------------------------------------------------------------------------------
+note: first_us_turb_pot_wind_cap omitted because of collinearity
+
+      Source |       SS           df       MS      Number of obs   =    16,618
+-------------+----------------------------------   F(8, 16609)     =  11477.00
+       Model |  324.903729         8  40.6129661   Prob > F        =    0.0000
+    Residual |   58.773283    16,609  .003538641   R-squared       =    0.8468
+-------------+----------------------------------   Adj R-squared   =    0.8467
+       Total |  383.677012    16,617  .023089427   Root MSE        =    .05949
+
+--------------------------------------------------------------------------------------------
+               black_ratio |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+---------------------------+----------------------------------------------------------------
+first_us_turb_pot_wind_cap |  -.0000362   .0000257    -1.41   0.159    -.0000865    .0000142
+                avg_income |   .0001418   .0000144     9.82   0.000     .0001135    .0001701
+                       pop |  -1.03e-06   3.76e-08   -27.43   0.000    -1.10e-06   -9.57e-07
+                 elevation |  -.0000325   1.66e-06   -19.60   0.000    -.0000358   -.0000293
+                 near_dist |  -5.88e-07   2.43e-06    -0.24   0.809    -5.36e-06    4.18e-06
+                male_ratio |  -.6096411   .0219473   -27.78   0.000    -.6526602    -.566622
+               white_ratio |   -.813975    .003027  -268.91   0.000    -.8199082   -.8080418
+               asian_ratio |  -1.061054   .0106346   -99.77   0.000    -1.081899   -1.040209
+first_us_turb_pot_wind_cap |          0  (omitted)
+                     _cons |   1.102537   .0110996    99.33   0.000     1.080781    1.124294
+--------------------------------------------------------------------------------------------
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+ asian_ratio |     16,618    .0241564    .0513805          0    .708819
+
+Two-sample t test with unequal variances
+------------------------------------------------------------------------------
+   Group |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+       0 |  16,356    .0244071    .0004037     .051633    .0236157    .0251984
+       1 |     262    .0085047    .0017146     .027753    .0051285    .0118809
+---------+--------------------------------------------------------------------
+combined |  16,618    .0241564    .0003986    .0513805    .0233751    .0249376
+---------+--------------------------------------------------------------------
+    diff |            .0159024    .0017615                .0124355    .0193692
+------------------------------------------------------------------------------
+    diff = mean(0) - mean(1)                                      t =   9.0279
+Ho: diff = 0                     Satterthwaite's degrees of freedom =   290.73
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(T < t) = 1.0000         Pr(|T| > |t|) = 0.0000          Pr(T > t) = 0.0000
+
+      Source |       SS           df       MS      Number of obs   =    16,618
+-------------+----------------------------------   F(1, 16616)     =    212.61
+       Model |  .554231941         1  .554231941   Prob > F        =    0.0000
+    Residual |  43.3139172    16,616   .00260676   R-squared       =    0.0126
+-------------+----------------------------------   Adj R-squared   =    0.0126
+       Total |  43.8681491    16,617  .002639956   Root MSE        =    .05106
+
+--------------------------------------------------------------------------------------------
+               asian_ratio |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+---------------------------+----------------------------------------------------------------
+first_us_turb_pot_wind_cap |  -.0003002   .0000206   -14.58   0.000    -.0003405   -.0002598
+                     _cons |   .0258183   .0004121    62.65   0.000     .0250105    .0266262
+--------------------------------------------------------------------------------------------
+note: first_us_turb_pot_wind_cap omitted because of collinearity
+
+      Source |       SS           df       MS      Number of obs   =    16,618
+-------------+----------------------------------   F(8, 16609)     =   2579.28
+       Model |   24.304717         8  3.03808962   Prob > F        =    0.0000
+    Residual |  19.5634321    16,609  .001177881   R-squared       =    0.5540
+-------------+----------------------------------   Adj R-squared   =    0.5538
+       Total |  43.8681491    16,617  .002639956   Root MSE        =    .03432
+
+--------------------------------------------------------------------------------------------
+               asian_ratio |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+---------------------------+----------------------------------------------------------------
+first_us_turb_pot_wind_cap |   .0000503   .0000148     3.40   0.001     .0000213    .0000794
+                avg_income |   .0003042   8.01e-06    37.96   0.000     .0002885    .0003199
+                       pop |   1.68e-07   2.21e-08     7.59   0.000     1.24e-07    2.11e-07
+                 elevation |  -8.72e-06   9.66e-07    -9.03   0.000    -.0000106   -6.83e-06
+                 near_dist |  -.0000149   1.40e-06   -10.67   0.000    -.0000177   -.0000122
+                male_ratio |  -.1463878   .0129032   -11.35   0.000    -.1716795   -.1210961
+               white_ratio |  -.3395939   .0030635  -110.85   0.000    -.3455986   -.3335892
+               black_ratio |  -.3531852   .0035399   -99.77   0.000    -.3601237   -.3462467
+first_us_turb_pot_wind_cap |          0  (omitted)
+                     _cons |   .3934039   .0074868    52.55   0.000     .3787289    .4080788
+--------------------------------------------------------------------------------------------
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+first_us_t~p |     16,618    5.536482    19.23904          0   99.77184
+
+Two-sample t test with unequal variances
+------------------------------------------------------------------------------
+   Group |     Obs        Mean    Std. Err.   Std. Dev.   [95% Conf. Interval]
+---------+--------------------------------------------------------------------
+       0 |  16,356    5.112556    .1440839    18.42697    4.830136    5.394976
+       1 |     262    32.00115    2.451002    39.67293    27.17489     36.8274
+---------+--------------------------------------------------------------------
+combined |  16,618    5.536482     .149243    19.23904     5.24395    5.829014
+---------+--------------------------------------------------------------------
+    diff |           -26.88859    2.455233               -31.72302   -22.05416
+------------------------------------------------------------------------------
+    diff = mean(0) - mean(1)                                      t = -10.9515
+Ho: diff = 0                     Satterthwaite's degrees of freedom =  262.807
+
+    Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(T < t) = 0.0000         Pr(|T| > |t|) = 0.0000          Pr(T > t) = 1.0000
 (note: file ../output/tables.txt not found)
 
 . 
 end of do-file
 
- make.py ended: 2018-04-01 17:34:34
+ make.py ended: 2018-05-08 17:48:17

@@ -5,7 +5,7 @@ preliminaries, loadglob("../../../lib/python/wind/input_params.txt")
 
 program main
     local nbr_months 12
-    local nbr_years 4
+    local nbr_years 6
 
     local input_file_list = "wind_panel_zip_median_listing_sqft " + ///
                             "wind_panel_zip_zhvi"
@@ -21,7 +21,7 @@ program main
         *balance_panel, time(dt) geo(regionname) stub(month)
         
         label var relative_ev_month_reggroups ///
-            "Months relative to completion of first wind farm in Zip Code"
+            "Months relative to completion of first wind farm in ZIP code"
         label var ln_p "`lab_price'"
         
         save_data "../temp/`inpt'_event_panel.dta", key(regionname dt) replace
@@ -32,7 +32,7 @@ program main
     *balance_panel, time(year) geo(tract_fip)
 
     label var relative_ev_year_reggroups ///
-        "Years relative to completion of first wind farm in Census Tract"
+        "Years relative to completion of first wind farm in census tract"
     label var ln_p "Log HPI"
 
     save_data "../temp/wind_panel_tract_fhfa_event_panel.dta", key(tract_fip year) replace
@@ -42,7 +42,7 @@ program main
     *balance_panel, time(year) geo(regionname)
     
     label var relative_ev_year_reggroups ///
-        "Years relative to completion of first wind farm in Zip Code"
+        "Years relative to completion of first wind farm in ZIP code"
     label var ln_p "Log HPI"
 
     save_data "../temp/wind_panel_zip_fhfa_event_panel.dta", key(regionname year) replace

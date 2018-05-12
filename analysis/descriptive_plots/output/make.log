@@ -1,38 +1,39 @@
 
- make.py started: 2018-04-01 19:55:25 C:\Users\giamb\Documents\GitHub\blowin_wind\analysis\descriptive_plots\code 
+ make.py started: 2018-05-12 19:08:21 C:\Users\giamb\Documents\GitHub\blowin_wind\analysis\descriptive_plots\code 
 
 
 
 
-Execute:  StataSE-64 /e do "./figures.do"
+Execute:  StataMP-64 /e do "./figures.do"
 
   ___  ____  ____  ____  ____ (R)
  /__    /   ____/   /   ____/
 ___/   /   /___/   /   /___/   15.0   Copyright 1985-2017 StataCorp LLC
   Statistics/Data Analysis            StataCorp
                                       4905 Lakeway Drive
-     Special Edition                  College Station, Texas 77845 USA
+     MP - Parallel Edition            College Station, Texas 77845 USA
                                       800-STATA-PC        http://www.stata.com
                                       979-696-4600        stata@stata.com
                                       979-696-4601 (fax)
 
-110-user Stata network perpetual license:
-       Serial number:  401506201178
-         Licensed to:  Brown University
-                       Brown University
+Single-user 32-core Stata perpetual license:
+       Serial number:  501506205566
+         Licensed to:  KU Leuven FEB (CES)
+                       KU Leuven
 
 Notes:
       1.  Stata is running in batch mode.
       2.  Unicode is supported; see help unicode_advice.
-      3.  Maximum number of variables is set to 5000; see help set_maxvar.
+      3.  More than 2 billion observations are allowed; see help obs_advice.
+      4.  Maximum number of variables is set to 5000; see help set_maxvar.
 
 . do ./figures.do 
 
 . set more off
 
 . adopath + ../../../lib/stata/gslab_misc/ado
-  [1]  (BASE)      "C:\Program Files (x86)\Stata15\ado\base/"
-  [2]  (SITE)      "C:\Program Files (x86)\Stata15\ado\site/"
+  [1]  (BASE)      "C:\Stata15\ado\base/"
+  [2]  (SITE)      "C:\Stata15\ado\site/"
   [3]              "."
   [4]  (PERSONAL)  "c:\ado\personal/"
   [5]  (PLUS)      "c:\ado\plus/"
@@ -40,8 +41,8 @@ Notes:
   [7]              "../../../lib/stata/gslab_misc/ado"
 
 . adopath + ../../../lib/third_party/stata_tools
-  [1]  (BASE)      "C:\Program Files (x86)\Stata15\ado\base/"
-  [2]  (SITE)      "C:\Program Files (x86)\Stata15\ado\site/"
+  [1]  (BASE)      "C:\Stata15\ado\base/"
+  [2]  (SITE)      "C:\Stata15\ado\site/"
   [3]              "."
   [4]  (PERSONAL)  "c:\ado\personal/"
   [5]  (PLUS)      "c:\ado\plus/"
@@ -170,7 +171,8 @@ Notes:
 >         (tsline delta_ln_median_listing, lpattern(dash) lcolor(navy)) ///
 >         (tsline delta_ln_zhvi, lpattern(shortdash_dot) lcolor(black)), ///
 >         ytitle("Average percentage change") legend( ///
->             lab(1 "BDL-Zip") lab(2 "BDL-CT") lab(3 "Median listing price") lab(4 "ZHVI"))
+>             lab(1 "Bogin et al (2016)" "ZIP") lab(2 "Bogin et al (2016)" "Census Tract") ///
+>             lab(3 "Median listing price") lab(4 "ZHVI"))
  18.     graph export "../output/validate_price_data.png", replace
  19. end
 
@@ -329,35 +331,36 @@ file ../temp/fhfa_tract_year.dta saved
 end of do-file
 
 
-Execute:  StataSE-64 /e do "./energy_figures.do"
+Execute:  StataMP-64 /e do "./energy_figures.do"
 
   ___  ____  ____  ____  ____ (R)
  /__    /   ____/   /   ____/
 ___/   /   /___/   /   /___/   15.0   Copyright 1985-2017 StataCorp LLC
   Statistics/Data Analysis            StataCorp
                                       4905 Lakeway Drive
-     Special Edition                  College Station, Texas 77845 USA
+     MP - Parallel Edition            College Station, Texas 77845 USA
                                       800-STATA-PC        http://www.stata.com
                                       979-696-4600        stata@stata.com
                                       979-696-4601 (fax)
 
-110-user Stata network perpetual license:
-       Serial number:  401506201178
-         Licensed to:  Brown University
-                       Brown University
+Single-user 32-core Stata perpetual license:
+       Serial number:  501506205566
+         Licensed to:  KU Leuven FEB (CES)
+                       KU Leuven
 
 Notes:
       1.  Stata is running in batch mode.
       2.  Unicode is supported; see help unicode_advice.
-      3.  Maximum number of variables is set to 5000; see help set_maxvar.
+      3.  More than 2 billion observations are allowed; see help obs_advice.
+      4.  Maximum number of variables is set to 5000; see help set_maxvar.
 
 . do ./energy_figures.do 
 
 . set more off
 
 . adopath + ../../../lib/stata/gslab_misc/ado
-  [1]  (BASE)      "C:\Program Files (x86)\Stata15\ado\base/"
-  [2]  (SITE)      "C:\Program Files (x86)\Stata15\ado\site/"
+  [1]  (BASE)      "C:\Stata15\ado\base/"
+  [2]  (SITE)      "C:\Stata15\ado\site/"
   [3]              "."
   [4]  (PERSONAL)  "c:\ado\personal/"
   [5]  (PLUS)      "c:\ado\plus/"
@@ -365,8 +368,8 @@ Notes:
   [7]              "../../../lib/stata/gslab_misc/ado"
 
 . adopath + ../../../lib/third_party/stata_tools
-  [1]  (BASE)      "C:\Program Files (x86)\Stata15\ado\base/"
-  [2]  (SITE)      "C:\Program Files (x86)\Stata15\ado\site/"
+  [1]  (BASE)      "C:\Stata15\ado\base/"
+  [2]  (SITE)      "C:\Stata15\ado\site/"
   [3]              "."
   [4]  (PERSONAL)  "c:\ado\personal/"
   [5]  (PLUS)      "c:\ado\plus/"
@@ -382,9 +385,8 @@ Notes:
 >         sheet("Foglio1") firstrow
   2. 
 .     graph bar (asis) cumulativecapacityMW,                  ///
->         over(year, label(labsize(small)))                   ///
->         ytitle("Cumulative Wind Power Capacity (MW)")       ///
->         note("Source: American Wind Energy Association", span)
+>         over(year, label(angle(45) labsize(small)))         ///
+>         ytitle("Cumulative Wind Power Capacity (MW)")
   3.     graph export "../output/WindEnergyTrend.png", replace
   4. 
 .     import excel "${GoogleDrive}/raw_data/energy_data/Wind energy capacity_American Wind Energy Association.xls", ///
@@ -401,8 +403,7 @@ Notes:
  12.     rename _ energy_cons
  13. 
 .     graph bar (asis) energy_cons, over(year, label(angle(45) labsize(small)))       ///
->         ytitle("World Energy Consumption (Mtoe)") ylabel(5000(5000)15000) exclude0  ///
->         note("Source: Global Energy Statistical Yearbook 2016", span)
+>         ytitle("World Energy Consumption (Mtoe)") ylabel(5000(5000)15000) exclude0
  14.     graph export "../output/WorldEnergyConsumption.png", replace
  15. end
 
@@ -427,4 +428,4 @@ xij variables:
 . 
 end of do-file
 
- make.py ended: 2018-04-01 19:56:15
+ make.py ended: 2018-05-12 19:09:10

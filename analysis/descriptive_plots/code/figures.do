@@ -116,7 +116,8 @@ program validate_price_data
         (tsline delta_ln_median_listing, lpattern(dash) lcolor(navy)) ///
         (tsline delta_ln_zhvi, lpattern(shortdash_dot) lcolor(black)), ///
         ytitle("Average percentage change") legend( ///
-            lab(1 "BDL-Zip") lab(2 "BDL-CT") lab(3 "Median listing price") lab(4 "ZHVI"))
+            lab(1 "Bogin et al (2016)" "ZIP") lab(2 "Bogin et al (2016)" "Census Tract") ///
+            lab(3 "Median listing price") lab(4 "ZHVI"))
     graph export "../output/validate_price_data.png", replace
 end
 
