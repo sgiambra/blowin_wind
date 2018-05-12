@@ -1,0 +1,1359 @@
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\begin_preamble
+\usepackage{setspace}
+\usepackage[bottom]{footmisc}
+\usepackage{amsfonts}
+\usepackage{pdflscape}
+\usepackage{amsmath}
+\usepackage{datetime}
+\usepackage{caption}
+\usepackage{chngcntr}
+\usepackage[hidelinks]{hyperref}
+\usepackage{dsfont}
+
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\Corr}{Corr}
+\DeclareMathOperator{\Cov}{Cov}
+\DeclareMathOperator{\E}{E}
+\DeclareMathOperator{\logit}{logit}
+\DeclareMathOperator{\I}{I}
+
+\DeclareMathOperator*{\argmax}{arg\,max} 
+
+\theoremstyle{definition}
+\newtheorem{test}{Test}
+\end_preamble
+\use_default_options true
+\begin_modules
+hanging
+theorems-ams-bytype
+theorems-ams-extended-bytype
+\end_modules
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "times" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family rmdefault
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\float_placement H
+\paperfontsize 12
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine natbib
+\cite_engine_type authoryear
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 1in
+\topmargin 1in
+\rightmargin 1in
+\bottommargin 1in
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+
+\series bold
+Blowin' in the Wind:
+\begin_inset Newline newline
+\end_inset
+
+
+\series default
+The impact of wind farms on house prices
+\begin_inset VSpace bigskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Author
+Samuele Giambra
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+This project benefited from the suggestions of Lint Barrage, Emily Oster,
+ Neil Thakral, Matthew Turner, and from audience comments at the Brown Microecon
+omics Seminar.
+ E-mail: samuele_giambra@brown.edu.
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\emph on
+Brown University
+\end_layout
+
+\begin_layout Date
+
+\size normal
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+monthname
+\backslash
+ 
+\backslash
+number
+\backslash
+year
+\end_layout
+
+\end_inset
+
+
+\size default
+
+\begin_inset VSpace 0.5in
+\end_inset
+
+
+\end_layout
+
+\begin_layout Abstract
+\noindent
+This paper estimates the impact of wind turbines presence at the ZIP code
+ and census tract level on house prices.
+ A naïve OLS specification shows no evidence of a relation between wind
+ turbines and house prices.
+ Using an instrumental variables strategy where the instrument is defined
+ as the percentage of the area of the ZIP code or census tract with potential
+ wind capacity in 2008 greater than 30%, interacted with a dummy set to
+ one in the years after the first wind turbine was installed in the US,
+ I find that the presence of a wind farm significantly reduces house prices.
+ An event-study design brings additional evidence of this relation.
+\begin_inset VSpace 0.5in
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+
+\size small
+Keywords: wind turbines, home prices, 
+\end_layout
+
+\begin_layout Standard
+\noindent
+
+\size small
+JEL: THREE JEL
+\size default
+
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+setstretch{1.5}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Standard
+The world energy demand has grown exponentially over the last decades.
+ In 2015 the overall energy consumption was about 575 quadrillion British
+ thermal units (Btu) and the most recent projections from the 2017 International
+ Energy Outlook forecast a new pick of 736 quadrillion Btu in 2040 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "ieo2017"
+
+\end_inset
+
+.
+ Panel A of figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:energy_trends"
+
+\end_inset
+
+ shows that world energy use rose by 56.9% from 1990 through 2015.
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+For a direct comparison with the previously reported fact, one million Btu
+ is roughly equivalent to 25.1996 tonne of oil equivalent (toe).
+\end_layout
+
+\end_inset
+
+ In this framework, wind energy represents a key option for a sustainable
+ future for two main reasons.
+ First, wind is a clean and renewable energy source that produces virtually
+ no toxic pollution or global warming emissions 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "energygov"
+
+\end_inset
+
+.
+ Second, wind power production has very low operating and maintenance costs
+ compared to traditional sources of energy, with nearly all the cost being
+ related to wind turbines' construction and installation 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "cullen2013measuring"
+
+\end_inset
+
+.
+ In accordance with this view, the US wind energy sector has been characterized
+ by a fast expansion during the last fifteen years, growing from a cumulative
+ power capacity of less than 2,500 MW in 1999 to about 85,000 MW at the
+ end of 2017 (see panel B of figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:energy_trends"
+
+\end_inset
+
+).
+ 
+\end_layout
+
+\begin_layout Standard
+Even if the public opinion is typically in favor of wind power 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "firestone2007public"
+
+\end_inset
+
+, the construction of wind farms has often to overcome the opposition of
+ local communities.
+ A major concern is that the visual and aural impact of wind farms might
+ decrease house values in the surrounding areas.
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+Another concern is that the noise and vibrations generated by wind farms
+ could directly harm individuals living close to the plant.
+ Although the traditional medical literature finds no evidence of a negative
+ relationship between wind turbines and health 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "knopper2011health"
+
+\end_inset
+
+, a recent study claims that psychological factors might play a role in
+ reports of sleep disturbance by people living in the proximity of wind
+ plants 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "jalali2016impact"
+
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+ For instance, 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "slattery2012predominance"
+
+\end_inset
+
+ conduct surveys in several communities near wind farms in Texas and Iowa
+ and find that one third of the respondents consider wind turbines an unattracti
+ve feature of the landscape.
+ 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "ladenburg2007willingness"
+
+\end_inset
+
+ estimate for Denmark that households are willing to pay between 46 and
+ 122 Euros per year for siting a future offshore wind farm further away
+ from the coast.
+\end_layout
+
+\begin_layout Standard
+The object of this paper is to analyze the impact of wind turbines presence
+ on house prices.
+ Using data on the location and building date of each turbine from the Federal
+ Aviation Administration (FAA), and home prices from Zillow and the Federal
+ Housing Finance Agency (FHFA), I am able to estimate changes in house prices
+ for areas that are or are not allocated a wind farm.
+ However, the presence of wind turbines in a given geographic area is clearly
+ an endogenous outcome since infrastructure projects are usually targeted
+ towards areas in specific economic conditions
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+Usually wind farms are built in rural areas and have the indirect aim of
+ boosting the local economy 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "doe2004"
+
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+ or influenced by political variables.
+ I thus rely on two empirical strategies to try to isolate the causal impact
+ of wind turbines on house prices.
+ First, I instrument for wind turbines presence using the percentage of
+ the area of the ZIP code or census tract with potential wind capacity in
+ 2008 greater than 30%, interacted with a dummy set to one in the years
+ after the first wind turbine was installed in the US.
+ Gross potential wind capacity factors are estimated for the US by 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "lopez2012us"
+
+\end_inset
+
+ taking into account the technology available in 2008 and local wind resources.
+ The 30% threshold is often used by engineers to determine the profitability
+ of a site 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "LectureA"
+
+\end_inset
+
+.
+ The hypothesis underlying this instrument is that locations having a larger
+ area above the threshold are more likely to be allocated a wind farm.
+ Second, I perform an event study analysis to investigate how house prices
+ change in the years before and after a wind farm is constructed.
+ The event is defined as the time in which an aggregate of at least ten
+ wind turbines becomes operative in a certain location.
+ 
+\end_layout
+
+\begin_layout Standard
+The results from my preferred instrumental variable specification show that
+ each additional wind turbine installed in a given year decreases home prices
+ by about 0.3%.
+ This is a remarkable negative effect considering that, on average, there
+ are 17 new turbines installed in a ZIP code/year, conditional on non-zero
+ construction.
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+The standard deviation is about 27 new turbines in the average ZIP code/year.
+\end_layout
+
+\end_inset
+
+ On the other hand, the results of the event study are more noisy due to
+ the intrinsic difficulty to identify an exact point in time in which the
+ wind plant starts exerting a negative impact on house prices.
+ Consequently, this approach appears to be less informative about the causal
+ impact of wind turbines on home prices.
+ 
+\end_layout
+
+\begin_layout Standard
+This paper mainly contributes to a recent literature that analyzes the detriment
+al effects of wind turbines on house transaction prices.
+ 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "sims2008modelling"
+
+\end_inset
+
+ are among the first to study this topic, using a sample of 201 house transactio
+ns within a mile of a wind farm in Cornwall, UK.
+ The authors do not find any significant evidence of a causal effect of
+ wind turbines on house prices, but this conclusion might be driven by the
+ limitations of the data used.
+ More recently, 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "hoen2009impact"
+
+\end_inset
+
+ analyze the impact of 24 wind farms in the US using data on 7,500 sales
+ of houses within 10 miles.
+ In an improvement of this study, 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "hoen2013spatial"
+
+\end_inset
+
+ use a differences-in-differences (DD) approach on more than 50,000 house
+ transactions between 1996 and 2011 from areas within 10 miles of 67 wind
+ farms in the US.
+ Both of the aforementioned articles, however, are unable to uncover significant
+ evidence of the impact of wind turbines on house prices.
+ Focusing on Rhode Island, 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "lang2014windy"
+
+\end_inset
+
+ use data from 3,254 transactions of houses within a mile of a wind turbine,
+ finding no significant effect.
+ A fair amount of other studies employing DD techniques have instead reached
+ conclusions in favor of the hypothesis of a negative impact on house value.
+ For the Netherlands, 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "droes2014renewable"
+
+\end_inset
+
+ use 2.2 million transaction prices and find that the construction of a wind
+ turbine lowers the price of houses within 2km by 1.4 percentage points.
+ Similarly, 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "sunak2016impact"
+
+\end_inset
+
+ find evidence of a negative impact of about 9-14% in two German cities.
+ 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "gibbons2015gone"
+
+\end_inset
+
+ develop a slightly more articulated digital elevation model to create a
+ 200m grid that shows if a turbine is visible or not from each location.
+ The author uses then a DD comparing price changes in locations where a
+ new turbine is built and is visible with different comparison groups, such
+ as price changes in places where the new turbine is hidden by the terrain
+ or became visible in the past.
+ The main conclusion of the study is that visible wind turbines decrease
+ house prices by 5-6% within 2km, and by less than 1% within 14km.
+\end_layout
+
+\begin_layout Standard
+In this paper, I contribute to this literature in two different ways.
+ First, I enlarge the scope of the analysis using data on wind turbines
+ in each state of the US through the end of 2017.
+ Second, in the preferred specification, I address the endogeneity issue
+ of the allocation of a wind turbine to a given geographic area using an
+ instrumental variable approach similar to the one exploited by 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "dinkelman2011effects"
+
+\end_inset
+
+, who instruments electrification projects in South Africa using land gradient.
+ To my knowledge, this is the first attempt to use an IV approach to estimate
+ the impact of wind turbines on house prices.
+\end_layout
+
+\begin_layout Section
+Data
+\end_layout
+
+\begin_layout Standard
+To analyze how the presence of wind turbines affects house values, I construct
+ a panel that covers the period from 2000 to 2016, where variables are aggregate
+d at the zip code level.
+ Median home selling prices per square foot are collected from Zillow.
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+Zillow datasets are publicly available for download from 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://www.zillow.com/research/data/
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+ All types of homes are considered, that is, all single-family, condominium
+ and co-operative homes with a county record.
+ Zillow provides other measures of home values, as for instance the Zillow
+ Home Value Index (ZHVI) that measures the median seasonally adjusted home
+ value for a given area.
+ However, these metrics are the output of statistical models that take already
+ into account characteristics such as local amenities and are thus less
+ indicated for the current analysis.
+ To the house prices panel I add data on wind turbines made available by
+ the Federal Aviation Administration (FAA), which contains monthly data
+ through September 2016 on the exact position of each wind turbine in the
+ US.
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+The actual GIS files are publicly available for download from 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://www.fws.gov/southwest/es/Energy_Wind_FAA.html
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+ Records include undergoing projects, denied permissions, and locations
+ under revision during the permission application process.
+ 
+\end_layout
+
+\begin_layout Standard
+Figure 2 displays the time trend for median home selling prices in the US
+ as it emerges from Zillow data.
+ The dashed line shows the trend obtained averaging across all zip codes
+ that are allocated a wind turbine during the period for which house price
+ data is available or before.
+ The solid line reports the corresponding trend for zip codes that do not
+ receive a wind turbine in the period considered or before it.
+\end_layout
+
+\begin_layout Standard
+Prices trend similarly over time in zip codes with and without a wind turbine,
+ although they are somewhat noisy, reflecting the existence of a seasonal
+ component.
+ The empirical distribution of median home selling prices for the zip codes
+ covered in the Zillow data is instead shown in Figure 3.
+\end_layout
+
+\begin_layout Standard
+This distribution is computed after excluding some observations from the
+ dataset according to the following procedure.
+ I first identify 183 zip code-month units that are associated with a median
+ house price higher than $1000.
+ If all other observations for the same zip code in different months have
+ home prices below this cutoff, I treat the flagged value as a typo and
+ I drop it from the dataset while leaving the other months.
+ If instead there is more than one case of prices above the cutoff within
+ the same zip code, I also drop all other observations related to that zip
+ code.
+ In total, I end up eliminating 21,567 zip code-month observations, or slightly
+ more than 2.2% of the original dataset.
+ As expected, the distribution of median home selling prices is highly right
+ skewed.
+ The mean value taken by this variable is about $150.
+\end_layout
+
+\begin_layout Standard
+To the Zillow median home selling prices I add then geographic and census
+ data.
+ Annual average wind raster data with a resolution from 200-meter to 1000-meter
+ cell sizes is made available by the National Renewable Energy Laboratory
+ (NREL).
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+The data can be downloaded at 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://www.nrel.gov/gis/data_wind.html
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+ For instance, appendix figure 1 shows the map assembled by NREL detailing
+ wind level in Rhode Island.
+ Wind speeds are recorded at a 50-meter height above the ground.
+ Wind power is then grouped into classes that range from poor (class 1)
+ to superb (class 7).
+ High resolution land-based wind data for Alabama, Florida, Louisiana or
+ Mississippi is unfortunately not available; these states will thus be excluded
+ from the analysis.
+ Other geographic characteristics that are used as control variables are
+ the distance from the coastline, elevation, and urbanized areas in year
+ 2000.
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+The US coastline can be accessed from 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://earthworks.stanford.edu/catalog/stanford-xv279yj9196
+\end_layout
+
+\end_inset
+
+, while the shapefile containing elevation data can be accessed through
+ the online catalogue of ArcGIS.
+ Urbanized areas can be downloaded from the Census at 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://www.census.gov/geo/maps-data/data/cbf/cbf_ua.html
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+ In order to aggregate these variables at the zip code level, I first merge
+ the related files in ArcGIS with the map detailing zip code boundaries.
+ I then compute the percentage of the area of a given zip code that is recorded
+ as urban according to the 2000 Census.
+ Concerning the two other geographic controls, I instead find the centroid
+ of each zip code and calculate the distance from the coastline and elevation
+ related to these points.
+ 
+\end_layout
+
+\begin_layout Standard
+The remaining demographic controls come from the 2000 Census.
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+All variables can be downloaded from 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://factfinder.census.gov/faces/nav/jsf/pages/index.xhtml
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+ These variables are collected at the census block group level, and I have
+ thus to map them into the zip code polygons at which house prices are aggregate
+d.
+ To do this, I match each zip code with the block group that occupies the
+ largest fraction of its area.
+ This is certainly an imperfect mapping between zip codes and block groups,
+ since it could happen that the same block group is matched to multiple
+ zip codes.
+ At the moment I am still working on the development of an algorithm that
+ performs this operation in a more precise way.
+\end_layout
+
+\begin_layout Section
+Sample characteristics
+\end_layout
+
+\begin_layout Standard
+Data related to wind turbine locations and other geographic and demographic
+ variables is basically available for the entire US.
+ On the other hand, I have information on median home selling prices only
+ on a subsample of the full set of US zip codes.
+ Appendix figure 2 makes this point more explicit.
+ It shows in blue the zip codes for which information on home prices is
+ available from Zillow.
+ The red triangles represent wind turbines within these zip codes.
+ Obviously, the zip codes included in the sample are not randomly selected
+ and they likely correspond to highly populated geographic areas.
+ However, at least for some of the US states, they represent a large fraction
+ of the complete set of zip codes.
+ 
+\end_layout
+
+\begin_layout Standard
+Considering only zip codes for which I have house prices, table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:cov_balance"
+
+\end_inset
+
+ presents a summary of means and standard deviations of the key variables
+ used in the analysis that follows.
+ Column 1 displays descriptive statistics for the full sample, while column
+ 2 and 3 distinguish between zip codes characterized by the presence of
+ a wind turbine or not.
+ Areas with wind turbines are on average more distant from the coastline,
+ have a higher elevation, and are less populated.
+ They have a lower income per capita, a higher fraction of white inhabitants,
+ and a lower fraction of blacks and asians.
+ Moreover, they tend to have a higher fraction of male residents and of
+ individuals with lower education (high school degree or less).
+ The last row shows that the zip codes that are not allocated a wind turbine
+ are characterized by a lower fraction of the total geographic area having
+ annual average wind with power class greater or equal than three.
+ The correlation between average wind and wind turbines location can be
+ visually inspected from Figure 4 (as well as appendix figure 3).
+ The figure makes it evident that wind turbines (depicted as black triangles)
+ tend to be placed in areas characterized by higher wind level (dark-shaded).
+\end_layout
+
+\begin_layout Standard
+Column 4 of Table 1 shows that zip codes with and without a wind turbine
+ are significantly different in terms of the variables considered.
+ Since this paper uses the percentage of the area of a zip code having average
+ wind of category three or more as instrument, I can investigate if the
+ covariates are balanced conditional on this variable.
+ Column 5 shows the coefficients estimated regressing each exogenous control
+ on the percentage of zip code area having wind of power class larger than
+ three, while column 6 adds to the regression all the other covariates as
+ controls, together with state fixed effects.
+ The differences in total population, percentage of black and asian population
+ and level of education tend to disappear.
+ The coefficients for the distance from the coastline, elevation and percentage
+ of white and male population remain significant but considerably small.
+ Income per capita is the only variable that remains statistically significant
+ and with a large coefficient after regressing it on the wind variable and
+ controlling for the other zip code characteristics.
+ Overall however, the instrument seems to achieve a good balance of the
+ covariates considered in the analysis.
+\end_layout
+
+\begin_layout Section
+Identification strategy
+\end_layout
+
+\begin_layout Standard
+If the presence of a wind turbine in a given zip code was determined randomly,
+ I could in principle be able to estimate its effect on house values using
+ the following model
+\begin_inset Formula 
+\begin{equation}
+ln\left(p_{lt}\right)=\alpha_{l}+\beta turbines_{lt}+\mathbf{X}_{lt}\boldsymbol{\theta}+\tau_{t}+\varepsilon_{lt}\label{eq:ols}
+\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $ln\left(p_{lt}\right)$
+\end_inset
+
+ measures the average house value in location 
+\begin_inset Formula $l$
+\end_inset
+
+ (zip code or census tract), and time 
+\begin_inset Formula $t$
+\end_inset
+
+ (year or month), while 
+\begin_inset Formula $turbines_{lt}$
+\end_inset
+
+ describes the number of wind turbines active in that location.
+ The other parameters in the model – 
+\begin_inset Formula $\alpha_{l}$
+\end_inset
+
+, and 
+\begin_inset Formula $\tau_{t}$
+\end_inset
+
+ – capture fixed effects for location and time, respectively.
+ Finally, 
+\begin_inset Formula $\mathbf{X}_{lt}$
+\end_inset
+
+ represents a vector of time varying location characteristics, such as average
+ household income, total population, high education rate, and minority prevalenc
+e.
+ 
+\end_layout
+
+\begin_layout Standard
+If we are willing to assume that the vector of location specific control
+ variables remains constant over the time period relevant for this analysis
+ – i.e.
+ 
+\begin_inset Formula $\mathbf{X}_{lt}=\mathbf{X}_{l}$
+\end_inset
+
+ – we can rewrite equation 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:ols"
+
+\end_inset
+
+ in first differences
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\Delta ln\left(p_{lt}\right)=\beta\Delta turbines_{lt}+\tau_{t}+\Delta\varepsilon_{lt}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+However, the coefficients estimated running simple OLS on equation 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:ols"
+
+\end_inset
+
+ are likely to be biased by the existence of omitted variables that are
+ correlated with both the change in house values and wind turbine presence.
+ For instance, if poorer geographic areas are more likely to be allocated
+ a wind turbine, and the price of houses in these areas is lower, then this
+ would generate a negative relationship between turbines and house prices.
+ In the attempt to reduce this problem, I control for a vector of zip code
+ level covariates, 
+\begin_inset Formula $\mathbf{X}_{zs0}$
+\end_inset
+
+, measured in 2000, the baseline period of the analysis.
+ Among the control variables I include distance from the coastline; elevation;
+ percentage of urbanized area; total population; fraction of whites, blacks
+ and asians; income per capita; and educational attainment.
+ Unfortunately, even after controlling for these zip code characteristics
+ it is still likely that the estimate of 
+\begin_inset Formula $\alpha_{2}$
+\end_inset
+
+ will be biased due to omitted or unobservable variables and confounding
+ trends.
+ To identify the causal impact of wind turbines on house values I therefore
+ rely on an instrumental variable approach.
+ I use annual average 50-meter height above the ground wind data to construct
+ a variable that measures the percentage of the area of a given zip code
+ having wind of power category equal or higher than three.
+ Since the productivity of wind turbines depends, among other geographic
+ characteristics, on the location's wind power, this instrument is likely
+ to be a good predictor for wind turbine presence.
+ The two equations related to the IV approach are the following
+\begin_inset Formula 
+\begin{eqnarray}
+ &  & \text{First stage:}\quad\Delta turbines_{lt}=\pi Z_{lt}+\tau_{t}+\nu_{lt}\label{eq:first_stage}\\
+ &  & \text{Second stage:}\quad\Delta ln\left(p_{lt}\right)=\beta\Delta\widehat{turbines_{lt}}+\tau_{t}+\Delta\varepsilon_{lt}\label{eq:second_stage}
+\end{eqnarray}
+
+\end_inset
+
+I will now discuss more in details why the instrument I construct is based
+ on the cutoff of a power class equal to three.
+ As mentioned above, wind data is reported by the NREL on the basis of seven
+ wind power classes.
+ In order to construct an instrumental variable that is relevant to the
+ allocation decision of a wind turbine to a given location, I rely on the
+ fact that, as noted in the Wind Energy Resource Atlas of the United States,
+ 
+\begin_inset Quotes eld
+\end_inset
+
+Areas designated class 3 or greater are suitable for most wind turbine applicati
+ons, whereas class 2 areas are marginal.
+ Class 1 areas are generally not suitable, although a few locations (e.g.,
+ exposed hilltops not shown on the maps) with adequate wind resource for
+ wind turbine applications may exist in some class 1 areas.
+\begin_inset Quotes erd
+\end_inset
+
+
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+The Wind Energy Resource Atlas of the United States can be consulted at
+ 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://rredc.nrel.gov/wind/pubs/atlas/chp1.html
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+ Therefore, I choose to compute the percentage of the geographic area of
+ each zip code that is characterized by average wind level of at least class
+ three.
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+Practically, this step is implemented in ArcGIS intersecting the map containing
+ wind level information with that reporting the US zip code boundaries.
+\end_layout
+
+\end_inset
+
+ The results of the analysis that follows remain mainly unchanged if I choose
+ slightly different specifications of the instrument, as for instance adding
+ also areas with average wind of power class two.
+\end_layout
+
+\begin_layout Section
+Results
+\end_layout
+
+\begin_layout Standard
+I now present the main results of the IV approach outlined in the previous
+ section.
+ Table 2 reports the estimates obtained in the first stage.
+ In all specifications standard errors are clustered at the date specific
+ (
+\begin_inset Formula $year\times month$
+\end_inset
+
+) level.
+ The dependent variable is an indicator that is equal to one whenever a
+ wind turbine is present in a certain zip code and month.
+ In column (1), the first row indicates that for a 10% increase in the area
+ of the zip code having wind of at least category three, the probability
+ of receiving a wind turbine increases by more than half percentage points.
+ Column (2) adds to this baseline model the vector of control variables
+ listed before.
+ The size of the coefficient remains basically unchanged, as well as the
+ F-statistic which is highly above the rule-of-thumb threshold of 10.
+ Moving to column (3), I include state and date specific fixed effects.
+ In this case, the coefficient of the first row shows that a 10% increase
+ in the area of a zip code with average wind level of power class of at
+ least three increases by 0.6% the probability that a wind turbine will be
+ assigned to that zip code.
+ The coefficients of the covariates included in column (2) and (3) have
+ generally the expected signs: for instance, zip codes characterized by
+ high elevation have on average a higher probability to be allocated a wind
+ turbine.
+ On the other hand, wind turbines are less frequently found in richer and
+ more populated areas.
+ A somehow less intuitive result comes from the negative coefficient of
+ the variable measuring the percentage of the area of the zip code being
+ urbanized in year 2000.
+ We would in fact expect that wind turbines are more frequently allocated
+ to highly rural zip codes.
+ A possible explanation to reconcile this finding is that wind turbines
+ are not directly placed in urban areas but next to them, in order to represent
+ an alternative source of energy in locations where energy demand is particularl
+y high.
+ Moreover, this could also be a mechanic consequence of the fact that the
+ zip codes for which Zillow collects data on home selling prices are not
+ a random selection of the universe of US zip codes.
+\end_layout
+
+\begin_layout Standard
+Figure 5 is a graphic representation of the first stage just discussed.
+ I first regress the instrument on the vector of covariates together with
+ state fixed effects.
+ Next, I take the residuals obtained from this regression and plot them
+ against the indicator for turbine presence in the zip code.
+ As a last step I fit a local quadratic regression on this data using the
+ rule-of-thumb bandwidth suggested by 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "fan1996local"
+
+\end_inset
+
+.
+ Consistent with the earlier estimates the probability to find a turbine
+ in a given zip code is increasing in the residualized percentage area of
+ the zip code with average wind of category three or higher.
+ Consistently with the monotonicity assumption, also the slope is increasing
+ in the residualized instrumental variable.
+ 
+\end_layout
+
+\begin_layout Standard
+We turn next to the analysis of the results from the OLS regression of median
+ home selling price per square foot on turbine presence, reported in the
+ first three columns of Table 3.
+ Standard errors are clustered at the date specific level in all specifications.
+ The coefficients related to the complete model -- shown in column (3) --
+ suggest that the presence of a turbine in a given zip code decreases the
+ house prices by $20, everything else kept constant.
+ As intuitively expected, distance from the coastline and elevation have
+ also a negative and significant effect on home selling prices, while an
+ opposite relation exists for instance in the case of income per capita.
+\end_layout
+
+\begin_layout Standard
+Despite the OLS coefficient on wind turbine presence shows already some
+ evidence of a negative effect on house prices, this relationship could
+ be biased by the presence of omitted variables and endogeneity in the choice
+ of the area where wind turbines are built.
+ To be able to isolate an exogenous source of variation in wind turbines
+ allocation to zip codes I instrument wind turbine presence with annual
+ average wind level as discussed in the previous section.
+ The coefficients estimated using the IV approach are reported in column
+ (4) to (6).
+ Once again, standard errors in parenthesis are clustered at the date specific
+ level.
+ In all three columns we confirm the hypothesis that wind turbine presence
+ has a negative and statistically significant effect on home values.
+ Focusing on column (6), where I include all controls together with state
+ and date fixed effects, the negative impact on house prices is found to
+ be as large as $122.
+ It is important to notice that the 2SLS coefficients of wind turbine presence
+ are way larger than the correspondent OLS estimates.
+ This is likely due to the presence of measurement error in the price variable
+ that is not completely eliminated by simply dropping outlier observations
+ as discussed before.
+\end_layout
+
+\begin_layout Section
+Event study analysis
+\end_layout
+
+\begin_layout Standard
+As an alternative approach to the instrumental variable estimation, I perform
+ an event study of the effect of wind turbines on house values.
+ In their study of displaced workers' earnings losses, 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "jacobson1993earnings"
+
+\end_inset
+
+ develop a framework to analyze multiple events occurring at different timings.
+ I adopt the notation presented in 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "sandler2012multiple"
+
+\end_inset
+
+, who offer an overview of the recent literature of multiple event studies.
+ Let 
+\begin_inset Formula $y_{zst}$
+\end_inset
+
+ denote the value of houses in zip code 
+\begin_inset Formula $z$
+\end_inset
+
+, state 
+\begin_inset Formula $s$
+\end_inset
+
+ and time
+\begin_inset Formula $t$
+\end_inset
+
+, and call 
+\begin_inset Formula $e^{z}$
+\end_inset
+
+ the date of the event occurring in 
+\begin_inset Formula $z$
+\end_inset
+
+.
+ Then, I can estimate the following model
+\begin_inset Formula 
+\[
+y_{zst}=\sum_{d=-D,d\neq-1}^{D}1(t-e^{z}=d)\beta_{d}+\alpha_{t}+\gamma_{s}+\epsilon_{zst}
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $\alpha_{t}$
+\end_inset
+
+ denote time fixed effects and 
+\begin_inset Formula $\gamma_{s}$
+\end_inset
+
+ capture state fixed effects.
+ 
+\end_layout
+
+\begin_layout Standard
+Figure 6 displays the coefficients 
+\begin_inset Formula $\beta_{d}$
+\end_inset
+
+ of the equation above for the median home selling prices per square foot
+ collected by Zillow.
+ 
+\end_layout
+
+\begin_layout Standard
+The time window considered is 3 years before and after a turbine is erected
+ in a given zip code.
+ Observations in the plot are the coefficients estimated from the sample
+ of zip codes where wind turbines are actually built.
+ This implicit restriction imposed by the event study framework limits the
+ power of this analysis since the dataset I use contains only 269 cases
+ of zip codes where a wind turbine is located and information on house prices
+ is available.
+ Moreover, requiring to observe at least three years before and after the
+ turbine is built limits this sample set even further.
+ The consequence of these restrictions is that no clear pattern emerges
+ from the event study plot shown in Figure 6.
+ More precisely, the figure shows that home selling prices decrease on average
+ the year before a wind turbine is built, but this drop is not different
+ in magnitude than the one measured two years after the event making the
+ interpretation of any of those pattern less credible.
+ Moreover, the standard errors related to the coefficients 
+\begin_inset Formula $\beta_{d}$
+\end_inset
+
+ (not depicted in the figure) are extremely large and eliminate any statistical
+ difference between the observations plotted.
+\end_layout
+
+\begin_layout Section
+Conclusions and future work
+\end_layout
+
+\begin_layout Standard
+This paper investigates the relation between wind turbine presence at the
+ zip code level and home values.
+ It uses the percentage of the area of a given zip code having annual average
+ wind level of category three or more to address problems related to the
+ endogenous placement of wind turbines and other confounding trends.
+ Results from the 2SLS estimation suggest that home selling prices in places
+ that are allocated a wind turbine are on average $120 lower.
+ On the other hand, the event study analysis does not convincingly show
+ any particular trend before and after a wind turbine is constructed.
+ 
+\end_layout
+
+\begin_layout Standard
+Despite the findings discussed in this paper clearly point towards the direction
+ of an existing negative relation between wind turbines presence and home
+ values, this evidence if far from being conclusive.
+ However, Zillow will soon release a new version of its public available
+ house price dataset that will cover the entire US at the census tract level.
+ This will help reducing the issue of sample selection faced by this study
+ and likely add more robustness to its results.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset bibtex
+LatexCommand bibtex
+bibfiles "Ref"
+options "agsm"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+noindent
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+parindent=2em
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+leftskip=0em
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\start_of_appendix
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+setstretch{1.4}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand include
+filename "../output/tables_filled.lyx"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand include
+filename "figures.lyx"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand include
+filename "appendix_figures.lyx"
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document

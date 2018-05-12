@@ -1,0 +1,85 @@
+
+ make.py started: 2018-05-12 20:01:39 C:\Users\giamb\Documents\GitHub\blowin_wind\drafts\source 
+
+
+
+
+Execute:  lyx -e pdf2 ".\blowin_wind.lyx"
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (MiKTeX 2.9.6500)
+
+entering extended mode
+
+(blowin_wind.tex
+
+LaTeX2e <2017-04-15>
+
+Babel <3.17> and hyphenation patterns for 75 language(s) loaded.
+
+
+
+This is BibTeX, Version 0.99d (MiKTeX 2.9.6500)
+
+The top-level auxiliary file: blowin_wind.aux
+
+The style file: agsm.bst
+
+A level-1 auxiliary file: 4C__Users_giamb_Documents_GitHub_blowin_wind_drafts_output_tables_filled.aux
+
+A level-1 auxiliary file: 5C__Users_giamb_Documents_GitHub_blowin_wind_drafts_source_figures.aux
+
+A level-1 auxiliary file: 14C__Users_giamb_Documents_GitHub_blowin_wind_drafts_source_appendix_figures.aux
+
+Database file #1: 3C__Users_giamb_Documents_GitHub_blowin_wind_drafts_source_Ref.bib
+
+Warning--entry type for "energygov" isn't style-file defined
+
+--line 200 of file 3C__Users_giamb_Documents_GitHub_blowin_wind_drafts_source_Ref.bib
+
+(There was 1 warning)
+
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (MiKTeX 2.9.6500)
+
+entering extended mode
+
+(blowin_wind.tex
+
+LaTeX2e <2017-04-15>
+
+Babel <3.17> and hyphenation patterns for 75 language(s) loaded.
+
+
+
+This is BibTeX, Version 0.99d (MiKTeX 2.9.6500)
+
+The top-level auxiliary file: blowin_wind.aux
+
+The style file: agsm.bst
+
+A level-1 auxiliary file: 4C__Users_giamb_Documents_GitHub_blowin_wind_drafts_output_tables_filled.aux
+
+A level-1 auxiliary file: 5C__Users_giamb_Documents_GitHub_blowin_wind_drafts_source_figures.aux
+
+A level-1 auxiliary file: 14C__Users_giamb_Documents_GitHub_blowin_wind_drafts_source_appendix_figures.aux
+
+Database file #1: 3C__Users_giamb_Documents_GitHub_blowin_wind_drafts_source_Ref.bib
+
+Warning--entry type for "energygov" isn't style-file defined
+
+--line 200 of file 3C__Users_giamb_Documents_GitHub_blowin_wind_drafts_source_Ref.bib
+
+(There was 1 warning)
+
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (MiKTeX 2.9.6500)
+
+entering extended mode
+
+(blowin_wind.tex
+
+LaTeX2e <2017-04-15>
+
+Babel <3.17> and hyphenation patterns for 75 language(s) loaded.
+
+
+
+
+ make.py ended: 2018-05-12 20:01:50
