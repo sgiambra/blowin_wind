@@ -12,54 +12,61 @@ program main
 
     build_descriptive_table, depvar(`depvar') endog("D.aggr_turb_tract_year") ///
             instr(`instr') time_fe(year) cluster(tract_fip)
-    matrix fs_table  = r(fs_col)
-    matrix ols_table = r(ols_col)
-    matrix iv_table  = r(iv_col)
+    matrix fs_table  = r(fs_cols)
+    matrix ols_block = r(ols_cols)
+    matrix iv_block  = r(iv_cols)
 
     use "${GoogleDrive}/stata/build_wind_panel/wind_panel_zip_fhfa.dta", clear
 
     build_descriptive_table, depvar(`depvar') endog("D.aggr_turb_zip_year") ///
             instr(`instr') time_fe(year) cluster(regionname)
-    matrix fs_table  = (fs_table, r(fs_col))
-    matrix ols_table = (ols_table, r(ols_col))
-    matrix iv_table  = (iv_table, r(iv_col))
+    matrix fs_table  = (fs_table, r(fs_cols))
+    matrix ols_block = (ols_block, r(ols_cols))
+    matrix iv_block  = (iv_block, r(iv_cols))
 
     foreach file in "wind_panel_zip_median_listing_sqft" "wind_panel_zip_zhvi" {
         use "${GoogleDrive}/stata/build_wind_panel/`file'.dta", clear
 
         build_descriptive_table, depvar(`depvar') endog("D.aggr_turb_zip_month") ///
             instr(`instr') time_fe(dt) cluster(regionname)
-        matrix fs_table  = (nullmat(fs_table), r(fs_col))
-        matrix ols_table = (nullmat(ols_table), r(ols_col))
-        matrix iv_table  = (nullmat(iv_table), r(iv_col))
+        matrix fs_table  = (fs_table, r(fs_cols))
+        matrix ols_block = (ols_block, r(ols_cols))
+        matrix iv_block  = (iv_block, r(iv_cols))
     }
+    matrix reg_table = (ols_block, iv_block)
 
     matrix_to_txt, saving(`table_file') mat(fs_table) ///
         format(%20.5f) title(<tab:descr_fs>) replace
-    matrix_to_txt, saving(`table_file') mat(ols_table) ///
-        format(%20.5f) title(<tab:descr_ols>) append
-    matrix_to_txt, saving(`table_file') mat(iv_table) ///
-        format(%20.5f) title(<tab:descr_iv>) append
+    matrix_to_txt, saving(`table_file') mat(reg_table) ///
+        format(%20.5f) title(<tab:descr_reg>) append
 end
 
 program build_descriptive_table, rclass
-    syntax, depvar(str) endog(str) instr(str) time_fe(str) [controls(str) *]
+    syntax, depvar(str) endog(str) instr(str) time_fe(str) [*]
 
     local obs    = "e(N_clust) \ e(N)"
     local ss_est = "_b[`endog'] \ _se[`endog']"
     local fs_est = "_b[`instr'] \ _se[`instr']"
 
-    reghdfe `endog' `instr' `controls', absorb(`time_fe') `options'
-    matrix fs_col = (`fs_est' \ `obs')
+    foreach control in "" "i.state" {
+        if "`control'" != "" {
+            local stub "_c"
+        } 
+        reghdfe `endog' `instr' `control', absorb(`time_fe') `options'
+        matrix fs_col`stub' = (`fs_est' \ `obs')
 
-    reghdfe `depvar' `controls' `endog', absorb(`time_fe') `options'
-    matrix ols_col = (`ss_est' \ `obs')
-    reghdfe `depvar' `controls' (`endog' = `instr'), absorb(`time_fe') `options'
-    matrix iv_col = (`ss_est' \ `obs')
+        reghdfe `depvar' `control' `endog', absorb(`time_fe') `options'
+        matrix ols_col`stub' = (`ss_est' \ `obs')
+        reghdfe `depvar' `control' (`endog' = `instr'), absorb(`time_fe') `options'
+        matrix iv_col`stub' = (`ss_est' \ `obs')
+    }
 
-    return matrix fs_col  = fs_col
-    return matrix ols_col = ols_col
-    return matrix iv_col  = iv_col
+    foreach mat in fs_col ols_col iv_col {
+        matrix `mat's = (`mat', `mat'_c)
+    }
+    return matrix fs_cols  = fs_cols
+    return matrix ols_cols = ols_cols
+    return matrix iv_cols  = iv_cols
 end
 
 * Execute

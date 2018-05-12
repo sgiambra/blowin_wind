@@ -63,7 +63,7 @@ program build_zillow
 
     rename regionname zipcode
     merge 1:1 zipcode using "${GoogleDrive}/stata/zip_zcta_xwalk.dta", ///
-        nogen keep(3) assert(1 2 3)
+        nogen keep(3) assert(1 2 3) keepusing(regionname)
     drop zipcode
 
     collapse (mean) p* (first) city state metro county = county*, by(regionname)
@@ -80,8 +80,8 @@ program build_wind_panel_zip_month
 
     use "../temp/zillow_prices.dta", clear
 
-    egen county_nbr = group(county state)
-    egen state_nbr  = group(state)
+    rename state state_str
+    egen state = group(state_str)
     gen ln_p = log(p)
     
     merge 1:1 regionname dt using "../temp/turbines_zip.dta", ///

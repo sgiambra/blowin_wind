@@ -19,8 +19,8 @@ set_option(link_logs_dir = '../output')
 clear_dirs('../output', '../temp', google_drive)
 start_make_logging()
 
-run_stata(program='build_wind_panel_zillow.do', executable='StataSE-64')
-run_stata(program='build_wind_panel_fhfa.do', executable='StataSE-64')
+run_stata(program='build_wind_panel_zillow.do', executable='StataMP-64')
+run_stata(program='build_wind_panel_fhfa.do', executable='StataMP-64')
 
 end_make_logging()
 

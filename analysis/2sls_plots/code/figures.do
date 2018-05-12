@@ -4,7 +4,7 @@ adopath + ../../../lib/third_party/stata_tools
 preliminaries, loadglob("../../../lib/python/wind/input_params.txt")
 
 program main
-    local controls "i.year"
+    local controls "i.year i.state"
 
     foreach stub in "zip" "tract" {
         use "${GoogleDrive}/stata/build_wind_panel/wind_panel_`stub'_fhfa.dta", clear
@@ -20,9 +20,11 @@ program main
             xtitle(`: var label first_us_turb_pot_wind_cap') ytitle(`: var label delta_lnp')
         graph export "../output/price_change_wind_binsc_`stub'.png", replace
 
-        * Residualize instrument
-        reg first_us_turb_pot_wind_cap `controls'
-        predict first_us_turb_pot_wind_cap_adj, residuals
+        * Residualize variables
+        foreach var in first_us_turb_pot_wind_cap delta_lnp delta_turbines {
+            reg `var' `controls'
+            predict `var'_adj, residuals
+        }
         label var first_us_turb_pot_wind_cap_adj "Residualized area with wind power capacity > 30% x time first turbine US"
 
         foreach type in "" "_adj" {
@@ -33,7 +35,7 @@ program main
 
         local inst_list   = "first_us_turb_pot_wind_cap first_us_turb_pot_wind_cap_adj first_us_turb_pot_wind_cap first_us_turb_pot_wind_cap_adj"
         local saving_list = "first_stage_`stub' fist_stage_adj_`stub' second_stage_`stub' second_stage_adj_`stub'"
-        local var_list    = "delta_turbines delta_turbines delta_lnp delta_lnp"
+        local var_list    = "delta_turbines delta_turbines_adj delta_lnp delta_lnp_adj"
         local range_list  = `""`rng_min' `rng_max'" "`rng_min_adj' `rng_max_adj'" "`rng_min' `rng_max'" "`rng_min_adj' `rng_max_adj'""'
 
         forval col_index = 1/4 {

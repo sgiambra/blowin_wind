@@ -81,7 +81,8 @@ program build_zip_zcta_xwalk
     
     destring ZIP_CODE, gen(zipcode)
     destring ZCTA, gen(regionname)
-    keep zipcode regionname
+    egen state = group(STATE)
+    keep zipcode regionname state
     
     save_data "${GoogleDrive}/stata/zip_zcta_xwalk.dta", key(zipcode) replace
 end

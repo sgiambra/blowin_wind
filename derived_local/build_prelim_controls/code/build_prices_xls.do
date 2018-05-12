@@ -23,7 +23,7 @@ program build_zillow_xls
 
     rename regionname zipcode
     merge 1:1 zipcode using "${GoogleDrive}/stata/zip_zcta_xwalk.dta", ///
-        nogen keep(3) assert(1 2 3)
+        nogen keep(3) assert(1 2 3) keepusing(regionname)
     drop zipcode
 
     collapse (mean) p* (first) city state metro countyname, by(regionname) 

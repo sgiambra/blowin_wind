@@ -19,9 +19,9 @@ set_option(link_logs_dir = '../output')
 clear_dirs('../output', '../temp', google_drive)
 start_make_logging()
 
-run_stata(program='build_zip_controls.do', executable='StataSE-64')
-run_stata(program='build_wind.do', executable='StataSE-64')
-run_stata(program='build_prices_xls.do', executable='StataSE-64')
+run_stata(program='build_zip_controls.do', executable='StataMP-64')
+run_stata(program='build_wind.do', executable='StataMP-64')
+run_stata(program='build_prices_xls.do', executable='StataMP-64')
 
 end_make_logging()
 

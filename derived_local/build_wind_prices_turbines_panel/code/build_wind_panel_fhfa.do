@@ -43,6 +43,7 @@ program build_wind_panel_tract_year
     import delimited "${GoogleDrive}/raw_data/house_prices/fhfa/HPI_AT_BDL_tract.csv", ///
         stringcols(1) clear
     rename tract tract_fip
+    egen state = group(state_abbr)
     merge_turbine_wind, geo(tract_fip) stub(tract) farm_threshold(`farm_threshold')
 end
 
@@ -65,7 +66,10 @@ program build_wind_panel_zip_year
     foreach var of varlist _all {
         destring `var', replace
     }
-    rename (FiveDigitZIPCode Year HPI) (regionname year hpi)
+    rename (FiveDigitZIPCode Year HPI) (zipcode year hpi)
+    merge m:1 zipcode using "${GoogleDrive}/stata/zip_zcta_xwalk.dta", ///
+        nogen assert(1 2 3) keep(3) keepusing(state)
+    rename zipcode regionname
     merge_turbine_wind, geo(regionname) stub(zip) farm_threshold(`farm_threshold')
 
     merge m:1 regionname using "${GoogleDrive}/stata/build_prelim_controls/zip_controls.dta", ///

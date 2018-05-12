@@ -1,38 +1,39 @@
 
- make.py started: 2018-04-02 16:03:27 C:\Users\giamb\Documents\GitHub\blowin_wind\derived_local\build_prelim_controls\code 
+ make.py started: 2018-05-12 13:02:31 C:\Users\giamb\Documents\GitHub\blowin_wind\derived_local\build_prelim_controls\code 
 
 
 
 
-Execute:  StataSE-64 /e do "./build_zip_controls.do"
+Execute:  StataMP-64 /e do "./build_zip_controls.do"
 
   ___  ____  ____  ____  ____ (R)
  /__    /   ____/   /   ____/
 ___/   /   /___/   /   /___/   15.0   Copyright 1985-2017 StataCorp LLC
   Statistics/Data Analysis            StataCorp
                                       4905 Lakeway Drive
-     Special Edition                  College Station, Texas 77845 USA
+     MP - Parallel Edition            College Station, Texas 77845 USA
                                       800-STATA-PC        http://www.stata.com
                                       979-696-4600        stata@stata.com
                                       979-696-4601 (fax)
 
-110-user Stata network perpetual license:
-       Serial number:  401506201178
-         Licensed to:  Brown University
-                       Brown University
+Single-user 32-core Stata perpetual license:
+       Serial number:  501506205566
+         Licensed to:  KU Leuven FEB (CES)
+                       KU Leuven
 
 Notes:
       1.  Stata is running in batch mode.
       2.  Unicode is supported; see help unicode_advice.
-      3.  Maximum number of variables is set to 5000; see help set_maxvar.
+      3.  More than 2 billion observations are allowed; see help obs_advice.
+      4.  Maximum number of variables is set to 5000; see help set_maxvar.
 
 . do ./build_zip_controls.do 
 
 . set more off
 
 . adopath + ../../../lib/stata/gslab_misc/ado
-  [1]  (BASE)      "C:\Program Files (x86)\Stata15\ado\base/"
-  [2]  (SITE)      "C:\Program Files (x86)\Stata15\ado\site/"
+  [1]  (BASE)      "C:\Stata15\ado\base/"
+  [2]  (SITE)      "C:\Stata15\ado\site/"
   [3]              "."
   [4]  (PERSONAL)  "c:\ado\personal/"
   [5]  (PLUS)      "c:\ado\plus/"
@@ -40,8 +41,8 @@ Notes:
   [7]              "../../../lib/stata/gslab_misc/ado"
 
 . adopath + ../../../lib/third_party/stata_tools
-  [1]  (BASE)      "C:\Program Files (x86)\Stata15\ado\base/"
-  [2]  (SITE)      "C:\Program Files (x86)\Stata15\ado\site/"
+  [1]  (BASE)      "C:\Stata15\ado\base/"
+  [2]  (SITE)      "C:\Stata15\ado\site/"
   [3]              "."
   [4]  (PERSONAL)  "c:\ado\personal/"
   [5]  (PLUS)      "c:\ado\plus/"
@@ -132,10 +133,11 @@ Notes:
   2.     
 .     destring ZIP_CODE, gen(zipcode)
   3.     destring ZCTA, gen(regionname)
-  4.     keep zipcode regionname
-  5.     
+  4.     egen state = group(STATE)
+  5.     keep zipcode regionname state
+  6.     
 .     save_data "${GoogleDrive}/stata/zip_zcta_xwalk.dta", key(zipcode) replace
-  6. end
+  7. end
 
 . 
 . * Execute
@@ -244,17 +246,19 @@ file ../temp/pop_controls.dta saved
 ZIP_CODE: all characters numeric; zipcode generated as long
 ZCTA: all characters numeric; regionname generated as long
 (data now sorted by zipcode)
-  (0 bytes saved)
+  variable state was float now byte
+  (123,552 bytes saved)
 ==================================================================================================
 File: G:/My Drive/research projects/wind/stata/zip_zcta_xwalk.dta
 Key: zipcode
 ==================================================================================================
-  41184:2(122201):1069770470:2172241517
+  41184:3(83245):708689984:4283793158
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
      zipcode |     41,184    49588.09    27937.71        501      99950
   regionname |     41,184    49555.32    27927.68        601      99929
+       state |     41,184    28.89867    15.78168          1         56
 
 
 
@@ -287,7 +291,7 @@ zipcode already numeric; no replace
 File: G:/My Drive/research projects/wind/stata/build_prelim_controls/zip_controls.dta
 Key: regionname
 ==================================================================================================
-  27511:12(57840):2815889337:4162229602
+  27511:13(54099):3416279930:30394139
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
@@ -297,12 +301,13 @@ Key: regionname
 adj_gr_inc~e |     27,511    289628.5    474298.5       1706   1.17e+07
   avg_income |     27,511    53.17259    38.25005   5.001689   2368.675
 -------------+---------------------------------------------------------
+       state |     27,511    29.21657    15.37286          1         56
   male_ratio |     27,511    .4992528     .029497   .1522716   .9701023
          pop |     27,511    11048.73    14285.47          4     113916
  white_ratio |     27,511    .8326477    .1972321   .0040855          1
  black_ratio |     27,511    .0815186     .159848          0   .9825632
- asian_ratio |     27,511     .020213    .0486299          0   .7158496
 -------------+---------------------------------------------------------
+ asian_ratio |     27,511     .020213    .0486299          0   .7158496
    elevation |     27,511    331.3374    397.9725        -69       3631
    near_dist |     27,511    279.3247    286.1438   .0020966   1316.173
 
@@ -316,35 +321,36 @@ file G:/My Drive/research projects/wind/stata/build_prelim_controls/zip_controls
 end of do-file
 
 
-Execute:  StataSE-64 /e do "./build_wind.do"
+Execute:  StataMP-64 /e do "./build_wind.do"
 
   ___  ____  ____  ____  ____ (R)
  /__    /   ____/   /   ____/
 ___/   /   /___/   /   /___/   15.0   Copyright 1985-2017 StataCorp LLC
   Statistics/Data Analysis            StataCorp
                                       4905 Lakeway Drive
-     Special Edition                  College Station, Texas 77845 USA
+     MP - Parallel Edition            College Station, Texas 77845 USA
                                       800-STATA-PC        http://www.stata.com
                                       979-696-4600        stata@stata.com
                                       979-696-4601 (fax)
 
-110-user Stata network perpetual license:
-       Serial number:  401506201178
-         Licensed to:  Brown University
-                       Brown University
+Single-user 32-core Stata perpetual license:
+       Serial number:  501506205566
+         Licensed to:  KU Leuven FEB (CES)
+                       KU Leuven
 
 Notes:
       1.  Stata is running in batch mode.
       2.  Unicode is supported; see help unicode_advice.
-      3.  Maximum number of variables is set to 5000; see help set_maxvar.
+      3.  More than 2 billion observations are allowed; see help obs_advice.
+      4.  Maximum number of variables is set to 5000; see help set_maxvar.
 
 . do ./build_wind.do 
 
 . set more off
 
 . adopath + ../../../lib/stata/gslab_misc/ado
-  [1]  (BASE)      "C:\Program Files (x86)\Stata15\ado\base/"
-  [2]  (SITE)      "C:\Program Files (x86)\Stata15\ado\site/"
+  [1]  (BASE)      "C:\Stata15\ado\base/"
+  [2]  (SITE)      "C:\Stata15\ado\site/"
   [3]              "."
   [4]  (PERSONAL)  "c:\ado\personal/"
   [5]  (PLUS)      "c:\ado\plus/"
@@ -352,8 +358,8 @@ Notes:
   [7]              "../../../lib/stata/gslab_misc/ado"
 
 . adopath + ../../../lib/third_party/stata_tools
-  [1]  (BASE)      "C:\Program Files (x86)\Stata15\ado\base/"
-  [2]  (SITE)      "C:\Program Files (x86)\Stata15\ado\site/"
+  [1]  (BASE)      "C:\Stata15\ado\base/"
+  [2]  (SITE)      "C:\Stata15\ado\site/"
   [3]              "."
   [4]  (PERSONAL)  "c:\ado\personal/"
   [5]  (PLUS)      "c:\ado\plus/"
@@ -568,35 +574,36 @@ warning: nquantiles(20) was specified, but only 13 were generated. see help file
 end of do-file
 
 
-Execute:  StataSE-64 /e do "./build_prices_xls.do"
+Execute:  StataMP-64 /e do "./build_prices_xls.do"
 
   ___  ____  ____  ____  ____ (R)
  /__    /   ____/   /   ____/
 ___/   /   /___/   /   /___/   15.0   Copyright 1985-2017 StataCorp LLC
   Statistics/Data Analysis            StataCorp
                                       4905 Lakeway Drive
-     Special Edition                  College Station, Texas 77845 USA
+     MP - Parallel Edition            College Station, Texas 77845 USA
                                       800-STATA-PC        http://www.stata.com
                                       979-696-4600        stata@stata.com
                                       979-696-4601 (fax)
 
-110-user Stata network perpetual license:
-       Serial number:  401506201178
-         Licensed to:  Brown University
-                       Brown University
+Single-user 32-core Stata perpetual license:
+       Serial number:  501506205566
+         Licensed to:  KU Leuven FEB (CES)
+                       KU Leuven
 
 Notes:
       1.  Stata is running in batch mode.
       2.  Unicode is supported; see help unicode_advice.
-      3.  Maximum number of variables is set to 5000; see help set_maxvar.
+      3.  More than 2 billion observations are allowed; see help obs_advice.
+      4.  Maximum number of variables is set to 5000; see help set_maxvar.
 
 . do ./build_prices_xls.do 
 
 . set more off
 
 . adopath + ../../../lib/stata/gslab_misc/ado
-  [1]  (BASE)      "C:\Program Files (x86)\Stata15\ado\base/"
-  [2]  (SITE)      "C:\Program Files (x86)\Stata15\ado\site/"
+  [1]  (BASE)      "C:\Stata15\ado\base/"
+  [2]  (SITE)      "C:\Stata15\ado\site/"
   [3]              "."
   [4]  (PERSONAL)  "c:\ado\personal/"
   [5]  (PLUS)      "c:\ado\plus/"
@@ -604,8 +611,8 @@ Notes:
   [7]              "../../../lib/stata/gslab_misc/ado"
 
 . adopath + ../../../lib/third_party/stata_tools
-  [1]  (BASE)      "C:\Program Files (x86)\Stata15\ado\base/"
-  [2]  (SITE)      "C:\Program Files (x86)\Stata15\ado\site/"
+  [1]  (BASE)      "C:\Stata15\ado\base/"
+  [2]  (SITE)      "C:\Stata15\ado\site/"
   [3]              "."
   [4]  (PERSONAL)  "c:\ado\personal/"
   [5]  (PLUS)      "c:\ado\plus/"
@@ -637,7 +644,7 @@ Notes:
  10. 
 .     rename regionname zipcode
  11.     merge 1:1 zipcode using "${GoogleDrive}/stata/zip_zcta_xwalk.dta", ///
->         nogen keep(3) assert(1 2 3)
+>         nogen keep(3) assert(1 2 3) keepusing(regionname)
  12.     drop zipcode
  13. 
 .     collapse (mean) p* (first) city state metro countyname, by(regionname) 
@@ -842,4 +849,4 @@ file G:/My Drive/research projects/wind/stata/fhfa_zip.xls saved
 . 
 end of do-file
 
- make.py ended: 2018-04-02 16:04:46
+ make.py ended: 2018-05-12 13:04:17
