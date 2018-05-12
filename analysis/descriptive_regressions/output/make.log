@@ -1,5 +1,5 @@
 
- make.py started: 2018-05-12 14:30:02 C:\Users\giamb\Documents\GitHub\blowin_wind\analysis\descriptive_regressions\code 
+ make.py started: 2018-05-12 15:45:28 C:\Users\giamb\Documents\GitHub\blowin_wind\analysis\descriptive_regressions\code 
 
 
 
@@ -63,16 +63,16 @@ Notes:
 .     build_descriptive_table, depvar(`depvar') endog("D.aggr_turb_tract_year") ///
 >             instr(`instr') time_fe(year) cluster(tract_fip)
   6.     matrix fs_table  = r(fs_cols)
-  7.     matrix ols_block = r(ols_cols)
-  8.     matrix iv_block  = r(iv_cols)
+  7.     matrix ols_table = r(ols_cols)
+  8.     matrix iv_table  = r(iv_cols)
   9. 
 .     use "${GoogleDrive}/stata/build_wind_panel/wind_panel_zip_fhfa.dta", clear
  10. 
 .     build_descriptive_table, depvar(`depvar') endog("D.aggr_turb_zip_year") ///
 >             instr(`instr') time_fe(year) cluster(regionname)
  11.     matrix fs_table  = (fs_table, r(fs_cols))
- 12.     matrix ols_block = (ols_block, r(ols_cols))
- 13.     matrix iv_block  = (iv_block, r(iv_cols))
+ 12.     matrix ols_table = (ols_table, r(ols_cols))
+ 13.     matrix iv_table  = (iv_table, r(iv_cols))
  14. 
 .     foreach file in "wind_panel_zip_median_listing_sqft" "wind_panel_zip_zhvi" {
  15.         use "${GoogleDrive}/stata/build_wind_panel/`file'.dta", clear
@@ -80,15 +80,16 @@ Notes:
 .         build_descriptive_table, depvar(`depvar') endog("D.aggr_turb_zip_month") ///
 >             instr(`instr') time_fe(dt) cluster(regionname)
  17.         matrix fs_table  = (fs_table, r(fs_cols))
- 18.         matrix ols_block = (ols_block, r(ols_cols))
- 19.         matrix iv_block  = (iv_block, r(iv_cols))
+ 18.         matrix ols_table = (ols_table, r(ols_cols))
+ 19.         matrix iv_table  = (iv_table, r(iv_cols))
  20.     }
- 21.     matrix reg_table = (ols_block, iv_block)
- 22. 
+ 21. 
 .     matrix_to_txt, saving(`table_file') mat(fs_table) ///
 >         format(%20.5f) title(<tab:descr_fs>) replace
- 23.     matrix_to_txt, saving(`table_file') mat(reg_table) ///
->         format(%20.5f) title(<tab:descr_reg>) append
+ 22.     matrix_to_txt, saving(`table_file') mat(ols_table) ///
+>         format(%20.5f) title(<tab:descr_ols>) append
+ 23.     matrix_to_txt, saving(`table_file') mat(iv_table) ///
+>         format(%20.5f) title(<tab:descr_iv>) append
  24. end
 
 . 
@@ -1528,4 +1529,4 @@ Absorbed degrees of freedom:
 . 
 end of do-file
 
- make.py ended: 2018-05-12 14:38:45
+ make.py ended: 2018-05-12 15:53:12

@@ -13,16 +13,16 @@ program main
     build_descriptive_table, depvar(`depvar') endog("D.aggr_turb_tract_year") ///
             instr(`instr') time_fe(year) cluster(tract_fip)
     matrix fs_table  = r(fs_cols)
-    matrix ols_block = r(ols_cols)
-    matrix iv_block  = r(iv_cols)
+    matrix ols_table = r(ols_cols)
+    matrix iv_table  = r(iv_cols)
 
     use "${GoogleDrive}/stata/build_wind_panel/wind_panel_zip_fhfa.dta", clear
 
     build_descriptive_table, depvar(`depvar') endog("D.aggr_turb_zip_year") ///
             instr(`instr') time_fe(year) cluster(regionname)
     matrix fs_table  = (fs_table, r(fs_cols))
-    matrix ols_block = (ols_block, r(ols_cols))
-    matrix iv_block  = (iv_block, r(iv_cols))
+    matrix ols_table = (ols_table, r(ols_cols))
+    matrix iv_table  = (iv_table, r(iv_cols))
 
     foreach file in "wind_panel_zip_median_listing_sqft" "wind_panel_zip_zhvi" {
         use "${GoogleDrive}/stata/build_wind_panel/`file'.dta", clear
@@ -30,15 +30,16 @@ program main
         build_descriptive_table, depvar(`depvar') endog("D.aggr_turb_zip_month") ///
             instr(`instr') time_fe(dt) cluster(regionname)
         matrix fs_table  = (fs_table, r(fs_cols))
-        matrix ols_block = (ols_block, r(ols_cols))
-        matrix iv_block  = (iv_block, r(iv_cols))
+        matrix ols_table = (ols_table, r(ols_cols))
+        matrix iv_table  = (iv_table, r(iv_cols))
     }
-    matrix reg_table = (ols_block, iv_block)
 
     matrix_to_txt, saving(`table_file') mat(fs_table) ///
         format(%20.5f) title(<tab:descr_fs>) replace
-    matrix_to_txt, saving(`table_file') mat(reg_table) ///
-        format(%20.5f) title(<tab:descr_reg>) append
+    matrix_to_txt, saving(`table_file') mat(ols_table) ///
+        format(%20.5f) title(<tab:descr_ols>) append
+    matrix_to_txt, saving(`table_file') mat(iv_table) ///
+        format(%20.5f) title(<tab:descr_iv>) append
 end
 
 program build_descriptive_table, rclass
