@@ -4,14 +4,16 @@ adopath + ../../../lib/third_party/stata_tools
 preliminaries, loadglob("../../../lib/python/wind/input_params.txt")
 
 program main
-    build_wind_farms
+    build_wind_farms, built_time(dtbuilt)
     build_wind_panel_tract_year, farm_threshold(10)
     build_wind_panel_zip_year, farm_threshold(10)
 end
 
 program build_wind_farms
+    syntax, built_time(str)
+
     import delimited "${GoogleDrive}/gis_derived/tract_turbines.csv", clear
-    keep objectid_1 dtbuilt sprname geo_id agldet
+    keep objectid_1 dtbuilt sprname geo_id agldet wsbegdt wsenddt recdate compdate
 
     save_data "../temp/turbines_tract.dta", key(objectid_1) replace
     import delimited "${GoogleDrive}/gis_derived/census_tracts.csv", stringcols(2 3 4) clear
@@ -19,7 +21,7 @@ program build_wind_farms
     merge 1:m geo_id using "../temp/turbines_tract.dta", ///
         nogen assert(1 2 3) keep(3)
     
-    gen date = date(dtbuilt, "YMDhms")
+    gen date = date(`built_time', "YMDhms")
     gen dt = mofd(date)
     format dt %tm
     generate year = year(date)

@@ -37,15 +37,18 @@ program main
 
     save_data "../temp/wind_panel_tract_fhfa_event_panel.dta", key(tract_fip year) replace
 
-    use "${GoogleDrive}/stata/build_wind_panel/wind_panel_zip_fhfa.dta", clear 
-    generate_reggroups, window(`nbr_years') time(year) geo(regionname)
-    *balance_panel, time(year) geo(regionname)
+    foreach stub in "" "_hazard" "_notdetermined" "_nobuiltdate" {
+        use "${GoogleDrive}/stata/build_wind_panel/wind_panel_zip_fhfa`stub'.dta", clear 
+        generate_reggroups, window(`nbr_years') time(year) geo(regionname)
+        *balance_panel, time(year) geo(regionname)
     
-    label var relative_ev_year_reggroups ///
-        "Years relative to completion of first wind farm in ZIP code"
-    label var ln_p "Log HPI"
+        label var relative_ev_year_reggroups ///
+            "Years relative to completion of first wind farm in ZIP code"
+        label var ln_p "Log HPI"
 
-    save_data "../temp/wind_panel_zip_fhfa_event_panel.dta", key(regionname year) replace
+        save_data "../temp/wind_panel_zip_fhfa_event_panel`stub'.dta", ///
+            key(regionname year) replace
+    }
 end
 
 program generate_reggroups

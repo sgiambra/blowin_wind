@@ -1,5 +1,5 @@
 
- make.py started: 2018-05-12 13:22:48 C:\Users\giamb\Documents\GitHub\blowin_wind\derived_local\build_wind_prices_turbines_panel\code 
+ make.py started: 2018-05-13 17:06:49 C:\Users\giamb\Documents\GitHub\blowin_wind\derived_local\build_wind_prices_turbines_panel\code 
 
 
 
@@ -59,7 +59,7 @@ Notes:
   2.     local output_file_list = "wind_panel_zip_median_listing_sqft " + ///
 >                              "wind_panel_zip_zhvi"
   3. 
-.     build_wind_farms
+.     build_wind_farms, built_time(dtbuilt)
   4. 
 .     forval col_index = 1/2 {
   5.         local inpt : word `col_index' of `input_file_list'
@@ -73,31 +73,33 @@ Notes:
 
 . 
 . program build_wind_farms
-  1.     import delimited "${GoogleDrive}/gis_derived/zip_turbines.csv", clear
-  2.     keep objectid_1 dtbuilt sprname zcta5ce10 agldet
-  3.     keep if !missing(zcta5ce10)
-  4.     
-.     gen date = date(dtbuilt, "YMDhms")
-  5.     gen dt = mofd(date)
-  6.     format dt %tm
-  7.     gen year = year(date)
-  8.     keep if year > 1930 & year <= 2018
-  9.     
+  1.     syntax, built_time(str)
+  2. 
+.     import delimited "${GoogleDrive}/gis_derived/zip_turbines.csv", clear
+  3.     keep objectid_1 dtbuilt sprname zcta5ce10 agldet wsbegdt wsenddt recdate compdate
+  4.     keep if !missing(zcta5ce10)
+  5.     
+.     gen date = date(`built_time', "YMDhms")
+  6.     gen dt = mofd(date)
+  7.     format dt %tm
+  8.     gen year = year(date)
+  9.     keep if year > 1930 & year <= 2018
+ 10.     
 .     drop if missing(agldet)
- 10.     qui sum agldet, det
- 11.     keep if agldet > `r(p1)'
- 12. 
+ 11.     qui sum agldet, det
+ 12.     keep if agldet > `r(p1)'
+ 13. 
 .     save_data "${GoogleDrive}/stata/build_wind_panel/new_turbines_zip.dta", ///
 >         key(objectid_1) nopreserve replace
- 13. 
+ 14. 
 .     collapse (count) new_turbines_zip_month = objectid_1, by(zcta5ce10 dt)
- 14.     bys zcta5ce10 (dt): gen aggr_turb_zip_month = sum(new_turbines_zip_month)
- 15.     rename zcta5ce10 regionname
- 16.     save_data "../temp/turbines_zip.dta", key(regionname dt) replace
- 17. 
+ 15.     bys zcta5ce10 (dt): gen aggr_turb_zip_month = sum(new_turbines_zip_month)
+ 16.     rename zcta5ce10 regionname
+ 17.     save_data "../temp/turbines_zip.dta", key(regionname dt) replace
+ 18. 
 .     collapse (sum) new_turb_us_month = new_turbines_zip_month, by(dt)
- 18.     save_data "../temp/new_turbines_us_month.dta", key(dt) replace
- 19. end
+ 19.     save_data "../temp/new_turbines_us_month.dta", key(dt) replace
+ 20. end
 
 . 
 . program build_zillow
@@ -197,17 +199,22 @@ Notes:
 File: G:/My Drive/research projects/wind/stata/build_wind_panel/new_turbines_zip.dta
 Key: objectid_1
 ==================================================================================================
-  43556:8(68223):1506343205:138954117
+  43556:12(78609):3064154653:4170486196
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
   objectid_1 |     43,556    24172.95    13918.41         90      47761
+     recdate |          0
+    compdate |          0
+     wsbegdt |          0
+     wsenddt |          0
+-------------+---------------------------------------------------------
      dtbuilt |          0
       agldet |     43,556    413.7781    53.83387        200        657
      sprname |          0
    zcta5ce10 |     43,556     67536.4    19672.04        718      99762
--------------+---------------------------------------------------------
         date |     43,556    18894.63    1479.228      14167      21220
+-------------+---------------------------------------------------------
           dt |     43,556    620.2892    48.60219        465        697
         year |     43,556    2011.118    4.052298       1998       2018
 
@@ -725,39 +732,41 @@ Notes:
 
 . 
 . program main
-  1.     build_wind_farms
+  1.     build_wind_farms, built_time(dtbuilt)
   2.     build_wind_panel_tract_year, farm_threshold(10)
   3.     build_wind_panel_zip_year, farm_threshold(10)
   4. end
 
 . 
 . program build_wind_farms
-  1.     import delimited "${GoogleDrive}/gis_derived/tract_turbines.csv", clear
-  2.     keep objectid_1 dtbuilt sprname geo_id agldet
-  3. 
+  1.     syntax, built_time(str)
+  2. 
+.     import delimited "${GoogleDrive}/gis_derived/tract_turbines.csv", clear
+  3.     keep objectid_1 dtbuilt sprname geo_id agldet wsbegdt wsenddt recdate compdate
+  4. 
 .     save_data "../temp/turbines_tract.dta", key(objectid_1) replace
-  4.     import delimited "${GoogleDrive}/gis_derived/census_tracts.csv", stringcols(2 3 4) clear
-  5.     gen tract_fip = state + county + tract
-  6.     merge 1:m geo_id using "../temp/turbines_tract.dta", ///
+  5.     import delimited "${GoogleDrive}/gis_derived/census_tracts.csv", stringcols(2 3 4) clear
+  6.     gen tract_fip = state + county + tract
+  7.     merge 1:m geo_id using "../temp/turbines_tract.dta", ///
 >         nogen assert(1 2 3) keep(3)
-  7.     
-.     gen date = date(dtbuilt, "YMDhms")
-  8.     gen dt = mofd(date)
-  9.     format dt %tm
- 10.     generate year = year(date)
- 11.     keep if year > 1930 & year <= 2018
- 12.     
+  8.     
+.     gen date = date(`built_time', "YMDhms")
+  9.     gen dt = mofd(date)
+ 10.     format dt %tm
+ 11.     generate year = year(date)
+ 12.     keep if year > 1930 & year <= 2018
+ 13.     
 .     drop if missing(agldet)
- 13.     qui sum agldet, det
- 14.     keep if agldet > `r(p1)'
- 15. 
+ 14.     qui sum agldet, det
+ 15.     keep if agldet > `r(p1)'
+ 16. 
 .     collapse (count) new_turbines_tract_year = objectid_1, by(tract_fip year)
- 16.     bys tract_fip (year): gen aggr_turb_tract_year = sum(new_turbines_tract_year)
- 17.     save_data "../temp/turbines_tract.dta", key(tract_fip year) replace
- 18. 
+ 17.     bys tract_fip (year): gen aggr_turb_tract_year = sum(new_turbines_tract_year)
+ 18.     save_data "../temp/turbines_tract.dta", key(tract_fip year) replace
+ 19. 
 .     collapse (sum) new_turb_us_year = new_turbines_tract_year, by(year)
- 19.     save_data "../temp/new_turbines_us_year.dta", key(year) replace
- 20. end
+ 20.     save_data "../temp/new_turbines_us_year.dta", key(year) replace
+ 21. end
 
 . 
 . program build_wind_panel_tract_year
@@ -855,11 +864,16 @@ Notes:
 File: ../temp/turbines_tract.dta
 Key: objectid_1
 ==================================================================================================
-  47761:5(34176):1637892544:3807833795
+  47761:9(71345):3034605324:105744038
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
   objectid_1 |     47,761       23881    13787.56          1      47761
+     recdate |          0
+    compdate |          0
+     wsbegdt |          0
+     wsenddt |          0
+-------------+---------------------------------------------------------
      dtbuilt |          0
       agldet |     47,147    409.6419    61.49392          0        659
      sprname |          0
@@ -1215,4 +1229,4 @@ file G:/My Drive/research projects/wind/stata/build_wind_panel/wind_panel_zip_fh
 . 
 end of do-file
 
- make.py ended: 2018-05-12 13:33:39
+ make.py ended: 2018-05-13 17:16:28

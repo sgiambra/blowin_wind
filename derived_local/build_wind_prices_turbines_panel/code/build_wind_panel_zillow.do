@@ -9,7 +9,7 @@ program main
     local output_file_list = "wind_panel_zip_median_listing_sqft " + ///
                              "wind_panel_zip_zhvi"
 
-    build_wind_farms
+    build_wind_farms, built_time(dtbuilt)
 
     forval col_index = 1/2 {
         local inpt : word `col_index' of `input_file_list'
@@ -22,11 +22,13 @@ program main
 end
 
 program build_wind_farms
+    syntax, built_time(str)
+
     import delimited "${GoogleDrive}/gis_derived/zip_turbines.csv", clear
-    keep objectid_1 dtbuilt sprname zcta5ce10 agldet
+    keep objectid_1 dtbuilt sprname zcta5ce10 agldet wsbegdt wsenddt recdate compdate
     keep if !missing(zcta5ce10)
     
-    gen date = date(dtbuilt, "YMDhms")
+    gen date = date(`built_time', "YMDhms")
     gen dt = mofd(date)
     format dt %tm
     gen year = year(date)

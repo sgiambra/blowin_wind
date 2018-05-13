@@ -24,12 +24,14 @@ program main
     make_event_study_plot, depvar(ln_p) time(year) geo(tract_fip) ///
         saving(event_study_wind_panel_tract_fhfa) `reg_opts'
 
-    use "../temp/wind_panel_zip_fhfa_event_panel.dta", clear
-    prepare_factor_info relative_ev_year if relevant_time_period
-    local reg_opts = r(reg_opts)
+    foreach stub in "" "_hazard" "_notdetermined" "_nobuiltdate" {
+        use "../temp/wind_panel_zip_fhfa_event_panel`stub'.dta", clear
+        prepare_factor_info relative_ev_year if relevant_time_period
+        local reg_opts = r(reg_opts)
 
-    make_event_study_plot, depvar(ln_p) time(year) geo(regionname) ///
-        saving(event_study_wind_panel_zip_fhfa) `reg_opts'
+        make_event_study_plot, depvar(ln_p) time(year) geo(regionname) ///
+            saving(event_study_wind_panel_zip_fhfa`stub') `reg_opts'
+    }
 end
 
 program prepare_factor_info, rclass
