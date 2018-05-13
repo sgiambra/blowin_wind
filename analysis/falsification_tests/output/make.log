@@ -1,5 +1,5 @@
 
- make.py started: 2018-05-13 17:23:49 C:\Users\giamb\Documents\GitHub\blowin_wind\analysis\falsification_tests\code 
+ make.py started: 2018-05-13 19:38:42 C:\Users\giamb\Documents\GitHub\blowin_wind\analysis\falsification_tests\code 
 
 
 
@@ -58,22 +58,19 @@ Notes:
   2.     local depvar        "D.ln_p"
   3. 
 .     use "${GoogleDrive}/stata/build_wind_panel/wind_panel_tract_fhfa.dta", clear
-  4. 
-.     build_falsification_table if new_turb_us_year == 0, ///
+  4.     build_falsification_table if new_turb_us_year == 0, ///
 >         depvar(`depvar') geo(tract) time_fe(year) cluster(tract_fip)
-  5.     matrix fals_table  = r(fals_cols)
+  5.     matrix fals_table = r(fals_cols)
   6. 
 .     use "${GoogleDrive}/stata/build_wind_panel/wind_panel_zip_fhfa.dta", clear
-  7. 
-.     build_falsification_table if new_turb_us_year == 0, ///
+  7.     build_falsification_table if new_turb_us_year == 0, ///
 >         depvar(`depvar') geo(zip) time_fe(year) cluster(regionname)
-  8.     matrix fals_table  = (fals_table, r(fals_cols))
+  8.     matrix fals_table = (fals_table, r(fals_cols))
   9. 
 .     use "${GoogleDrive}/stata/build_wind_panel/wind_panel_zip_zhvi.dta", clear
- 10. 
-.     build_falsification_table if new_turb_us_month == 0, ///
+ 10.     build_falsification_table if new_turb_us_month == 0, ///
 >         depvar(`depvar') geo(zip) time_fe(dt) cluster(regionname)
- 11.     matrix fals_table  = (fals_table, r(fals_cols))
+ 11.     matrix fals_table = (fals_table, r(fals_cols))
  12. 
 .     matrix_to_txt, saving(`table_file') mat(fals_table) ///
 >         format(%20.6f) title(<tab:falsification>) replace
@@ -83,7 +80,7 @@ Notes:
 . program build_falsification_table, rclass
   1.     syntax [if], depvar(str) geo(str) time_fe(str) [*]
   2. 
-.     local obs    = "e(N_clust) \ e(N)"
+.     local obs      = "e(N_clust) \ e(N)"
   3.     local fals_est = "_b[pot_wind_cap_`geo'_area] \ _se[pot_wind_cap_`geo'_area]"
   4. 
 .     foreach control in "" "i.state" {
@@ -401,4 +398,4 @@ Absorbed degrees of freedom:
 . 
 end of do-file
 
- make.py ended: 2018-05-13 17:24:18
+ make.py ended: 2018-05-13 19:39:08
