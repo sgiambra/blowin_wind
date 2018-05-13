@@ -547,6 +547,14 @@ key "dinkelman2011effects"
 Data
 \end_layout
 
+\begin_layout Subsection
+Potential wind capacity and wind turbines
+\end_layout
+
+\begin_layout Subsection
+House prices
+\end_layout
+
 \begin_layout Standard
 To analyze how the presence of wind turbines affects house values, I construct
  a panel that covers the period from 2000 to 2016, where variables are aggregate
@@ -832,6 +840,14 @@ Column 4 of Table 1 shows that zip codes with and without a wind turbine
 Identification strategy
 \end_layout
 
+\begin_layout Subsection
+Instrumental variable approach
+\end_layout
+
+\begin_layout Subsection
+Event study analysis
+\end_layout
+
 \begin_layout Standard
 If the presence of a wind turbine in a given zip code was determined randomly,
  I could in principle be able to estimate its effect on house values using
@@ -1015,6 +1031,10 @@ Practically, this step is implemented in ArcGIS intersecting the map containing
 
 \begin_layout Section
 Results
+\end_layout
+
+\begin_layout Subsection
+Threats to IV validity
 \end_layout
 
 \begin_layout Standard
@@ -1317,6 +1337,30 @@ status open
 
 
 \backslash
+setstretch{1.0}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Repeat sales index methodology
+\end_layout
+
+\begin_layout Standard
+This appendix investigates
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
 setstretch{1.4}
 \end_layout
 
@@ -1339,6 +1383,16 @@ filename "../output/tables_filled.lyx"
 \begin_inset CommandInset include
 LatexCommand include
 filename "figures.lyx"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand include
+filename "../output/appendix_tables_filled.lyx"
 
 \end_inset
 

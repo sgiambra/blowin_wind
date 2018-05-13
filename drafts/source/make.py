@@ -22,10 +22,18 @@ from gslab_fill.textfill import textfill
 
 tablefill(
     input = '../../analysis/covariates_balance/output/tables.txt '
-            '../../analysis/descriptive_regressions/output/tables.txt',
+            '../../analysis/descriptive_regressions/output/tables.txt '
+            '../../analysis/monotonicity_test/output/tables.txt '
+            '../../analysis/falsification_tests/output/tables.txt',
     template = './tables.lyx',
     output = '../output/tables_filled.lyx'
     )
+
+tablefill(
+    input = '../../analysis/monotonicity_test/output/tables.txt', 
+    template = './appendix_tables.lyx', 
+    output = '../output/appendix_tables_filled.lyx'
+)
 
 # COMPILE (ORDER MATTERS)
 run_lyx(program = './blowin_wind')

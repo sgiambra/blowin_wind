@@ -1,5 +1,5 @@
 
- make.py started: 2018-05-13 19:35:00 C:\Users\giamb\Documents\GitHub\blowin_wind\analysis\monotonicity_test\code 
+ make.py started: 2018-05-13 20:36:29 C:\Users\giamb\Documents\GitHub\blowin_wind\analysis\monotonicity_test\code 
 
 
 
@@ -340,21 +340,25 @@ Notes:
 .     use "../temp/wind_panel_tract_fhfa_ru.dta", clear
   4.     build_monotonicity_table, depvar(aggr_turb_tract_year) ///
 >         inst(`inst') time_fe(year) cluster(tract_fip)
-  5.     matrix monot_table = r(monot_block)
+  5.     matrix monot_table_bdl_tract = r(monot_block)
   6. 
 .     use "../temp/wind_panel_zip_fhfa_ru.dta", clear
   7.     build_monotonicity_table, depvar(aggr_turb_zip_year) ///
 >         inst(`inst') time_fe(year) cluster(regionname)
-  8.     matrix monot_table = (monot_table \ r(monot_block))
+  8.     matrix monot_table_bdl_zip = r(monot_block)
   9. 
 .     use "../temp/wind_panel_zip_zhvi_ru.dta", clear
  10.     build_monotonicity_table, depvar(aggr_turb_zip_month) ///
 >         inst(`inst') time_fe(dt) cluster(regionname)
- 11.     matrix monot_table  = (monot_table \ r(monot_block))
+ 11.     matrix monot_table_zillow_zip = r(monot_block)
  12. 
-.     matrix_to_txt, saving(`table_file') mat(monot_table) ///
->         format(%20.6f) title(<tab:monotonicity>) append
- 13. end
+.     matrix_to_txt, saving(`table_file') mat(monot_table_bdl_tract) ///
+>         format(%20.5f) title(<tab:monotonicity_bdl_tract>) replace
+ 13.     matrix_to_txt, saving(`table_file') mat(monot_table_bdl_zip) ///
+>         format(%20.5f) title(<tab:monotonicity_bdl_zip>) append
+ 14.     matrix_to_txt, saving(`table_file') mat(monot_table_zillow_zip) ///
+>         format(%20.5f) title(<tab:monotonicity_zillow_zip>) append
+ 15. end
 
 . 
 . program build_monotonicity_table, rclass
@@ -1034,4 +1038,4 @@ Absorbed degrees of freedom:
 . 
 end of do-file
 
- make.py ended: 2018-05-13 19:36:02
+ make.py ended: 2018-05-13 20:37:32

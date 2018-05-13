@@ -10,20 +10,24 @@ program main
     use "../temp/wind_panel_tract_fhfa_ru.dta", clear
     build_monotonicity_table, depvar(aggr_turb_tract_year) ///
         inst(`inst') time_fe(year) cluster(tract_fip)
-    matrix monot_table = r(monot_block)
+    matrix monot_table_bdl_tract = r(monot_block)
 
     use "../temp/wind_panel_zip_fhfa_ru.dta", clear
     build_monotonicity_table, depvar(aggr_turb_zip_year) ///
         inst(`inst') time_fe(year) cluster(regionname)
-    matrix monot_table = (monot_table \ r(monot_block))
+    matrix monot_table_bdl_zip = r(monot_block)
 
     use "../temp/wind_panel_zip_zhvi_ru.dta", clear
     build_monotonicity_table, depvar(aggr_turb_zip_month) ///
         inst(`inst') time_fe(dt) cluster(regionname)
-    matrix monot_table  = (monot_table \ r(monot_block))
+    matrix monot_table_zillow_zip = r(monot_block)
 
-    matrix_to_txt, saving(`table_file') mat(monot_table) ///
-        format(%20.6f) title(<tab:monotonicity>) append
+    matrix_to_txt, saving(`table_file') mat(monot_table_bdl_tract) ///
+        format(%20.5f) title(<tab:monotonicity_bdl_tract>) replace
+    matrix_to_txt, saving(`table_file') mat(monot_table_bdl_zip) ///
+        format(%20.5f) title(<tab:monotonicity_bdl_zip>) append
+    matrix_to_txt, saving(`table_file') mat(monot_table_zillow_zip) ///
+        format(%20.5f) title(<tab:monotonicity_zillow_zip>) append
 end
 
 program build_monotonicity_table, rclass

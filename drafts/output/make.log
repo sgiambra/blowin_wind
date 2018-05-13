@@ -1,10 +1,20 @@
 
- make.py started: 2018-05-12 20:01:39 C:\Users\giamb\Documents\GitHub\blowin_wind\drafts\source 
+ make.py started: 2018-05-13 21:56:35 C:\Users\giamb\Documents\GitHub\blowin_wind\drafts\source 
 
 
 
 
 Execute:  lyx -e pdf2 ".\blowin_wind.lyx"
+Warning: Module not found
+----------------------------------------
+Included file `~\Documents\GitHub\blowin_wind\drafts\output\tables_filled.lyx'
+uses module `graphicboxes'
+which is not used in parent file.
+Warning: Module not found
+----------------------------------------
+Included file `~\Documents\GitHub\blowin_wind\drafts\output\appendix_tables_filled.lyx'
+uses module `graphicboxes'
+which is not used in parent file.
 This is pdfTeX, Version 3.14159265-2.6-1.40.18 (MiKTeX 2.9.6500)
 
 entering extended mode
@@ -23,17 +33,19 @@ The top-level auxiliary file: blowin_wind.aux
 
 The style file: agsm.bst
 
-A level-1 auxiliary file: 4C__Users_giamb_Documents_GitHub_blowin_wind_drafts_output_tables_filled.aux
+A level-1 auxiliary file: 5C__Users_giamb_Documents_GitHub_blowin_wind_drafts_output_tables_filled.aux
 
-A level-1 auxiliary file: 5C__Users_giamb_Documents_GitHub_blowin_wind_drafts_source_figures.aux
+A level-1 auxiliary file: 6C__Users_giamb_Documents_GitHub_blowin_wind_drafts_source_figures.aux
 
-A level-1 auxiliary file: 14C__Users_giamb_Documents_GitHub_blowin_wind_drafts_source_appendix_figures.aux
+A level-1 auxiliary file: 15C__Users_giamb_Documents_GitHub_blowin_wind_drafts_output_appendix_tables_filled.aux
 
-Database file #1: 3C__Users_giamb_Documents_GitHub_blowin_wind_drafts_source_Ref.bib
+A level-1 auxiliary file: 16C__Users_giamb_Documents_GitHub_blowin_wind_drafts_source_appendix_figures.aux
+
+Database file #1: 4C__Users_giamb_Documents_GitHub_blowin_wind_drafts_source_Ref.bib
 
 Warning--entry type for "energygov" isn't style-file defined
 
---line 200 of file 3C__Users_giamb_Documents_GitHub_blowin_wind_drafts_source_Ref.bib
+--line 200 of file 4C__Users_giamb_Documents_GitHub_blowin_wind_drafts_source_Ref.bib
 
 (There was 1 warning)
 
@@ -55,17 +67,19 @@ The top-level auxiliary file: blowin_wind.aux
 
 The style file: agsm.bst
 
-A level-1 auxiliary file: 4C__Users_giamb_Documents_GitHub_blowin_wind_drafts_output_tables_filled.aux
+A level-1 auxiliary file: 5C__Users_giamb_Documents_GitHub_blowin_wind_drafts_output_tables_filled.aux
 
-A level-1 auxiliary file: 5C__Users_giamb_Documents_GitHub_blowin_wind_drafts_source_figures.aux
+A level-1 auxiliary file: 6C__Users_giamb_Documents_GitHub_blowin_wind_drafts_source_figures.aux
 
-A level-1 auxiliary file: 14C__Users_giamb_Documents_GitHub_blowin_wind_drafts_source_appendix_figures.aux
+A level-1 auxiliary file: 15C__Users_giamb_Documents_GitHub_blowin_wind_drafts_output_appendix_tables_filled.aux
 
-Database file #1: 3C__Users_giamb_Documents_GitHub_blowin_wind_drafts_source_Ref.bib
+A level-1 auxiliary file: 16C__Users_giamb_Documents_GitHub_blowin_wind_drafts_source_appendix_figures.aux
+
+Database file #1: 4C__Users_giamb_Documents_GitHub_blowin_wind_drafts_source_Ref.bib
 
 Warning--entry type for "energygov" isn't style-file defined
 
---line 200 of file 3C__Users_giamb_Documents_GitHub_blowin_wind_drafts_source_Ref.bib
+--line 200 of file 4C__Users_giamb_Documents_GitHub_blowin_wind_drafts_source_Ref.bib
 
 (There was 1 warning)
 
@@ -82,4 +96,4 @@ Babel <3.17> and hyphenation patterns for 75 language(s) loaded.
 
 
 
- make.py ended: 2018-05-12 20:01:50
+ make.py ended: 2018-05-13 21:56:46
