@@ -133,7 +133,14 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Number of currently active executives
+Monthly house prices (ZHVI)
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:dist_zhvi"
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -155,8 +162,11 @@ Number of currently active executives
 
 \begin_layout Plain Layout
 
-\size small
-Notes: 
+\emph on
+Notes:
+\emph default
+ The figure shows the cumulative distribution The sample is all ZIP codes
+ with 
 \end_layout
 
 \end_inset
@@ -179,7 +189,14 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Number of currently active executives
+Geographic coverage BDL index
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:bdl_coverage"
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -201,8 +218,10 @@ Number of currently active executives
 
 \begin_layout Plain Layout
 
-\size small
-Notes: 
+\emph on
+Notes:
+\emph default
+ 
 \end_layout
 
 \end_inset
@@ -244,7 +263,9 @@ Number of currently active executives
 \begin_inset Text
 
 \begin_layout Plain Layout
-Current estimate vs 2008
+
+\emph on
+Panel A: Current estimate vs 2008
 \end_layout
 
 \end_inset
@@ -273,7 +294,9 @@ Current estimate vs 2008
 \begin_inset Text
 
 \begin_layout Plain Layout
-Near future estimate vs 2008
+
+\emph on
+Panel B: Near future estimate vs 2008
 \end_layout
 
 \end_inset
@@ -306,8 +329,10 @@ Near future estimate vs 2008
 
 \begin_layout Plain Layout
 
-\size small
-Notes: 
+\emph on
+Notes:
+\emph default
+ 
 \end_layout
 
 \end_inset
@@ -352,8 +377,10 @@ Number of currently active executives
 
 \begin_layout Plain Layout
 
-\size small
-Notes: 
+\emph on
+Notes:
+\emph default
+ 
 \end_layout
 
 \end_inset
@@ -398,8 +425,10 @@ Number of currently active executives
 
 \begin_layout Plain Layout
 
-\size small
-Notes: 
+\emph on
+Notes:
+\emph default
+ 
 \end_layout
 
 \end_inset

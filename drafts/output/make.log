@@ -1,5 +1,5 @@
 
- make.py started: 2018-05-13 21:56:35 C:\Users\giamb\Documents\GitHub\blowin_wind\drafts\source 
+ make.py started: 2018-05-14 17:18:05 C:\Users\giamb\Documents\GitHub\blowin_wind\drafts\source 
 
 
 
@@ -47,7 +47,11 @@ Warning--entry type for "energygov" isn't style-file defined
 
 --line 200 of file 4C__Users_giamb_Documents_GitHub_blowin_wind_drafts_source_Ref.bib
 
-(There was 1 warning)
+Warning--entry type for "nationalwindwatch" isn't style-file defined
+
+--line 276 of file 4C__Users_giamb_Documents_GitHub_blowin_wind_drafts_source_Ref.bib
+
+(There were 2 warnings)
 
 This is pdfTeX, Version 3.14159265-2.6-1.40.18 (MiKTeX 2.9.6500)
 
@@ -81,7 +85,11 @@ Warning--entry type for "energygov" isn't style-file defined
 
 --line 200 of file 4C__Users_giamb_Documents_GitHub_blowin_wind_drafts_source_Ref.bib
 
-(There was 1 warning)
+Warning--entry type for "nationalwindwatch" isn't style-file defined
+
+--line 276 of file 4C__Users_giamb_Documents_GitHub_blowin_wind_drafts_source_Ref.bib
+
+(There were 2 warnings)
 
 This is pdfTeX, Version 3.14159265-2.6-1.40.18 (MiKTeX 2.9.6500)
 
@@ -96,4 +104,4 @@ Babel <3.17> and hyphenation patterns for 75 language(s) loaded.
 
 
 
- make.py ended: 2018-05-13 21:56:46
+ make.py ended: 2018-05-14 17:18:17

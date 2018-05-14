@@ -1,5 +1,5 @@
 
- make.py started: 2018-05-13 17:06:49 C:\Users\giamb\Documents\GitHub\blowin_wind\derived_local\build_wind_prices_turbines_panel\code 
+ make.py started: 2018-05-14 11:00:31 C:\Users\giamb\Documents\GitHub\blowin_wind\derived_local\build_wind_prices_turbines_panel\code 
 
 
 
@@ -76,7 +76,7 @@ Notes:
   1.     syntax, built_time(str)
   2. 
 .     import delimited "${GoogleDrive}/gis_derived/zip_turbines.csv", clear
-  3.     keep objectid_1 dtbuilt sprname zcta5ce10 agldet wsbegdt wsenddt recdate compdate
+  3.     keep objectid_1 dtbuilt sprname zcta5ce10 agldet wsbegdt wsenddt recdate compdate strtype
   4.     keep if !missing(zcta5ce10)
   5.     
 .     gen date = date(`built_time', "YMDhms")
@@ -89,17 +89,19 @@ Notes:
  11.     qui sum agldet, det
  12.     keep if agldet > `r(p1)'
  13. 
+.     drop if strtype != "Wind Turbine"
+ 14. 
 .     save_data "${GoogleDrive}/stata/build_wind_panel/new_turbines_zip.dta", ///
 >         key(objectid_1) nopreserve replace
- 14. 
+ 15. 
 .     collapse (count) new_turbines_zip_month = objectid_1, by(zcta5ce10 dt)
- 15.     bys zcta5ce10 (dt): gen aggr_turb_zip_month = sum(new_turbines_zip_month)
- 16.     rename zcta5ce10 regionname
- 17.     save_data "../temp/turbines_zip.dta", key(regionname dt) replace
- 18. 
+ 16.     bys zcta5ce10 (dt): gen aggr_turb_zip_month = sum(new_turbines_zip_month)
+ 17.     rename zcta5ce10 regionname
+ 18.     save_data "../temp/turbines_zip.dta", key(regionname dt) replace
+ 19. 
 .     collapse (sum) new_turb_us_month = new_turbines_zip_month, by(dt)
- 19.     save_data "../temp/new_turbines_us_month.dta", key(dt) replace
- 20. end
+ 20.     save_data "../temp/new_turbines_us_month.dta", key(dt) replace
+ 21. end
 
 . 
 . program build_zillow
@@ -190,33 +192,36 @@ Notes:
 (4 observations deleted)
 (613 observations deleted)
 (522 observations deleted)
+(2,448 observations deleted)
 (data now sorted by objectid_1)
   variable date was float now int
   variable dt was float now int
   variable year was float now int
-  (261,336 bytes saved)
+  variable strtype was str31 now str12
+  (1,027,700 bytes saved)
 ==================================================================================================
 File: G:/My Drive/research projects/wind/stata/build_wind_panel/new_turbines_zip.dta
 Key: objectid_1
 ==================================================================================================
-  43556:12(78609):3064154653:4170486196
+  41108:13(49703):1541394885:3433425352
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-  objectid_1 |     43,556    24172.95    13918.41         90      47761
+  objectid_1 |     41,108    24659.06    13627.74        458      47761
      recdate |          0
     compdate |          0
      wsbegdt |          0
      wsenddt |          0
 -------------+---------------------------------------------------------
      dtbuilt |          0
-      agldet |     43,556    413.7781    53.83387        200        657
+     strtype |          0
+      agldet |     41,108    421.4686    43.82595        210        585
      sprname |          0
-   zcta5ce10 |     43,556     67536.4    19672.04        718      99762
-        date |     43,556    18894.63    1479.228      14167      21220
+   zcta5ce10 |     41,108    67572.38     19542.7        718      99762
 -------------+---------------------------------------------------------
-          dt |     43,556    620.2892    48.60219        465        697
-        year |     43,556    2011.118    4.052298       1998       2018
+        date |     41,108    18988.16    1362.271      14850      21220
+          dt |     41,108    623.3638     44.7555        487        697
+        year |     41,108    2011.371    3.734712       2000       2018
 
 
 
@@ -226,19 +231,19 @@ file G:/My Drive/research projects/wind/stata/build_wind_panel/new_turbines_zip.
 (data already sorted by regionname dt)
   variable new_turbines_zip_month was long now int
   variable aggr_turb_zip_month was float now int
-  (18,300 bytes saved)
+  (15,272 bytes saved)
 ==================================================================================================
 File: ../temp/turbines_zip.dta
 Key: regionname dt
 ==================================================================================================
-  4575:4(35710):1613605203:399000343
+  3818:4(35710):32165329:2635409168
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-  regionname |      4,575    63149.46    22706.16        718      99762
-          dt |      4,575     619.374    48.03384        465        697
-new_turbin~h |      4,575    9.520437    11.59733          1        129
-aggr_turb_~h |      4,575    46.18579    71.78191          1        850
+  regionname |      3,818    63251.48    22564.39        718      99762
+          dt |      3,818    620.7491    45.04014        487        697
+new_turbin~h |      3,818    10.76689    11.69632          1        129
+aggr_turb_~h |      3,818    48.16632    71.76463          1        848
 
 
 
@@ -247,17 +252,17 @@ aggr_turb_~h |      4,575    46.18579    71.78191          1        850
 file ../temp/turbines_zip.dta saved
 (data already sorted by dt)
   variable new_turb_us_month was double now int
-  (1,308 bytes saved)
+  (1,158 bytes saved)
 ==================================================================================================
 File: ../temp/new_turbines_us_month.dta
 Key: dt
 ==================================================================================================
-  218:2(55028):3855151537:1953336815
+  193:2(55028):4216819703:2836768350
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-          dt |        218       587.5    64.66334        465        697
-new_turb_u~h |        218    199.7982    199.5819          1        908
+          dt |        193    599.5181    57.47537        487        697
+new_turb_u~h |        193    212.9948    198.6227          1        898
 
 
 
@@ -314,20 +319,20 @@ file ../temp/zillow_prices.dta saved
 
     Result                           # of obs.
     -----------------------------------------
-    not matched                     1,014,858
-        from master                 1,010,754  (_merge==1)
-        from using                      4,104  (_merge==2)
+    not matched                     1,014,291
+        from master                 1,010,849  (_merge==1)
+        from using                      3,442  (_merge==2)
 
-    matched                               471  (_merge==3)
+    matched                               376  (_merge==3)
     -----------------------------------------
-(1,012,371 missing values generated)
-aggr_turb_zip_month:  (14,744 real changes made)
-wind_farm:  (6157 real changes made)
-(1,010,754 real changes made)
-(996,010 real changes made)
-(1,006,214 real changes made)
-(1002883 missing values generated)
-(199,337 observations deleted)
+(1,012,052 missing values generated)
+aggr_turb_zip_month:  (11,809 real changes made)
+wind_farm:  (5771 real changes made)
+(1,010,849 real changes made)
+(999,040 real changes made)
+(1,006,281 real changes made)
+(1003173 missing values generated)
+(198,675 observations deleted)
        panel variable:  regionname (unbalanced)
         time variable:  dt, 2010m1 to 2018m1
                 delta:  1 month
@@ -341,10 +346,13 @@ wind_farm:  (6157 real changes made)
 
     Result                           # of obs.
     -----------------------------------------
-    not matched                             0
-    matched                           731,503  
+    not matched                         6,774
+        from master                     6,774  
+        from using                          0  
+
+    matched                           724,729  
     -----------------------------------------
-(0 real changes made)
+(6,774 real changes made)
 (0 real changes made)
 (data now sorted by regionname dt)
   variable state was float now byte
@@ -360,7 +368,7 @@ wind_farm:  (6157 real changes made)
 File: G:/My Drive/research projects/wind/stata/build_wind_panel/wind_panel_zip_median_listing_sqft.dta
 Key: regionname dt
 ==================================================================================================
-  731503:23(79994):4208530087:1030202629
+  731503:23(79994):238060400:2931949351
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
@@ -376,20 +384,20 @@ Key: regionname dt
        state |    731,503    26.08465    14.68302          2         51
         ln_p |    731,503    4.860403    .5280288   2.865476   7.937169
 -------------+---------------------------------------------------------
-new_turbin~h |    731,503    .0029938    .2368953          0         49
-aggr_turb_~h |    731,503    .3927639    6.973308          0        386
+new_turbin~h |    731,503    .0028503    .2349821          0         49
+aggr_turb_~h |    731,503    .3661147    6.458398          0        331
         year |    731,503     2013.94    2.294426       2010       2018
-   wind_farm |    731,503    .0059617    .0769816          0          1
-wind_farm_~t |      5,692    611.9088    53.22075        467        694
+   wind_farm |    731,503    .0056609    .0750261          0          1
+wind_farm_~t |      5,477    616.1618     48.2176        525        695
 -------------+---------------------------------------------------------
    zcta5ce10 |    731,503    46427.77    29355.38       1001      99403
        a_zip |    731,503    198.3765    413.2388     .18995    10150.9
 tot_wgt_wi~p |    731,503    23.99786    168.6837          0   7285.144
 pot_wind_c~a |    731,503    5.666911    15.56485          0   97.61828
-new_turb_u~h |    731,503    286.3624    207.9923          3        908
+new_turb_u~h |    731,503    276.4731    205.0369          0        898
 -------------+---------------------------------------------------------
-new_turb_r~h |    731,503    286.3594     207.991          2        908
-subvention~p |    731,503     1634.91    5688.588          0    88637.4
+new_turb_r~h |    731,503    276.4703    205.0356          0        898
+subvention~p |    731,503    1578.489    5535.527          0   87661.21
 first_us_t~p |    731,503    5.666911    15.56485          0   97.61828
 
 
@@ -417,7 +425,7 @@ file G:/My Drive/research projects/wind/stata/build_wind_panel/wind_panel_zip_me
 File: G:/My Drive/research projects/wind/stata/build_wind_panel/wind_panel_zip_median_listing_sqft_controls.dta
 Key: regionname dt
 ==================================================================================================
-  721507:34(19220):3325171863:1360962666
+  721507:34(19220):1720354629:3994304045
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
@@ -433,20 +441,20 @@ Key: regionname dt
        state |    721,507     26.1208    14.67927          2         51
         ln_p |    721,507    4.851958    .5217075   2.865476   7.937169
 -------------+---------------------------------------------------------
-new_turbin~h |    721,507    .0030353    .2385304          0         49
-aggr_turb_~h |    721,507    .3982054    7.021293          0        386
+new_turbin~h |    721,507    .0028898    .2366041          0         49
+aggr_turb_~h |    721,507     .371187    6.502838          0        331
         year |    721,507    2013.939    2.294785       2010       2018
-   wind_farm |    721,507    .0060443    .0775098          0          1
-wind_farm_~t |      5,692    611.9088    53.22075        467        694
+   wind_farm |    721,507    .0057394     .075541          0          1
+wind_farm_~t |      5,477    616.1618     48.2176        525        695
 -------------+---------------------------------------------------------
    zcta5ce10 |    721,507    46425.57    29303.76       1001      99403
        a_zip |    721,507    199.7381    414.9544     .18995    10150.9
 tot_wgt_wi~p |    721,507    24.22972     169.783          0   7285.144
 pot_wind_c~a |    721,507    5.632256    15.54105          0   97.61828
-new_turb_u~h |    721,507    286.3404     207.978          3        908
+new_turb_u~h |    721,507    276.4513    205.0232          0        898
 -------------+---------------------------------------------------------
-new_turb_r~h |    721,507    286.3374    207.9766          2        908
-subvention~p |    721,507    1624.718    5678.279          0    88637.4
+new_turb_r~h |    721,507    276.4484    205.0218          0        898
+subvention~p |    721,507    1568.644    5525.479          0   87661.21
 first_us_t~p |    721,507    5.632256    15.54105          0   97.61828
      zipcode |    721,507    46425.57    29303.76       1001      99403
      returns |    721,507    10242.52    6725.762    95.0004      48032
@@ -522,20 +530,20 @@ file ../temp/zillow_prices.dta saved
 
     Result                           # of obs.
     -----------------------------------------
-    not matched                     4,013,459
-        from master                 4,010,314  (_merge==1)
-        from using                      3,145  (_merge==2)
+    not matched                     4,013,202
+        from master                 4,010,564  (_merge==1)
+        from using                      2,638  (_merge==2)
 
-    matched                             1,430  (_merge==3)
+    matched                             1,180  (_merge==3)
     -----------------------------------------
-(4,011,931 missing values generated)
-aggr_turb_zip_month:  (35,438 real changes made)
-wind_farm:  (15175 real changes made)
-(4,010,314 real changes made)
-(3,974,876 real changes made)
-(3,996,756 real changes made)
-(3962970 missing values generated)
-(386,873 observations deleted)
+(4,011,767 missing values generated)
+aggr_turb_zip_month:  (27,994 real changes made)
+wind_farm:  (14123 real changes made)
+(4,010,564 real changes made)
+(3,982,570 real changes made)
+(3,997,644 real changes made)
+(3964662 missing values generated)
+(386,366 observations deleted)
        panel variable:  regionname (unbalanced)
         time variable:  dt, 1996m4 to 2018m1
                 delta:  1 month
@@ -549,15 +557,15 @@ wind_farm:  (15175 real changes made)
 
     Result                           # of obs.
     -----------------------------------------
-    not matched                       505,584
-        from master                   505,584  
+    not matched                       803,234
+        from master                   803,234  
         from using                          0  
 
-    matched                         2,818,251  
+    matched                         2,520,601  
     -----------------------------------------
-(505,584 real changes made)
-(328,523 missing values generated)
-(328,523 real changes made)
+(803,234 real changes made)
+(586,259 missing values generated)
+(586,259 real changes made)
 (data now sorted by regionname dt)
   variable state was float now byte
   variable new_turbines_zip_month was int now byte
@@ -571,7 +579,7 @@ wind_farm:  (15175 real changes made)
 File: G:/My Drive/research projects/wind/stata/build_wind_panel/wind_panel_zip_zhvi.dta
 Key: regionname dt
 ==================================================================================================
-  3323835:23(79994):1500536464:698173813
+  3323835:23(79994):3267337248:301090103
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
@@ -587,21 +595,21 @@ Key: regionname dt
        state |  3,323,835    26.10183    14.29294          2         51
         ln_p |  3,323,835    11.93899     .621502   9.723164     15.821
 -------------+---------------------------------------------------------
-new_turbin~h |  3,323,835    .0032303    .2624698          0         86
-aggr_turb_~h |  3,323,835    .2434432    5.061523          0        386
+new_turbin~h |  3,323,835    .0030841    .2596296          0         86
+aggr_turb_~h |  3,323,835    .2266635    4.814558          0        335
         year |  3,323,835    2007.179    6.278474       1996       2018
-   wind_farm |  3,323,835    .0044082    .0662475          0          1
-wind_farm_~t |     37,847    611.3191    49.50766        465        692
+   wind_farm |  3,323,835    .0041091    .0639705          0          1
+wind_farm_~t |     36,345    614.9456    45.31104        508        692
 -------------+---------------------------------------------------------
    zcta5ce10 |  3,323,835    45206.49    28959.73       1001      99362
        a_zip |  3,323,835    167.5259    324.5108     .18995    10150.9
 tot_wgt_wi~p |  3,323,835    24.66247    156.5972          0   7285.144
 pot_wind_c~a |  3,323,835    7.774777    19.45988          0     99.751
-new_turb_u~h |  3,323,835    175.7189    199.5748          0        908
+new_turb_u~h |  3,323,835    166.3045    197.3551          0        898
 -------------+---------------------------------------------------------
-new_turb_r~h |  3,323,835    175.7157    199.5716          0        908
-subvention~p |  3,323,835    1440.002    5638.878          0   90573.91
-first_us_t~p |  3,323,835     7.09332    18.75307          0     99.751
+new_turb_r~h |  3,323,835    166.3014    197.3519          0        898
+subvention~p |  3,323,835    1366.206    5482.893          0    89576.4
+first_us_t~p |  3,323,835    6.537223    18.13313          0     99.751
 
 
 
@@ -627,7 +635,7 @@ file G:/My Drive/research projects/wind/stata/build_wind_panel/wind_panel_zip_zh
 File: G:/My Drive/research projects/wind/stata/build_wind_panel/wind_panel_zip_zhvi_controls.dta
 Key: regionname dt
 ==================================================================================================
-  3282991:34(19220):4156802209:4032829146
+  3282991:34(19220):1962559985:4152964548
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
@@ -643,21 +651,21 @@ Key: regionname dt
        state |  3,282,991    26.16054    14.28525          2         51
         ln_p |  3,282,991    11.93259    .6168772   9.723164     15.821
 -------------+---------------------------------------------------------
-new_turbin~h |  3,282,991    .0032696    .2640921          0         86
-aggr_turb_~h |  3,282,991    .2464061    5.092822          0        386
+new_turbin~h |  3,282,991    .0031215    .2612342          0         86
+aggr_turb_~h |  3,282,991    .2294176    4.844331          0        335
         year |  3,282,991    2007.178     6.27863       1996       2018
-   wind_farm |  3,282,991     .004463    .0666565          0          1
-wind_farm_~t |     37,847    611.3191    49.50766        465        692
+   wind_farm |  3,282,991    .0041602    .0643656          0          1
+wind_farm_~t |     36,345    614.9456    45.31104        508        692
 -------------+---------------------------------------------------------
    zcta5ce10 |  3,282,991     45189.9     28890.5       1001      99362
        a_zip |  3,282,991    168.7031    325.6429     .18995    10150.9
 tot_wgt_wi~p |  3,282,991    24.91443    157.5191          0   7285.144
 pot_wind_c~a |  3,282,991    7.777682    19.49688          0     99.751
-new_turb_u~h |  3,282,991    175.7032    199.5711          0        908
+new_turb_u~h |  3,282,991    166.2894    197.3511          0        898
 -------------+---------------------------------------------------------
-new_turb_r~h |  3,282,991       175.7    199.5678          0        908
-subvention~p |  3,282,991    1439.936    5646.674          0   90573.91
-first_us_t~p |  3,282,991    7.094865    18.78727          0     99.751
+new_turb_r~h |  3,282,991    166.2862    197.3479          0        898
+subvention~p |  3,282,991    1366.124    5490.431          0    89576.4
+first_us_t~p |  3,282,991    6.538378    18.16512          0     99.751
      zipcode |  3,282,991     45189.9     28890.5       1001      99362
      returns |  3,282,991    7556.044    6925.865   116.0004      48032
 -------------+---------------------------------------------------------
@@ -742,7 +750,7 @@ Notes:
   1.     syntax, built_time(str)
   2. 
 .     import delimited "${GoogleDrive}/gis_derived/tract_turbines.csv", clear
-  3.     keep objectid_1 dtbuilt sprname geo_id agldet wsbegdt wsenddt recdate compdate
+  3.     keep objectid_1 dtbuilt sprname geo_id agldet wsbegdt wsenddt recdate compdate strtype
   4. 
 .     save_data "../temp/turbines_tract.dta", key(objectid_1) replace
   5.     import delimited "${GoogleDrive}/gis_derived/census_tracts.csv", stringcols(2 3 4) clear
@@ -760,13 +768,15 @@ Notes:
  14.     qui sum agldet, det
  15.     keep if agldet > `r(p1)'
  16. 
+.     drop if strtype != "Wind Turbine"
+ 17. 
 .     collapse (count) new_turbines_tract_year = objectid_1, by(tract_fip year)
- 17.     bys tract_fip (year): gen aggr_turb_tract_year = sum(new_turbines_tract_year)
- 18.     save_data "../temp/turbines_tract.dta", key(tract_fip year) replace
- 19. 
+ 18.     bys tract_fip (year): gen aggr_turb_tract_year = sum(new_turbines_tract_year)
+ 19.     save_data "../temp/turbines_tract.dta", key(tract_fip year) replace
+ 20. 
 .     collapse (sum) new_turb_us_year = new_turbines_tract_year, by(year)
- 20.     save_data "../temp/new_turbines_us_year.dta", key(year) replace
- 21. end
+ 21.     save_data "../temp/new_turbines_us_year.dta", key(year) replace
+ 22. end
 
 . 
 . program build_wind_panel_tract_year
@@ -864,7 +874,7 @@ Notes:
 File: ../temp/turbines_tract.dta
 Key: objectid_1
 ==================================================================================================
-  47761:9(71345):3034605324:105744038
+  47761:10(81192):1072351193:1232253401
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
@@ -875,6 +885,7 @@ Key: objectid_1
      wsenddt |          0
 -------------+---------------------------------------------------------
      dtbuilt |          0
+     strtype |          0
       agldet |     47,147    409.6419    61.49392          0        659
      sprname |          0
       geo_id |          0
@@ -897,23 +908,24 @@ file ../temp/turbines_tract.dta saved
 (4 observations deleted)
 (613 observations deleted)
 (492 observations deleted)
+(2,728 observations deleted)
 (data already sorted by tract_fip year)
   variable year was float now int
   variable new_turbines_tract_year was long now int
   variable aggr_turb_tract_year was float now int
-  (10,410 bytes saved)
+  (8,034 bytes saved)
 ==================================================================================================
 File: ../temp/turbines_tract.dta
 Key: tract_fip year
 ==================================================================================================
-  1735:4(69261):3059276571:2854185265
+  1339:4(69261):4064131155:3220667467
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
    tract_fip |          0
-        year |      1,735    2010.681    4.286395       1998       2018
-new_turbin~r |      1,735    26.68761    41.23149          1        352
-aggr_turb_~r |      1,735    58.00576    99.91705          1       1263
+        year |      1,339    2010.804    3.886405       2000       2018
+new_turbin~r |      1,339    32.54294    43.08687          1        347
+aggr_turb_~r |      1,339    63.01494    99.48971          1       1252
 
 
 
@@ -922,17 +934,17 @@ file ../temp/turbines_tract.dta saved
 (data already sorted by year)
   variable year was float now int
   variable new_turb_us_year was double now int
-  (168 bytes saved)
+  (152 bytes saved)
 ==================================================================================================
 File: ../temp/new_turbines_us_year.dta
 Key: year
 ==================================================================================================
-  21:2(54386):659305433:1832216177
+  19:2(54386):3976167429:4091690908
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-        year |         21        2008    6.204837       1998       2018
-new_turb_u~r |         21    2204.905    1941.246         30       6017
+        year |         19        2009    5.627314       2000       2018
+new_turb_u~r |         19    2293.421    1910.939          4       5829
 
 
 
@@ -944,20 +956,20 @@ file ../temp/new_turbines_us_year.dta saved
 
     Result                           # of obs.
     -----------------------------------------
-    not matched                     1,477,771
-        from master                 1,476,970  (_merge==1)
-        from using                        801  (_merge==2)
+    not matched                     1,477,745
+        from master                 1,477,155  (_merge==1)
+        from using                        590  (_merge==2)
 
-    matched                               934  (_merge==3)
+    matched                               749  (_merge==3)
     -----------------------------------------
-(1,477,635 missing values generated)
-aggr_turb_tract_year:  (3,531 real changes made)
-wind_farm:  (1562 real changes made)
-(1,476,970 real changes made)
-(1,473,439 real changes made)
-(1,476,073 real changes made)
-(1472667 missing values generated)
-(36,921 observations deleted)
+(1,477,562 missing values generated)
+aggr_turb_tract_year:  (2,818 real changes made)
+wind_farm:  (1429 real changes made)
+(1,477,155 real changes made)
+(1,474,337 real changes made)
+(1,476,133 real changes made)
+(1472869 missing values generated)
+(36,710 observations deleted)
 
     Result                           # of obs.
     -----------------------------------------
@@ -967,15 +979,15 @@ wind_farm:  (1562 real changes made)
 
     Result                           # of obs.
     -----------------------------------------
-    not matched                       329,871
-        from master                   329,871  
+    not matched                       406,676
+        from master                   406,676  
         from using                          0  
 
-    matched                           877,017  
+    matched                           800,212  
     -----------------------------------------
-(329,871 real changes made)
-(329,871 missing values generated)
-(329,871 real changes made)
+(406,676 real changes made)
+(406,676 missing values generated)
+(406,676 real changes made)
 tract_fip: all characters numeric; replaced as double
        panel variable:  tract_fip (unbalanced)
         time variable:  year, 1975 to 2017, but with gaps
@@ -990,7 +1002,7 @@ tract_fip: all characters numeric; replaced as double
 File: G:/My Drive/research projects/wind/stata/build_wind_panel/wind_panel_tract_fhfa.dta
 Key: tract_fip year
 ==================================================================================================
-  1206888:20(66573):1560138922:4283459185
+  1206888:20(66573):1286499876:2188016310
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
@@ -1004,19 +1016,19 @@ annual_cha~e |  1,147,555    3.508735    8.378472     -67.95     109.23
      hpi2000 |  1,082,018    113.5318    40.00402      10.55     541.02
        state |  1,206,888    24.56242    14.79516          2         51
         ln_p |  1,206,888    5.118289    .4179967   3.158276   7.700141
-new_turbin~r |  1,206,888    .0166097    1.134075          0        204
+new_turbin~r |  1,206,888    .0157885    1.103413          0        202
 -------------+---------------------------------------------------------
-aggr_turb_~r |  1,206,888    .1219343    4.344924          0        686
-   wind_farm |  1,206,888    .0016671    .0407961          0          1
-wind_farm_~t |      5,296    2010.093    4.174927       1998       2017
+aggr_turb_~r |  1,206,888    .1104369    4.038483          0        570
+   wind_farm |  1,206,888     .001508    .0388038          0          1
+wind_farm_~t |      5,016    2010.448     3.75693       2002       2017
   area_tract |  1,206,888    74.28519    376.4813       .111   24699.54
 tot_wgt_wi~t |  1,206,888    13.28509     140.321          0   10560.79
 -------------+---------------------------------------------------------
 pot_wind_c~a |  1,206,888    5.844712    16.48583          0        100
-new_turb_u~r |  1,206,888     1713.02    1915.376          0       6017
-new_turb_r~r |  1,206,888    1713.004    1915.358          0       6017
-subvention~p |  1,206,888    11237.74    47516.34          0     601700
-first_us_t~p |  1,206,888    4.670725     15.2382          0        100
+new_turb_u~r |  1,206,888    1616.254    1885.334          0       5829
+new_turb_r~r |  1,206,888    1616.238    1885.316          0       5829
+subvention~p |  1,206,888    10623.27    45981.88          0     582900
+first_us_t~p |  1,206,888    4.301908    14.71833          0        100
 
 
 
@@ -1026,19 +1038,19 @@ file G:/My Drive/research projects/wind/stata/build_wind_panel/wind_panel_tract_
 (data already sorted by regionname year)
   variable year was float now int
   variable new_turbines_zip_year was double now int
-  (17,032 bytes saved)
+  (13,560 bytes saved)
 ==================================================================================================
 File: ../temp/turbines_zip.dta
 Key: regionname year
 ==================================================================================================
-  2129:4(50765):2984882254:2150790377
+  1695:4(50765):903565113:2379691988
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-  regionname |      2,129    61098.89    23531.16        718      99762
-        year |      2,129    2010.799    4.212292       1998       2018
-new_turbin~r |      2,129    20.45843    31.35786          1        311
-aggr_turb_~r |      2,129      38.752    64.07491          1        850
+  regionname |      1,695    61154.01    23422.72        718      99762
+        year |      1,695    2010.928    3.858264       2000       2018
+new_turbin~r |      1,695    24.25251    32.75936          1        311
+aggr_turb_~r |      1,695    42.37522    64.18137          1        848
 
 
 
@@ -1047,17 +1059,17 @@ file ../temp/turbines_zip.dta saved
 (data already sorted by year)
   variable year was float now int
   variable new_turb_us_year was double now int
-  (168 bytes saved)
+  (152 bytes saved)
 ==================================================================================================
 File: ../temp/new_turbines_us_year.dta
 Key: year
 ==================================================================================================
-  21:2(54386):4218810645:1197252859
+  19:2(54386):3029325901:2316473553
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
-        year |         21        2008    6.204837       1998       2018
-new_turb_u~r |         21    2074.095    1824.623         30       5623
+        year |         19        2009    5.627314       2000       2018
+new_turb_u~r |         19    2163.579    1786.833          4       5436
 
 
 
@@ -1083,20 +1095,20 @@ HPIwith2000base: all characters numeric; replaced as double
 
     Result                           # of obs.
     -----------------------------------------
-    not matched                       517,896
-        from master                   516,702  (_merge==1)
-        from using                      1,194  (_merge==2)
+    not matched                       517,828
+        from master                   516,885  (_merge==1)
+        from using                        943  (_merge==2)
 
-    matched                               935  (_merge==3)
+    matched                               752  (_merge==3)
     -----------------------------------------
-(517,608 missing values generated)
-aggr_turb_zip_year:  (3,527 real changes made)
-wind_farm:  (1557 real changes made)
-(516,702 real changes made)
-(513,175 real changes made)
-(516,051 real changes made)
-(511598 missing values generated)
-(8,548 observations deleted)
+(517,493 missing values generated)
+aggr_turb_zip_year:  (2,831 real changes made)
+wind_farm:  (1463 real changes made)
+(516,885 real changes made)
+(514,054 real changes made)
+(516,030 real changes made)
+(511732 missing values generated)
+(8,297 observations deleted)
 (note: variable regionname was long, now double to accommodate using data's values)
 
     Result                           # of obs.
@@ -1107,15 +1119,15 @@ wind_farm:  (1557 real changes made)
 
     Result                           # of obs.
     -----------------------------------------
-    not matched                       145,864
-        from master                   145,864  
+    not matched                       172,644
+        from master                   172,644  
         from using                          0  
 
-    matched                           316,542  
+    matched                           289,762  
     -----------------------------------------
-(145,864 real changes made)
-(145,864 missing values generated)
-(145,864 real changes made)
+(172,644 real changes made)
+(172,644 missing values generated)
+(172,644 real changes made)
        panel variable:  regionname (unbalanced)
         time variable:  year, 1975 to 2017, but with gaps
                 delta:  1 unit
@@ -1129,7 +1141,7 @@ wind_farm:  (1557 real changes made)
 File: G:/My Drive/research projects/wind/stata/build_wind_panel/wind_panel_zip_fhfa.dta
 Key: regionname year
 ==================================================================================================
-  462406:20(61374):3738422841:1992774149
+  462406:20(61374):2349615246:2989695298
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
@@ -1142,20 +1154,20 @@ HPIwith199~e |    280,891    143.2517    62.63311      15.93      830.9
 HPIwith200~e |    412,162    107.2924    39.43947          9     471.63
        state |    462,406    28.23476    15.57759          2         56
         ln_p |    462,406    5.211543    .5023526   3.745968   7.852151
-new_turbin~r |    462,406    .0333646    1.417112          0        239
-aggr_turb_~r |    462,406    .2216321    4.694185          0        386
+new_turbin~r |    462,406    .0316994    1.387099          0        235
+aggr_turb_~r |    462,406    .2054515    4.452007          0        335
 -------------+---------------------------------------------------------
-   wind_farm |    462,406    .0041306    .0641367          0          1
-wind_farm_~t |      6,034    2010.372    4.180927       1998       2017
+   wind_farm |    462,406      .00383    .0617682          0          1
+wind_farm_~t |      5,820    2010.722    3.768596       2002       2017
    zcta5ce10 |    462,406    48294.53    28513.96       1001      99403
        a_zip |    462,406    189.6499    378.6501      .2717    10150.9
 tot_wgt_wi~p |    462,406    34.34908    188.6386          0   7285.144
 -------------+---------------------------------------------------------
 pot_wind_c~a |    462,406    9.421557    21.82958          0   99.77184
-new_turb_u~r |    462,406    1532.807    1790.703          0       5623
-new_turb_r~r |    462,406    1532.773    1790.665          0       5623
-subvention~p |    462,406    16890.86    59842.56          0   561017.1
-first_us_t~p |    462,406    7.390979    20.17288          0   99.77184
+new_turb_u~r |    462,406    1451.022    1754.896          0       5436
+new_turb_r~r |    462,406     1450.99    1754.859          0       5436
+subvention~p |    462,406     16024.9    57899.77          0   542359.8
+first_us_t~p |    462,406    6.845852    19.56322          0   99.77184
 
 
 
@@ -1178,7 +1190,7 @@ file G:/My Drive/research projects/wind/stata/build_wind_panel/wind_panel_zip_fh
 File: G:/My Drive/research projects/wind/stata/build_wind_panel/wind_panel_zip_fhfa_controls.dta
 Key: regionname year
 ==================================================================================================
-  458508:31(42074):3531977155:1830905570
+  458508:31(42074):3878540397:1246629488
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
@@ -1191,20 +1203,20 @@ HPIwith199~e |    279,095    143.0747    62.39423      15.93      830.9
 HPIwith200~e |    409,143    107.1922    39.33604          9     471.63
        state |    458,508    28.22709    15.58467          2         56
         ln_p |    458,508    5.211651     .502366   3.745968   7.852151
-new_turbin~r |    458,508    .0336417    1.423113          0        239
-aggr_turb_~r |    458,508     .223477    4.714041          0        386
+new_turbin~r |    458,508    .0319624    1.392973          0        235
+aggr_turb_~r |    458,508    .2071589     4.47084          0        335
 -------------+---------------------------------------------------------
-   wind_farm |    458,508    .0041657    .0644076          0          1
-wind_farm_~t |      6,034    2010.372    4.180927       1998       2017
+   wind_farm |    458,508    .0038625    .0620292          0          1
+wind_farm_~t |      5,820    2010.722    3.768596       2002       2017
    zcta5ce10 |    458,508    48367.58    28483.79       1001      99403
        a_zip |    458,508    190.8503    379.9212     .52372    10150.9
 tot_wgt_wi~p |    458,508    34.59146     189.395          0   7285.144
 -------------+---------------------------------------------------------
 pot_wind_c~a |    458,508    9.425494    21.86772          0   99.77184
-new_turb_u~r |    458,508    1531.253    1790.401          0       5623
-new_turb_r~r |    458,508    1531.219    1790.363          0       5623
-subvention~p |    458,508     16889.5    59924.27          0   561017.1
-first_us_t~p |    458,508     7.39148    20.20392          0   99.77184
+new_turb_u~r |    458,508    1449.517    1754.586          0       5436
+new_turb_r~r |    458,508    1449.485    1754.549          0       5436
+subvention~p |    458,508    16023.18    57978.65          0   542359.8
+first_us_t~p |    458,508    6.845757    19.59215          0   99.77184
 -------------+---------------------------------------------------------
      zipcode |    458,508    48367.58    28483.79       1001      99403
      returns |    458,508     8263.12    7092.419   126.0004      48032
@@ -1229,4 +1241,4 @@ file G:/My Drive/research projects/wind/stata/build_wind_panel/wind_panel_zip_fh
 . 
 end of do-file
 
- make.py ended: 2018-05-13 17:16:28
+ make.py ended: 2018-05-14 11:10:11

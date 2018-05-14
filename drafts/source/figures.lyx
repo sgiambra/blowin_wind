@@ -188,9 +188,11 @@ Panel B: US wind energy capacity
 
 \begin_layout Plain Layout
 
-\size small
-Notes: Data on world energy consumption comes from the 2016 Global Energy
- Statistical Yearbook (
+\emph on
+Notes:
+\emph default
+ Data on world energy consumption comes from the 2016 Global Energy Statistical
+ Yearbook (
 \begin_inset Flex URL
 status open
 
@@ -215,52 +217,6 @@ https://windexchange.energy.gov/maps-data/321
 \end_inset
 
 ).
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Newpage clearpage
-\end_inset
-
-
-\begin_inset Float figure
-placement H
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Number of currently active executives
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename ../../analysis/descriptive_plots/output/validate_price_data.png
-	lyxscale 50
-	scale 35
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-
-\size small
-Notes: 
 \end_layout
 
 \end_inset
@@ -311,17 +267,83 @@ name "fig:turbines_windcap"
 \end_layout
 
 \begin_layout Plain Layout
-Notes: The figure shows data on potential wind capacity in 2008 estimated
- by Lopez et al.
+
+\emph on
+Notes:
+\emph default
+ The figure shows data on potential wind capacity in 2008 estimated by Lopez
+ et al.
  (2012) using data from the National Renewable Energy Laboratory (NREL).
- The US map (Alaska excluded) is divided into cells of approximately equal
- size.
+ The US map (Alaska excluded) is divided into cells of approximately 400km
+\begin_inset Formula $^{2}$
+\end_inset
+
+.
  Blue cells correspond to locations having a non-zero fraction of their
  area with potential wind capacity larger than 30%.
  The intensity of the color represents the proportion of the area with wind
  capacity above the threshold.
  Red triangles symbolize wind turbines installed by December 2017.
  Data on wind turbines comes from the Federal Aviation Administration (FAA).
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Comparison of house prices measures
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:prices_comparison"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename ../../analysis/descriptive_plots/output/validate_price_data.png
+	lyxscale 50
+	scale 35
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\emph on
+Notes:
+\emph default
+ Data on home prices are either from Zillow or estimated by Bogin et al.
+ (2016).
+ Prices from Zillow are first averaged at the ZIP code-year level.
+ Each series is then computed as the average percentage change between two
+ consecutive years.
 \end_layout
 
 \end_inset
@@ -372,8 +394,11 @@ name "fig:ts_prices"
 \end_layout
 
 \begin_layout Plain Layout
-Notes: The figure reports data on average monthly log Zillow Home Value
- Index.
+
+\emph on
+Notes:
+\emph default
+ The figure reports data on average monthly log Zillow Home Value Index.
  The sample is divided into two sub-groups, according to whether a cumulative
  number of at least ten turbines is ever observed in a given ZIP code (solid
  line) or not (dashed line).
@@ -490,7 +515,11 @@ Panel B: Reduced form
 \end_layout
 
 \begin_layout Plain Layout
-Notes: 
+
+\emph on
+Notes:
+\emph default
+ 
 \end_layout
 
 \end_inset
@@ -534,7 +563,11 @@ Yearly house price
 \end_layout
 
 \begin_layout Plain Layout
-Notes: 
+
+\emph on
+Notes:
+\emph default
+ 
 \end_layout
 
 \end_inset

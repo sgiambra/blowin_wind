@@ -25,7 +25,7 @@ program build_wind_farms
     syntax, built_time(str)
 
     import delimited "${GoogleDrive}/gis_derived/zip_turbines.csv", clear
-    keep objectid_1 dtbuilt sprname zcta5ce10 agldet wsbegdt wsenddt recdate compdate
+    keep objectid_1 dtbuilt sprname zcta5ce10 agldet wsbegdt wsenddt recdate compdate strtype
     keep if !missing(zcta5ce10)
     
     gen date = date(`built_time', "YMDhms")
@@ -37,6 +37,8 @@ program build_wind_farms
     drop if missing(agldet)
     qui sum agldet, det
     keep if agldet > `r(p1)'
+
+    drop if strtype != "Wind Turbine"
 
     save_data "${GoogleDrive}/stata/build_wind_panel/new_turbines_zip.dta", ///
         key(objectid_1) nopreserve replace

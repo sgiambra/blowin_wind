@@ -13,7 +13,7 @@ program build_wind_farms
     syntax, built_time(str)
 
     import delimited "${GoogleDrive}/gis_derived/tract_turbines.csv", clear
-    keep objectid_1 dtbuilt sprname geo_id agldet wsbegdt wsenddt recdate compdate
+    keep objectid_1 dtbuilt sprname geo_id agldet wsbegdt wsenddt recdate compdate strtype
 
     save_data "../temp/turbines_tract.dta", key(objectid_1) replace
     import delimited "${GoogleDrive}/gis_derived/census_tracts.csv", stringcols(2 3 4) clear
@@ -30,6 +30,8 @@ program build_wind_farms
     drop if missing(agldet)
     qui sum agldet, det
     keep if agldet > `r(p1)'
+
+    drop if strtype != "Wind Turbine"
 
     collapse (count) new_turbines_tract_year = objectid_1, by(tract_fip year)
     bys tract_fip (year): gen aggr_turb_tract_year = sum(new_turbines_tract_year)

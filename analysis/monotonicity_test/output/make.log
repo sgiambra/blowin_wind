@@ -1,5 +1,5 @@
 
- make.py started: 2018-05-13 20:36:29 C:\Users\giamb\Documents\GitHub\blowin_wind\analysis\monotonicity_test\code 
+ make.py started: 2018-05-14 17:16:48 C:\Users\giamb\Documents\GitHub\blowin_wind\analysis\monotonicity_test\code 
 
 
 
@@ -144,7 +144,7 @@ file ../temp/county_rural_urban.dta saved
 File: ../temp/wind_panel_tract_fhfa_ru.dta
 Key: tract_fip year
 ==================================================================================================
-  1206551:22(75808):3545824542:4089924264
+  1206551:22(75808):1273018312:2167681921
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
@@ -158,19 +158,19 @@ annual_cha~e |  1,147,241      3.5091    8.378459     -67.95     109.23
      hpi2000 |  1,081,766      113.53    40.00571      10.55     541.02
        state |  1,206,551    24.56287    14.79448          2         51
         ln_p |  1,206,551    5.118341    .4180219   3.158276   7.700141
-new_turbin~r |  1,206,551    .0166143    1.134233          0        204
+new_turbin~r |  1,206,551     .015793    1.103567          0        202
 -------------+---------------------------------------------------------
-aggr_turb_~r |  1,206,551    .1219683     4.34553          0        686
-   wind_farm |  1,206,551    .0016676    .0408018          0          1
-wind_farm_~t |      5,296    2010.093    4.174927       1998       2017
+aggr_turb_~r |  1,206,551    .1104678    4.039046          0        570
+   wind_farm |  1,206,551    .0015084    .0388092          0          1
+wind_farm_~t |      5,016    2010.448     3.75693       2002       2017
   area_tract |  1,206,551    74.27757    376.5278       .111   24699.54
 tot_wgt_wi~t |  1,206,551     13.2888    140.3404          0   10560.79
 -------------+---------------------------------------------------------
 pot_wind_c~a |  1,206,551    5.846344    16.48784          0        100
-new_turb_u~r |  1,206,551    1712.915    1915.364          0       6017
-new_turb_r~r |  1,206,551    1712.898    1915.346          0       6017
-subvention~p |  1,206,551    11240.88     47522.6          0     601700
-first_us_t~p |  1,206,551     4.67203    15.24012          0        100
+new_turb_u~r |  1,206,551    1616.154    1885.319          0       5829
+new_turb_r~r |  1,206,551    1616.138    1885.301          0       5829
+subvention~p |  1,206,551    10626.23    45987.96          0     582900
+first_us_t~p |  1,206,551    4.303109     14.7202          0        100
 -------------+---------------------------------------------------------
    fipsstcou |  1,206,551    27475.62    15898.65       1001      56045
       ru2003 |  1,206,551    2.155884    1.655337          1          9
@@ -192,7 +192,7 @@ file ../temp/wind_panel_tract_fhfa_ru.dta saved
 File: ../temp/wind_panel_zip_fhfa_ru.dta
 Key: regionname year
 ==================================================================================================
-  452729:22(70609):713606987:3683260545
+  452729:22(70609):1859873091:392971658
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
@@ -205,20 +205,20 @@ HPIwith199~e |    274,601    143.2316    62.68007      15.93      830.9
 HPIwith200~e |    403,315    107.2711    39.44283          9     471.63
        state |    452,729     28.3147    15.53381          2         56
         ln_p |    452,729    5.211898    .5027591   3.745968   7.852151
-new_turbin~r |    452,729    .0337067    1.426226          0        239
-aggr_turb_~r |    452,729    .2244897    4.736747          0        386
+new_turbin~r |    452,729    .0320192    1.396054          0        235
+aggr_turb_~r |    452,729    .2079898    4.491839          0        335
 -------------+---------------------------------------------------------
-   wind_farm |    452,729    .0041658    .0644089          0          1
-wind_farm_~t |      5,975    2010.374    4.178525       1998       2017
+   wind_farm |    452,729    .0038588    .0619995          0          1
+wind_farm_~t |      5,761    2010.728    3.761041       2002       2017
    zcta5ce10 |    452,729    48056.89     28437.9       1001      99403
        a_zip |    452,729    190.2178    380.2001      .2717    10150.9
 tot_wgt_wi~p |    452,729    34.74504    189.4122          0   7285.144
 -------------+---------------------------------------------------------
 pot_wind_c~a |    452,729    9.535076    21.97642          0   99.77184
-new_turb_u~r |    452,729    1533.332    1790.789          0       5623
-new_turb_r~r |    452,729    1533.298     1790.75          0       5623
-subvention~p |    452,729     17118.3    60301.65          0   561017.1
-first_us_t~p |    452,729    7.489006    20.32009          0   99.77184
+new_turb_u~r |    452,729    1451.532    1754.984          0       5436
+new_turb_r~r |    452,729      1451.5    1754.947          0       5436
+subvention~p |    452,729    16241.09    58344.85          0   542359.8
+first_us_t~p |    452,729    6.937423    19.70782          0   99.77184
 -------------+---------------------------------------------------------
    fipsstcou |    452,729    28852.05    15375.51       1001      56045
       ru2003 |    452,729    2.605678    1.973868          1          9
@@ -240,7 +240,7 @@ file ../temp/wind_panel_zip_fhfa_ru.dta saved
 File: ../temp/wind_panel_zip_zhvi_ru.dta
 Key: regionname dt
 ==================================================================================================
-  3243590:25(23694):3584237435:3986921950
+  3243590:25(23694):1349115532:2002252396
 
     Variable |        Obs        Mean    Std. Dev.       Min        Max
 -------------+---------------------------------------------------------
@@ -256,21 +256,21 @@ Key: regionname dt
        state |  3,243,590    26.23555    14.24202          2         51
         ln_p |  3,243,590    11.93246    .6212156   9.723164     15.821
 -------------+---------------------------------------------------------
-new_turbin~h |  3,243,590    .0032856    .2651657          0         86
-aggr_turb_~h |  3,243,590    .2472276    5.117684          0        386
+new_turbin~h |  3,243,590    .0031363    .2622859          0         86
+aggr_turb_~h |  3,243,590    .2300417     4.86741          0        335
         year |  3,243,590    2007.183    6.278667       1996       2018
-   wind_farm |  3,243,590    .0044417    .0664978          0          1
-wind_farm_~t |     37,333    611.8358    49.46474        465        692
+   wind_farm |  3,243,590    .0041352    .0641727          0          1
+wind_farm_~t |     35,831     615.536    45.15298        508        692
 -------------+---------------------------------------------------------
    zcta5ce10 |  3,243,590    44897.98    28857.29       1001      99362
        a_zip |  3,243,590    168.3109    326.9777     .18995    10150.9
 tot_wgt_wi~p |  3,243,590     25.1741    158.4638          0   7285.144
 pot_wind_c~a |  3,243,590    7.887657    19.62153          0     99.751
-new_turb_u~h |  3,243,590    175.8055    199.6045          0        908
+new_turb_u~h |  3,243,590    166.3911    197.3841          0        898
 -------------+---------------------------------------------------------
-new_turb_r~h |  3,243,590    175.8022    199.6012          0        908
-subvention~p |  3,243,590    1461.438    5689.031          0   90573.91
-first_us_t~p |  3,243,590     7.19637    18.91025          0     99.751
+new_turb_r~h |  3,243,590     166.388    197.3808          0        898
+subvention~p |  3,243,590    1386.576    5531.769          0    89576.4
+first_us_t~p |  3,243,590    6.632352    18.28633          0     99.751
    fipsstcou |  3,243,590    29210.39    15225.08       1001      56045
       ru2003 |  3,243,590    2.482802    1.797247          1          9
 
@@ -382,19 +382,19 @@ Notes:
 (converged in 1 iterations)
 
 HDFE Linear regression                            Number of obs   =    568,137
-Absorbing 1 HDFE group                            F(   1,  21644) =       6.63
-Statistics robust to heteroskedasticity           Prob > F        =     0.0101
-                                                  R-squared       =     0.0010
-                                                  Adj R-squared   =     0.0009
-                                                  Within R-sq.    =     0.0009
-Number of clusters (tract_fip) =     21,645       Root MSE        =     0.3109
+Absorbing 1 HDFE group                            F(   1,  21644) =       6.53
+Statistics robust to heteroskedasticity           Prob > F        =     0.0106
+                                                  R-squared       =     0.0011
+                                                  Adj R-squared   =     0.0010
+                                                  Within R-sq.    =     0.0010
+Number of clusters (tract_fip) =     21,645       Root MSE        =     0.3028
 
                                        (Std. Err. adjusted for 21,645 clusters in tract_fip)
 --------------------------------------------------------------------------------------------
                            |               Robust
     D.aggr_turb_tract_year |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 ---------------------------+----------------------------------------------------------------
-first_us_turb_pot_wind_cap |   .0012617   .0004901     2.57   0.010     .0003011    .0022224
+first_us_turb_pot_wind_cap |   .0013261   .0005191     2.55   0.011     .0003085    .0023436
 --------------------------------------------------------------------------------------------
 
 Absorbed degrees of freedom:
@@ -406,19 +406,19 @@ Absorbed degrees of freedom:
 (converged in 1 iterations)
 
 HDFE Linear regression                            Number of obs   =    270,462
-Absorbing 1 HDFE group                            F(   1,  10758) =       9.43
-Statistics robust to heteroskedasticity           Prob > F        =     0.0021
+Absorbing 1 HDFE group                            F(   1,  10758) =       8.77
+Statistics robust to heteroskedasticity           Prob > F        =     0.0031
                                                   R-squared       =     0.0021
-                                                  Adj R-squared   =     0.0019
+                                                  Adj R-squared   =     0.0020
                                                   Within R-sq.    =     0.0018
-Number of clusters (tract_fip) =     10,759       Root MSE        =     0.8416
+Number of clusters (tract_fip) =     10,759       Root MSE        =     0.8126
 
                                        (Std. Err. adjusted for 10,759 clusters in tract_fip)
 --------------------------------------------------------------------------------------------
                            |               Robust
     D.aggr_turb_tract_year |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 ---------------------------+----------------------------------------------------------------
-first_us_turb_pot_wind_cap |   .0033918   .0011045     3.07   0.002     .0012267    .0055569
+first_us_turb_pot_wind_cap |   .0034565   .0011671     2.96   0.003     .0011687    .0057443
 --------------------------------------------------------------------------------------------
 
 Absorbed degrees of freedom:
@@ -430,19 +430,19 @@ Absorbed degrees of freedom:
 (converged in 1 iterations)
 
 HDFE Linear regression                            Number of obs   =    135,328
-Absorbing 1 HDFE group                            F(   1,   5660) =      16.83
+Absorbing 1 HDFE group                            F(   1,   5660) =      16.51
 Statistics robust to heteroskedasticity           Prob > F        =     0.0000
-                                                  R-squared       =     0.0029
-                                                  Adj R-squared   =     0.0026
-                                                  Within R-sq.    =     0.0025
-Number of clusters (tract_fip) =      5,661       Root MSE        =     1.6481
+                                                  R-squared       =     0.0030
+                                                  Adj R-squared   =     0.0027
+                                                  Within R-sq.    =     0.0026
+Number of clusters (tract_fip) =      5,661       Root MSE        =     1.6309
 
                                         (Std. Err. adjusted for 5,661 clusters in tract_fip)
 --------------------------------------------------------------------------------------------
                            |               Robust
     D.aggr_turb_tract_year |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 ---------------------------+----------------------------------------------------------------
-first_us_turb_pot_wind_cap |    .004161   .0010142     4.10   0.000     .0021728    .0061493
+first_us_turb_pot_wind_cap |   .0043879   .0010799     4.06   0.000     .0022709    .0065049
 --------------------------------------------------------------------------------------------
 
 Absorbed degrees of freedom:
@@ -454,19 +454,19 @@ Absorbed degrees of freedom:
 (converged in 1 iterations)
 
 HDFE Linear regression                            Number of obs   =     62,017
-Absorbing 1 HDFE group                            F(   1,   2818) =       9.82
-Statistics robust to heteroskedasticity           Prob > F        =     0.0017
-                                                  R-squared       =     0.0034
-                                                  Adj R-squared   =     0.0028
-                                                  Within R-sq.    =     0.0022
-Number of clusters (tract_fip) =      2,819       Root MSE        =     1.2311
+Absorbing 1 HDFE group                            F(   1,   2818) =       9.52
+Statistics robust to heteroskedasticity           Prob > F        =     0.0021
+                                                  R-squared       =     0.0036
+                                                  Adj R-squared   =     0.0029
+                                                  Within R-sq.    =     0.0024
+Number of clusters (tract_fip) =      2,819       Root MSE        =     1.1699
 
                                         (Std. Err. adjusted for 2,819 clusters in tract_fip)
 --------------------------------------------------------------------------------------------
                            |               Robust
     D.aggr_turb_tract_year |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 ---------------------------+----------------------------------------------------------------
-first_us_turb_pot_wind_cap |   .0030297    .000967     3.13   0.002     .0011336    .0049257
+first_us_turb_pot_wind_cap |    .003127   .0010135     3.09   0.002     .0011397    .0051142
 --------------------------------------------------------------------------------------------
 
 Absorbed degrees of freedom:
@@ -478,19 +478,19 @@ Absorbed degrees of freedom:
 (converged in 1 iterations)
 
 HDFE Linear regression                            Number of obs   =     21,888
-Absorbing 1 HDFE group                            F(   1,    983) =       6.68
-Statistics robust to heteroskedasticity           Prob > F        =     0.0099
+Absorbing 1 HDFE group                            F(   1,    983) =       6.54
+Statistics robust to heteroskedasticity           Prob > F        =     0.0107
                                                   R-squared       =     0.0053
                                                   Adj R-squared   =     0.0035
                                                   Within R-sq.    =     0.0035
-Number of clusters (tract_fip) =        984       Root MSE        =     2.3621
+Number of clusters (tract_fip) =        984       Root MSE        =     2.3170
 
                                           (Std. Err. adjusted for 984 clusters in tract_fip)
 --------------------------------------------------------------------------------------------
                            |               Robust
     D.aggr_turb_tract_year |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 ---------------------------+----------------------------------------------------------------
-first_us_turb_pot_wind_cap |   .0053461   .0020689     2.58   0.010     .0012862     .009406
+first_us_turb_pot_wind_cap |   .0054063   .0021139     2.56   0.011      .001258    .0095545
 --------------------------------------------------------------------------------------------
 
 Absorbed degrees of freedom:
@@ -503,19 +503,19 @@ Absorbed degrees of freedom:
 (converged in 1 iterations)
 
 HDFE Linear regression                            Number of obs   =     49,892
-Absorbing 1 HDFE group                            F(   1,   2646) =      18.05
+Absorbing 1 HDFE group                            F(   1,   2646) =      17.86
 Statistics robust to heteroskedasticity           Prob > F        =     0.0000
                                                   R-squared       =     0.0028
                                                   Adj R-squared   =     0.0020
                                                   Within R-sq.    =     0.0017
-Number of clusters (tract_fip) =      2,647       Root MSE        =     2.5052
+Number of clusters (tract_fip) =      2,647       Root MSE        =     2.4502
 
                                         (Std. Err. adjusted for 2,647 clusters in tract_fip)
 --------------------------------------------------------------------------------------------
                            |               Robust
     D.aggr_turb_tract_year |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 ---------------------------+----------------------------------------------------------------
-first_us_turb_pot_wind_cap |   .0038387   .0009035     4.25   0.000     .0020671    .0056103
+first_us_turb_pot_wind_cap |   .0039112   .0009254     4.23   0.000     .0020967    .0057258
 --------------------------------------------------------------------------------------------
 
 Absorbed degrees of freedom:
@@ -528,19 +528,19 @@ Absorbed degrees of freedom:
 (converged in 1 iterations)
 
 HDFE Linear regression                            Number of obs   =     27,345
-Absorbing 1 HDFE group                            F(   1,   1451) =      33.10
+Absorbing 1 HDFE group                            F(   1,   1451) =      32.18
 Statistics robust to heteroskedasticity           Prob > F        =     0.0000
-                                                  R-squared       =     0.0077
-                                                  Adj R-squared   =     0.0064
-                                                  Within R-sq.    =     0.0056
-Number of clusters (tract_fip) =      1,452       Root MSE        =     2.8001
+                                                  R-squared       =     0.0078
+                                                  Adj R-squared   =     0.0065
+                                                  Within R-sq.    =     0.0058
+Number of clusters (tract_fip) =      1,452       Root MSE        =     2.7381
 
                                         (Std. Err. adjusted for 1,452 clusters in tract_fip)
 --------------------------------------------------------------------------------------------
                            |               Robust
     D.aggr_turb_tract_year |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 ---------------------------+----------------------------------------------------------------
-first_us_turb_pot_wind_cap |   .0064628   .0011233     5.75   0.000     .0042594    .0086663
+first_us_turb_pot_wind_cap |   .0065561   .0011557     5.67   0.000     .0042891    .0088231
 --------------------------------------------------------------------------------------------
 
 Absorbed degrees of freedom:
@@ -553,19 +553,19 @@ Absorbed degrees of freedom:
 (converged in 1 iterations)
 
 HDFE Linear regression                            Number of obs   =      6,549
-Absorbing 1 HDFE group                            F(   1,    396) =       1.59
-Statistics robust to heteroskedasticity           Prob > F        =     0.2086
+Absorbing 1 HDFE group                            F(   1,    396) =       1.55
+Statistics robust to heteroskedasticity           Prob > F        =     0.2145
                                                   R-squared       =     0.0027
                                                   Adj R-squared   =    -0.0013
                                                   Within R-sq.    =     0.0006
-Number of clusters (tract_fip) =        397       Root MSE        =     2.2330
+Number of clusters (tract_fip) =        397       Root MSE        =     2.1763
 
                                           (Std. Err. adjusted for 397 clusters in tract_fip)
 --------------------------------------------------------------------------------------------
                            |               Robust
     D.aggr_turb_tract_year |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 ---------------------------+----------------------------------------------------------------
-first_us_turb_pot_wind_cap |   .0018875   .0014988     1.26   0.209    -.0010591    .0048341
+first_us_turb_pot_wind_cap |   .0018764   .0015091     1.24   0.214    -.0010904    .0048433
 --------------------------------------------------------------------------------------------
 
 Absorbed degrees of freedom:
@@ -577,19 +577,19 @@ Absorbed degrees of freedom:
 (converged in 1 iterations)
 
 HDFE Linear regression                            Number of obs   =      5,614
-Absorbing 1 HDFE group                            F(   1,    350) =       2.17
-Statistics robust to heteroskedasticity           Prob > F        =     0.1416
-                                                  R-squared       =     0.0029
-                                                  Adj R-squared   =    -0.0026
-                                                  Within R-sq.    =     0.0007
-Number of clusters (tract_fip) =        351       Root MSE        =     4.7330
+Absorbing 1 HDFE group                            F(   1,    350) =       2.45
+Statistics robust to heteroskedasticity           Prob > F        =     0.1181
+                                                  R-squared       =     0.0030
+                                                  Adj R-squared   =    -0.0025
+                                                  Within R-sq.    =     0.0008
+Number of clusters (tract_fip) =        351       Root MSE        =     4.3663
 
                                           (Std. Err. adjusted for 351 clusters in tract_fip)
 --------------------------------------------------------------------------------------------
                            |               Robust
     D.aggr_turb_tract_year |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 ---------------------------+----------------------------------------------------------------
-first_us_turb_pot_wind_cap |   .0033152   .0022501     1.47   0.142    -.0011102    .0077406
+first_us_turb_pot_wind_cap |   .0033822   .0021589     1.57   0.118    -.0008639    .0076283
 --------------------------------------------------------------------------------------------
 
 Absorbed degrees of freedom:
@@ -601,19 +601,19 @@ Absorbed degrees of freedom:
 (converged in 1 iterations)
 
 HDFE Linear regression                            Number of obs   =    176,352
-Absorbing 1 HDFE group                            F(   1,   5653) =       5.83
-Statistics robust to heteroskedasticity           Prob > F        =     0.0158
-                                                  R-squared       =     0.0012
+Absorbing 1 HDFE group                            F(   1,   5653) =       5.65
+Statistics robust to heteroskedasticity           Prob > F        =     0.0174
+                                                  R-squared       =     0.0013
                                                   Adj R-squared   =     0.0010
                                                   Within R-sq.    =     0.0010
-Number of clusters (regionname) =      5,654      Root MSE        =     0.2935
+Number of clusters (regionname) =      5,654      Root MSE        =     0.2886
 
                                        (Std. Err. adjusted for 5,654 clusters in regionname)
 --------------------------------------------------------------------------------------------
                            |               Robust
       D.aggr_turb_zip_year |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 ---------------------------+----------------------------------------------------------------
-first_us_turb_pot_wind_cap |   .0008793   .0003641     2.42   0.016     .0001656     .001593
+first_us_turb_pot_wind_cap |   .0009202   .0003869     2.38   0.017     .0001616    .0016787
 --------------------------------------------------------------------------------------------
 
 Absorbed degrees of freedom:
@@ -625,19 +625,19 @@ Absorbed degrees of freedom:
 (converged in 1 iterations)
 
 HDFE Linear regression                            Number of obs   =     98,398
-Absorbing 1 HDFE group                            F(   1,   3513) =      14.60
-Statistics robust to heteroskedasticity           Prob > F        =     0.0001
+Absorbing 1 HDFE group                            F(   1,   3513) =      13.38
+Statistics robust to heteroskedasticity           Prob > F        =     0.0003
                                                   R-squared       =     0.0035
                                                   Adj R-squared   =     0.0031
                                                   Within R-sq.    =     0.0026
-Number of clusters (regionname) =      3,514      Root MSE        =     0.8484
+Number of clusters (regionname) =      3,514      Root MSE        =     0.8241
 
                                        (Std. Err. adjusted for 3,514 clusters in regionname)
 --------------------------------------------------------------------------------------------
                            |               Robust
       D.aggr_turb_zip_year |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 ---------------------------+----------------------------------------------------------------
-first_us_turb_pot_wind_cap |    .002906   .0007605     3.82   0.000     .0014149     .004397
+first_us_turb_pot_wind_cap |   .0029158   .0007971     3.66   0.000      .001353    .0044786
 --------------------------------------------------------------------------------------------
 
 Absorbed degrees of freedom:
@@ -649,19 +649,19 @@ Absorbed degrees of freedom:
 (converged in 1 iterations)
 
 HDFE Linear regression                            Number of obs   =     56,479
-Absorbing 1 HDFE group                            F(   1,   2232) =      13.56
-Statistics robust to heteroskedasticity           Prob > F        =     0.0002
-                                                  R-squared       =     0.0039
+Absorbing 1 HDFE group                            F(   1,   2232) =      13.18
+Statistics robust to heteroskedasticity           Prob > F        =     0.0003
+                                                  R-squared       =     0.0040
                                                   Adj R-squared   =     0.0032
-                                                  Within R-sq.    =     0.0027
-Number of clusters (regionname) =      2,233      Root MSE        =     1.6227
+                                                  Within R-sq.    =     0.0028
+Number of clusters (regionname) =      2,233      Root MSE        =     1.5996
 
                                        (Std. Err. adjusted for 2,233 clusters in regionname)
 --------------------------------------------------------------------------------------------
                            |               Robust
       D.aggr_turb_zip_year |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 ---------------------------+----------------------------------------------------------------
-first_us_turb_pot_wind_cap |   .0034527   .0009375     3.68   0.000     .0016142    .0052913
+first_us_turb_pot_wind_cap |   .0035928   .0009895     3.63   0.000     .0016522    .0055333
 --------------------------------------------------------------------------------------------
 
 Absorbed degrees of freedom:
@@ -673,19 +673,19 @@ Absorbed degrees of freedom:
 (converged in 1 iterations)
 
 HDFE Linear regression                            Number of obs   =     32,263
-Absorbing 1 HDFE group                            F(   1,   1428) =      12.97
+Absorbing 1 HDFE group                            F(   1,   1428) =      13.03
 Statistics robust to heteroskedasticity           Prob > F        =     0.0003
-                                                  R-squared       =     0.0059
-                                                  Adj R-squared   =     0.0046
-                                                  Within R-sq.    =     0.0042
-Number of clusters (regionname) =      1,429      Root MSE        =     1.3756
+                                                  R-squared       =     0.0062
+                                                  Adj R-squared   =     0.0049
+                                                  Within R-sq.    =     0.0045
+Number of clusters (regionname) =      1,429      Root MSE        =     1.3422
 
                                        (Std. Err. adjusted for 1,429 clusters in regionname)
 --------------------------------------------------------------------------------------------
                            |               Robust
       D.aggr_turb_zip_year |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 ---------------------------+----------------------------------------------------------------
-first_us_turb_pot_wind_cap |   .0041552   .0011537     3.60   0.000     .0018922    .0064183
+first_us_turb_pot_wind_cap |   .0043318   .0012001     3.61   0.000     .0019777    .0066859
 --------------------------------------------------------------------------------------------
 
 Absorbed degrees of freedom:
@@ -697,19 +697,19 @@ Absorbed degrees of freedom:
 (converged in 1 iterations)
 
 HDFE Linear regression                            Number of obs   =      9,493
-Absorbing 1 HDFE group                            F(   1,    409) =       2.74
-Statistics robust to heteroskedasticity           Prob > F        =     0.0985
-                                                  R-squared       =     0.0059
-                                                  Adj R-squared   =     0.0015
-                                                  Within R-sq.    =     0.0031
-Number of clusters (regionname) =        410      Root MSE        =     3.0010
+Absorbing 1 HDFE group                            F(   1,    409) =       2.95
+Statistics robust to heteroskedasticity           Prob > F        =     0.0866
+                                                  R-squared       =     0.0057
+                                                  Adj R-squared   =     0.0012
+                                                  Within R-sq.    =     0.0028
+Number of clusters (regionname) =        410      Root MSE        =     2.9265
 
                                          (Std. Err. adjusted for 410 clusters in regionname)
 --------------------------------------------------------------------------------------------
                            |               Robust
       D.aggr_turb_zip_year |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 ---------------------------+----------------------------------------------------------------
-first_us_turb_pot_wind_cap |   .0060138    .003632     1.66   0.099    -.0011258    .0131535
+first_us_turb_pot_wind_cap |   .0057611   .0033539     1.72   0.087    -.0008319     .012354
 --------------------------------------------------------------------------------------------
 
 Absorbed degrees of freedom:
@@ -721,19 +721,19 @@ Absorbed degrees of freedom:
 (converged in 1 iterations)
 
 HDFE Linear regression                            Number of obs   =     33,185
-Absorbing 1 HDFE group                            F(   1,   1733) =      14.53
+Absorbing 1 HDFE group                            F(   1,   1733) =      14.44
 Statistics robust to heteroskedasticity           Prob > F        =     0.0001
-                                                  R-squared       =     0.0046
-                                                  Adj R-squared   =     0.0033
-                                                  Within R-sq.    =     0.0032
-Number of clusters (regionname) =      1,734      Root MSE        =     2.8118
+                                                  R-squared       =     0.0045
+                                                  Adj R-squared   =     0.0032
+                                                  Within R-sq.    =     0.0031
+Number of clusters (regionname) =      1,734      Root MSE        =     2.7502
 
                                        (Std. Err. adjusted for 1,734 clusters in regionname)
 --------------------------------------------------------------------------------------------
                            |               Robust
       D.aggr_turb_zip_year |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 ---------------------------+----------------------------------------------------------------
-first_us_turb_pot_wind_cap |   .0056354   .0014784     3.81   0.000     .0027357    .0085351
+first_us_turb_pot_wind_cap |   .0056131    .001477     3.80   0.000     .0027162    .0085101
 --------------------------------------------------------------------------------------------
 
 Absorbed degrees of freedom:
@@ -746,19 +746,19 @@ Absorbed degrees of freedom:
 (converged in 1 iterations)
 
 HDFE Linear regression                            Number of obs   =     16,598
-Absorbing 1 HDFE group                            F(   1,    842) =      38.15
+Absorbing 1 HDFE group                            F(   1,    842) =      37.41
 Statistics robust to heteroskedasticity           Prob > F        =     0.0000
-                                                  R-squared       =     0.0132
-                                                  Adj R-squared   =     0.0108
-                                                  Within R-sq.    =     0.0098
-Number of clusters (regionname) =        843      Root MSE        =     3.5514
+                                                  R-squared       =     0.0134
+                                                  Adj R-squared   =     0.0109
+                                                  Within R-sq.    =     0.0100
+Number of clusters (regionname) =        843      Root MSE        =     3.4767
 
                                          (Std. Err. adjusted for 843 clusters in regionname)
 --------------------------------------------------------------------------------------------
                            |               Robust
       D.aggr_turb_zip_year |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 ---------------------------+----------------------------------------------------------------
-first_us_turb_pot_wind_cap |   .0103956    .001683     6.18   0.000     .0070923     .013699
+first_us_turb_pot_wind_cap |   .0106583   .0017426     6.12   0.000     .0072379    .0140787
 --------------------------------------------------------------------------------------------
 
 Absorbed degrees of freedom:
@@ -771,19 +771,19 @@ Absorbed degrees of freedom:
 (converged in 1 iterations)
 
 HDFE Linear regression                            Number of obs   =      5,493
-Absorbing 1 HDFE group                            F(   1,    343) =       2.31
-Statistics robust to heteroskedasticity           Prob > F        =     0.1296
+Absorbing 1 HDFE group                            F(   1,    343) =       2.28
+Statistics robust to heteroskedasticity           Prob > F        =     0.1322
                                                   R-squared       =     0.0043
-                                                  Adj R-squared   =    -0.0005
+                                                  Adj R-squared   =    -0.0004
                                                   Within R-sq.    =     0.0022
-Number of clusters (regionname) =        344      Root MSE        =     2.7298
+Number of clusters (regionname) =        344      Root MSE        =     2.6738
 
                                          (Std. Err. adjusted for 344 clusters in regionname)
 --------------------------------------------------------------------------------------------
                            |               Robust
       D.aggr_turb_zip_year |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 ---------------------------+----------------------------------------------------------------
-first_us_turb_pot_wind_cap |   .0041389   .0027242     1.52   0.130    -.0012193    .0094972
+first_us_turb_pot_wind_cap |   .0041691    .002763     1.51   0.132    -.0012654    .0096036
 --------------------------------------------------------------------------------------------
 
 Absorbed degrees of freedom:
@@ -796,19 +796,19 @@ Absorbed degrees of freedom:
 (converged in 1 iterations)
 
 HDFE Linear regression                            Number of obs   =      4,555
-Absorbing 1 HDFE group                            F(   1,    280) =       4.10
-Statistics robust to heteroskedasticity           Prob > F        =     0.0438
-                                                  R-squared       =     0.0063
-                                                  Adj R-squared   =     0.0006
-                                                  Within R-sq.    =     0.0027
-Number of clusters (regionname) =        281      Root MSE        =     0.9302
+Absorbing 1 HDFE group                            F(   1,    280) =       3.64
+Statistics robust to heteroskedasticity           Prob > F        =     0.0574
+                                                  R-squared       =     0.0061
+                                                  Adj R-squared   =     0.0004
+                                                  Within R-sq.    =     0.0025
+Number of clusters (regionname) =        281      Root MSE        =     0.9175
 
                                          (Std. Err. adjusted for 281 clusters in regionname)
 --------------------------------------------------------------------------------------------
                            |               Robust
       D.aggr_turb_zip_year |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 ---------------------------+----------------------------------------------------------------
-first_us_turb_pot_wind_cap |    .001346   .0006646     2.03   0.044     .0000377    .0026543
+first_us_turb_pot_wind_cap |   .0012809   .0006712     1.91   0.057    -.0000404    .0026022
 --------------------------------------------------------------------------------------------
 
 Absorbed degrees of freedom:
@@ -820,19 +820,19 @@ Absorbed degrees of freedom:
 (converged in 1 iterations)
 
 HDFE Linear regression                            Number of obs   =  1,300,018
-Absorbing 1 HDFE group                            F(   1,   5321) =       3.45
-Statistics robust to heteroskedasticity           Prob > F        =     0.0633
+Absorbing 1 HDFE group                            F(   1,   5321) =       3.33
+Statistics robust to heteroskedasticity           Prob > F        =     0.0683
                                                   R-squared       =     0.0007
                                                   Adj R-squared   =     0.0005
                                                   Within R-sq.    =     0.0005
-Number of clusters (regionname) =      5,322      Root MSE        =     0.1048
+Number of clusters (regionname) =      5,322      Root MSE        =     0.1037
 
                                        (Std. Err. adjusted for 5,322 clusters in regionname)
 --------------------------------------------------------------------------------------------
                            |               Robust
      D.aggr_turb_zip_month |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 ---------------------------+----------------------------------------------------------------
-first_us_turb_pot_wind_cap |    .000211   .0001136     1.86   0.063    -.0000117    .0004337
+first_us_turb_pot_wind_cap |   .0002223   .0001219     1.82   0.068    -.0000167    .0004613
 --------------------------------------------------------------------------------------------
 
 Absorbed degrees of freedom:
@@ -844,19 +844,19 @@ Absorbed degrees of freedom:
 (converged in 1 iterations)
 
 HDFE Linear regression                            Number of obs   =    773,909
-Absorbing 1 HDFE group                            F(   1,   3233) =      10.58
-Statistics robust to heteroskedasticity           Prob > F        =     0.0012
+Absorbing 1 HDFE group                            F(   1,   3233) =       9.79
+Statistics robust to heteroskedasticity           Prob > F        =     0.0018
                                                   R-squared       =     0.0011
                                                   Adj R-squared   =     0.0007
                                                   Within R-sq.    =     0.0007
-Number of clusters (regionname) =      3,234      Root MSE        =     0.1789
+Number of clusters (regionname) =      3,234      Root MSE        =     0.1741
 
                                        (Std. Err. adjusted for 3,234 clusters in regionname)
 --------------------------------------------------------------------------------------------
                            |               Robust
      D.aggr_turb_zip_month |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 ---------------------------+----------------------------------------------------------------
-first_us_turb_pot_wind_cap |   .0003219    .000099     3.25   0.001     .0001278    .0005159
+first_us_turb_pot_wind_cap |   .0003282   .0001049     3.13   0.002     .0001225    .0005338
 --------------------------------------------------------------------------------------------
 
 Absorbed degrees of freedom:
@@ -868,19 +868,19 @@ Absorbed degrees of freedom:
 (converged in 1 iterations)
 
 HDFE Linear regression                            Number of obs   =    440,196
-Absorbing 1 HDFE group                            F(   1,   1869) =      11.31
-Statistics robust to heteroskedasticity           Prob > F        =     0.0008
+Absorbing 1 HDFE group                            F(   1,   1869) =      10.98
+Statistics robust to heteroskedasticity           Prob > F        =     0.0009
                                                   R-squared       =     0.0018
                                                   Adj R-squared   =     0.0012
                                                   Within R-sq.    =     0.0010
-Number of clusters (regionname) =      1,870      Root MSE        =     0.3292
+Number of clusters (regionname) =      1,870      Root MSE        =     0.3274
 
                                        (Std. Err. adjusted for 1,870 clusters in regionname)
 --------------------------------------------------------------------------------------------
                            |               Robust
      D.aggr_turb_zip_month |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 ---------------------------+----------------------------------------------------------------
-first_us_turb_pot_wind_cap |   .0004026   .0001197     3.36   0.001     .0001678    .0006374
+first_us_turb_pot_wind_cap |   .0004276   .0001291     3.31   0.001     .0001745    .0006807
 --------------------------------------------------------------------------------------------
 
 Absorbed degrees of freedom:
@@ -892,19 +892,19 @@ Absorbed degrees of freedom:
 (converged in 1 iterations)
 
 HDFE Linear regression                            Number of obs   =    287,556
-Absorbing 1 HDFE group                            F(   1,   1239) =       6.41
-Statistics robust to heteroskedasticity           Prob > F        =     0.0115
+Absorbing 1 HDFE group                            F(   1,   1239) =       6.37
+Statistics robust to heteroskedasticity           Prob > F        =     0.0117
                                                   R-squared       =     0.0019
-                                                  Adj R-squared   =     0.0009
+                                                  Adj R-squared   =     0.0010
                                                   Within R-sq.    =     0.0008
-Number of clusters (regionname) =      1,240      Root MSE        =     0.2276
+Number of clusters (regionname) =      1,240      Root MSE        =     0.2240
 
                                        (Std. Err. adjusted for 1,240 clusters in regionname)
 --------------------------------------------------------------------------------------------
                            |               Robust
      D.aggr_turb_zip_month |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 ---------------------------+----------------------------------------------------------------
-first_us_turb_pot_wind_cap |   .0003197   .0001262     2.53   0.011      .000072    .0005673
+first_us_turb_pot_wind_cap |   .0003367   .0001334     2.52   0.012     .0000749    .0005985
 --------------------------------------------------------------------------------------------
 
 Absorbed degrees of freedom:
@@ -916,19 +916,19 @@ Absorbed degrees of freedom:
 (converged in 1 iterations)
 
 HDFE Linear regression                            Number of obs   =     61,341
-Absorbing 1 HDFE group                            F(   1,    294) =       6.69
-Statistics robust to heteroskedasticity           Prob > F        =     0.0102
-                                                  R-squared       =     0.0052
+Absorbing 1 HDFE group                            F(   1,    294) =       6.60
+Statistics robust to heteroskedasticity           Prob > F        =     0.0107
+                                                  R-squared       =     0.0053
                                                   Adj R-squared   =     0.0010
                                                   Within R-sq.    =     0.0010
-Number of clusters (regionname) =        295      Root MSE        =     0.4144
+Number of clusters (regionname) =        295      Root MSE        =     0.4121
 
                                          (Std. Err. adjusted for 295 clusters in regionname)
 --------------------------------------------------------------------------------------------
                            |               Robust
      D.aggr_turb_zip_month |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 ---------------------------+----------------------------------------------------------------
-first_us_turb_pot_wind_cap |   .0004646   .0001797     2.59   0.010      .000111    .0008182
+first_us_turb_pot_wind_cap |   .0004888   .0001903     2.57   0.011     .0001142    .0008634
 --------------------------------------------------------------------------------------------
 
 Absorbed degrees of freedom:
@@ -940,19 +940,19 @@ Absorbed degrees of freedom:
 (converged in 1 iterations)
 
 HDFE Linear regression                            Number of obs   =    234,722
-Absorbing 1 HDFE group                            F(   1,   1097) =      13.39
+Absorbing 1 HDFE group                            F(   1,   1097) =      13.44
 Statistics robust to heteroskedasticity           Prob > F        =     0.0003
                                                   R-squared       =     0.0035
                                                   Adj R-squared   =     0.0024
                                                   Within R-sq.    =     0.0020
-Number of clusters (regionname) =      1,098      Root MSE        =     0.5880
+Number of clusters (regionname) =      1,098      Root MSE        =     0.5815
 
                                        (Std. Err. adjusted for 1,098 clusters in regionname)
 --------------------------------------------------------------------------------------------
                            |               Robust
      D.aggr_turb_zip_month |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 ---------------------------+----------------------------------------------------------------
-first_us_turb_pot_wind_cap |   .0010078   .0002754     3.66   0.000     .0004674    .0015483
+first_us_turb_pot_wind_cap |   .0010376    .000283     3.67   0.000     .0004823    .0015928
 --------------------------------------------------------------------------------------------
 
 Absorbed degrees of freedom:
@@ -964,19 +964,19 @@ Absorbed degrees of freedom:
 (converged in 1 iterations)
 
 HDFE Linear regression                            Number of obs   =     86,698
-Absorbing 1 HDFE group                            F(   1,    447) =      16.34
+Absorbing 1 HDFE group                            F(   1,    447) =      16.04
 Statistics robust to heteroskedasticity           Prob > F        =     0.0001
                                                   R-squared       =     0.0058
                                                   Adj R-squared   =     0.0028
                                                   Within R-sq.    =     0.0027
-Number of clusters (regionname) =        448      Root MSE        =     0.5667
+Number of clusters (regionname) =        448      Root MSE        =     0.5629
 
                                          (Std. Err. adjusted for 448 clusters in regionname)
 --------------------------------------------------------------------------------------------
                            |               Robust
      D.aggr_turb_zip_month |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 ---------------------------+----------------------------------------------------------------
-first_us_turb_pot_wind_cap |   .0008897   .0002201     4.04   0.000     .0004571    .0013223
+first_us_turb_pot_wind_cap |    .000921     .00023     4.01   0.000     .0004691    .0013729
 --------------------------------------------------------------------------------------------
 
 Absorbed degrees of freedom:
@@ -988,19 +988,19 @@ Absorbed degrees of freedom:
 (converged in 1 iterations)
 
 HDFE Linear regression                            Number of obs   =     31,564
-Absorbing 1 HDFE group                            F(   1,    159) =       1.05
-Statistics robust to heteroskedasticity           Prob > F        =     0.3076
+Absorbing 1 HDFE group                            F(   1,    159) =       1.04
+Statistics robust to heteroskedasticity           Prob > F        =     0.3096
                                                   R-squared       =     0.0095
                                                   Adj R-squared   =     0.0013
                                                   Within R-sq.    =     0.0032
-Number of clusters (regionname) =        160      Root MSE        =     0.3052
+Number of clusters (regionname) =        160      Root MSE        =     0.3041
 
                                          (Std. Err. adjusted for 160 clusters in regionname)
 --------------------------------------------------------------------------------------------
                            |               Robust
      D.aggr_turb_zip_month |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 ---------------------------+----------------------------------------------------------------
-first_us_turb_pot_wind_cap |   .0008786   .0008583     1.02   0.308    -.0008166    .0025738
+first_us_turb_pot_wind_cap |   .0009047   .0008876     1.02   0.310    -.0008483    .0026577
 --------------------------------------------------------------------------------------------
 
 Absorbed degrees of freedom:
@@ -1012,19 +1012,19 @@ Absorbed degrees of freedom:
 (converged in 1 iterations)
 
 HDFE Linear regression                            Number of obs   =     13,829
-Absorbing 1 HDFE group                            F(   1,     89) =       2.30
-Statistics robust to heteroskedasticity           Prob > F        =     0.1329
+Absorbing 1 HDFE group                            F(   1,     89) =       2.23
+Statistics robust to heteroskedasticity           Prob > F        =     0.1386
                                                   R-squared       =     0.0131
                                                   Adj R-squared   =    -0.0059
-                                                  Within R-sq.    =     0.0027
-Number of clusters (regionname) =         90      Root MSE        =     0.5059
+                                                  Within R-sq.    =     0.0026
+Number of clusters (regionname) =         90      Root MSE        =     0.5020
 
                                           (Std. Err. adjusted for 90 clusters in regionname)
 --------------------------------------------------------------------------------------------
                            |               Robust
      D.aggr_turb_zip_month |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 ---------------------------+----------------------------------------------------------------
-first_us_turb_pot_wind_cap |   .0007447    .000491     1.52   0.133     -.000231    .0017204
+first_us_turb_pot_wind_cap |   .0007286   .0004875     1.49   0.139    -.0002401    .0016972
 --------------------------------------------------------------------------------------------
 
 Absorbed degrees of freedom:
@@ -1038,4 +1038,4 @@ Absorbed degrees of freedom:
 . 
 end of do-file
 
- make.py ended: 2018-05-13 20:37:32
+ make.py ended: 2018-05-14 17:17:48

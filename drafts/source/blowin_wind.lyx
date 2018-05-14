@@ -29,6 +29,17 @@
 
 \theoremstyle{definition}
 \newtheorem{test}{Test}
+
+\let\oldenumerate=\enumerate
+\def\enumerate{
+\oldenumerate
+\setlength{\itemsep}{0pt}
+}
+\let\olditemize=\itemize
+\def\itemize{
+\olditemize
+\setlength{\itemsep}{0pt}
+}
 \end_preamble
 \use_default_options true
 \begin_modules
@@ -180,7 +191,7 @@ year
 This paper estimates the impact of wind turbines presence at the ZIP code
  and census tract level on house prices.
  A naïve OLS specification shows no evidence of a relation between wind
- turbines and house prices.
+ turbines and home prices.
  Using an instrumental variables strategy where the instrument is defined
  as the percentage of the area of the ZIP code or census tract with potential
  wind capacity in 2008 greater than 30%, interacted with a dummy set to
@@ -276,7 +287,7 @@ key "energygov"
 .
  Second, wind power production has very low operating and maintenance costs
  compared to traditional sources of energy, with nearly all the cost being
- related to wind turbines' construction and installation 
+ related to turbines' construction and installation 
 \begin_inset CommandInset citation
 LatexCommand citep
 key "cullen2013measuring"
@@ -348,7 +359,16 @@ key "slattery2012predominance"
  conduct surveys in several communities near wind farms in Texas and Iowa
  and find that one third of the respondents consider wind turbines an unattracti
 ve feature of the landscape.
- 
+ In particular, the lowest levels of support are expressed by people living
+ closest to wind farms, a phenomenon known as Not-In-My-Backyard 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "swofford2010public"
+
+\end_inset
+
+.
+ From an international perspective, 
 \begin_inset CommandInset citation
 LatexCommand citet
 key "ladenburg2007willingness"
@@ -358,6 +378,34 @@ key "ladenburg2007willingness"
  estimate for Denmark that households are willing to pay between 46 and
  122 Euros per year for siting a future offshore wind farm further away
  from the coast.
+ For Australia, 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "hall2013societal"
+
+\end_inset
+
+ bring qualitative evidence of a 
+\begin_inset Quotes eld
+\end_inset
+
+social gap
+\begin_inset Quotes erd
+\end_inset
+
+ between publicly stated support and individual local acceptance, partly
+ explained by the trade-off between global environmental gains and local
+ bearing of the costs of visual changes to a place or landscape.
+ According to 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "toke2005explaining"
+
+\end_inset
+
+, these are among the reasons that explain why less than half of onshore
+ wind farm applications in England and Wales are successful through the
+ normal planning process.
 \end_layout
 
 \begin_layout Standard
@@ -391,7 +439,7 @@ key "doe2004"
  I thus rely on two empirical strategies to try to isolate the causal impact
  of wind turbines on house prices.
  First, I instrument for wind turbines presence using the percentage of
- the area of the ZIP code or census tract with potential wind capacity in
+ the area of a ZIP code or census tract with potential wind capacity in
  2008 greater than 30%, interacted with a dummy set to one in the years
  after the first wind turbine was installed in the US.
  Gross potential wind capacity factors are estimated for the US by 
@@ -423,10 +471,9 @@ key "LectureA"
 \begin_layout Standard
 The results from my preferred instrumental variable specification show that
  each additional wind turbine installed in a given year decreases home prices
- by about 0.3%.
- This is a remarkable negative effect considering that, on average, there
- are 17 new turbines installed in a ZIP code/year, conditional on non-zero
- construction.
+ by about 0.25%.
+ This is a remarkable negative effect considering that, on average, 17 new
+ turbines are installed in a ZIP code/year, conditional on non-zero construction.
 \begin_inset Foot
 status open
 
@@ -437,7 +484,7 @@ The standard deviation is about 27 new turbines in the average ZIP code/year.
 \end_inset
 
  On the other hand, the results of the event study are more noisy due to
- the intrinsic difficulty to identify an exact point in time in which the
+ the intrinsic difficulty to identify an exact point in time in which a
  wind plant starts exerting a negative impact on house prices.
  Consequently, this approach appears to be less informative about the causal
  impact of wind turbines on home prices.
@@ -548,50 +595,12 @@ Data
 \end_layout
 
 \begin_layout Subsection
-Potential wind capacity and wind turbines
-\end_layout
-
-\begin_layout Subsection
-House prices
+Wind turbines
 \end_layout
 
 \begin_layout Standard
-To analyze how the presence of wind turbines affects house values, I construct
- a panel that covers the period from 2000 to 2016, where variables are aggregate
-d at the zip code level.
- Median home selling prices per square foot are collected from Zillow.
-\begin_inset Foot
-status open
-
-\begin_layout Plain Layout
-Zillow datasets are publicly available for download from 
-\begin_inset Flex URL
-status open
-
-\begin_layout Plain Layout
-
-http://www.zillow.com/research/data/
-\end_layout
-
-\end_inset
-
-.
-\end_layout
-
-\end_inset
-
- All types of homes are considered, that is, all single-family, condominium
- and co-operative homes with a county record.
- Zillow provides other measures of home values, as for instance the Zillow
- Home Value Index (ZHVI) that measures the median seasonally adjusted home
- value for a given area.
- However, these metrics are the output of statistical models that take already
- into account characteristics such as local amenities and are thus less
- indicated for the current analysis.
- To the house prices panel I add data on wind turbines made available by
- the Federal Aviation Administration (FAA), which contains monthly data
- through September 2016 on the exact position of each wind turbine in the
- US.
+I use data on all wind energy projects in the US through December 2017 made
+ available by the Federal Aviation Administration (FAA).
 \begin_inset Foot
 status open
 
@@ -612,9 +621,461 @@ https://www.fws.gov/southwest/es/Energy_Wind_FAA.html
 
 \end_inset
 
- Records include undergoing projects, denied permissions, and locations
- under revision during the permission application process.
+ Wind turbines observations are divided into four categories:
+\end_layout
+
+\begin_layout Itemize
+Determined with Built Date: records returned to the FAA with a Built Date
+ and generally represent completed construction.
+\end_layout
+
+\begin_layout Itemize
+Determined without Built Date: records that are in some state of construction
+ (and might be completed) but no Built Date has been returned to the FAA
+ yet.
+\end_layout
+
+\begin_layout Itemize
+Determined as Hazard: records that have been determined to be a hazard to
+ air navigation and in general are not under construction.
+\end_layout
+
+\begin_layout Itemize
+Not yet Determined: records in the early phase of the permitting process
+ and no determination of whether they are a hazard or not has been made.
+\end_layout
+
+\begin_layout Standard
+In the main analysis, I use the sample of wind turbines that are Determined
+ with Built Date.
+ I drop observations that I am not able to match to any ZIP code or census
+ tract (mainly because they are located in Alaska or offshore) or that are
+ not classified as wind turbines.
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+The data also include records for meteorological towers and other buildings
+ unrelated to wind energy.
+\end_layout
+
+\end_inset
+
+ I also remove observations below the first percentile of the height distributio
+n to keep only turbines that have a significant impact on the local landscape.
+ After imposing these restrictions, the sample of wind turbines for the
+ analysis at the ZIP code level is comprised of 41,108 turbines, with a
+ median height of 418 feet.
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+Similarly, the sample of turbines for the analysis at the census tract level
+ counts 43,575 turbines, with a median height of 416 feet.
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula $^{;}$
+\end_inset
+
+
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+According to the 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "nationalwindwatch"
+
+\end_inset
+
+, two diffused turbines model are the 1.8-megawatt Vestas V90 from Denmark
+ with a total height of 410 feet, and the 2-megawatt Gamesa G87 from Spain,
+ totaling 399 feet.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+I rely on the group of turbines Determined as Hazard for a falsification
+ test.
+ The categories Determined without Built Date and Not yet Determined are
+ not used in this paper because of the higher difficulty in classifying
+ each project as completed or not.
+\end_layout
+
+\begin_layout Subsection
+Potential wind capacity
+\end_layout
+
+\begin_layout Standard
+Potential annual average gross capacity factors for the US are computed
+ by 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "lopez2012us"
+
+\end_inset
+
+ using data from the National Renewable Energy Laboratory (NREL).
+ The authors use wind power at 80 meters height above surface to produce
+ estimates of wind resources at a 200-meters horizontal spatial resolution.
+ Next, they eliminate areas that cannot host wind plants (such as urban
+ areas, federally protected lands, and onshore water features) and estimate
+ average annual energy production assuming a power density of 5 MW/km
+\begin_inset Formula $^{2}$
+\end_inset
+
+ and 15% energy loss.
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+These are common features of a typical wind technology available in 2008
  
+\begin_inset CommandInset citation
+LatexCommand citep
+key "doeeere"
+
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+ Finally, they divide the US map into cells with areas of approximately
+ 400km
+\begin_inset Formula $^{2}$
+\end_inset
+
+ and compute the percentage of each cell with potential capacity greater
+ than 30%.
+\end_layout
+
+\begin_layout Standard
+Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:turbines_windcap"
+
+\end_inset
+
+ shows that wind turbines (represented by red triangles) are mainly placed
+ in locations with a higher proportion of their area with potential capacity
+ of at least 30% (shaded in dark blue).
+ High potential capacity factors tend to be concentrated in the so called
+ 
+\begin_inset Quotes eld
+\end_inset
+
+wind corridor
+\begin_inset Quotes erd
+\end_inset
+
+, a region stretching from North Dakota and Montana southward to western
+ Texas and characterized by high average annual wind speeds.
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+Average wind speed at 80 meters hight in the wind corridor ranges from 6
+ to 9 m/s (see map at 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://windexchange.energy.gov/maps-data/319
+\end_layout
+
+\end_inset
+
+).
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+House prices
+\end_layout
+
+\begin_layout Standard
+Data on house prices come from two distinct sources.
+\end_layout
+
+\begin_layout Standard
+First, Zillow provides monthly prices on all single-family, condominium
+ and co-operative homes for selected US ZIP codes.
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+Zillow datasets are publicly available for download from 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://www.zillow.com/research/data/
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+ I use two measures of house prices from Zillow: (i) median listing prices
+ per square foot, and (ii) Zillow Home Value Index (ZHVI).
+ Median listing prices are available from January 2010 through January 2018
+ for more than 10,000 distinct ZIP codes.
+ On the other hand, ZHVI data span the period April 1996–January 2018 for
+ more than 15,000 ZIP codes.
+ The larger time and geographic coverage of the ZHVI makes it my preferred
+ Zillow metric.
+\end_layout
+
+\begin_layout Standard
+In order to take into account the changing composition of properties sold
+ in different points in time, the Zillow Home Value Index is created from
+ estimated sale prices (called Zestimates) on every home in Zillow's database
+ instead of using prices from the subset of houses actually on sale.
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+Zestimates are calculated daily for more than 100 million homes, using automated
+ valuation models that are re-trained three times a week using updated data.
+ Zestimates are then seasonally adjusted, and the ZHVI is defined as the
+ median of all Zestimates in a given location (see 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://www.zillow.com/research/zhvi-methodology-6032/
+\end_layout
+
+\end_inset
+
+ for more details on ZHVI methodology and 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://www.zillow.com/zestimate/
+\backslash
+#acc
+\end_layout
+
+\end_inset
+
+ for an overview of Zestimates accuracy).
+\end_layout
+
+\end_inset
+
+ Appendix figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:dist_zhvi"
+
+\end_inset
+
+ shows the distribution of monthly log ZHVI, for prices below $1 million.
+\end_layout
+
+\begin_layout Standard
+Second, I use the house price index constructed by 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "bogin2016local"
+
+\end_inset
+
+ (BDL) at the ZIP code and census tract level using data on 97 million home
+ transactions from the Federal Housing Finance Agency (FHFA).
+ The index is built using the repeat-sales methodology, which is based on
+ the assumption that the characteristics of a given house remain unchanged
+ over the period of the analysis.
+ Holding this true, the price index for a given location can be computed
+ by regressing differences in sale prices of the 
+\emph on
+same
+\emph default
+ house on a vector of location
+\begin_inset Formula $\times$
+\end_inset
+
+time dummies.
+ Appendix section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:repeat-sales"
+
+\end_inset
+
+ provides more detail about the repeat-sales methodology.
+ A specific feature of BDL's index is the low level of geographic aggregation
+ (ZIP code and census tract), obtained by aggregating sales occurring over
+ a one-year horizon.
+ In summary BDL's index is available for approximately 18,000 ZIP codes
+ and 55,000 census tracts from 1975 through 2017.
+ Appendix figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:bdl_coverage"
+
+\end_inset
+
+ provides an overview of the ZIP codes for which the house index exists
+ in 2005 and 2010.
+\end_layout
+
+\begin_layout Standard
+Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:prices_comparison"
+
+\end_inset
+
+ shows that, on average, the four price measures depict a similar pattern
+ for the US housing market.
+\end_layout
+
+\begin_layout Subsection
+Additional variables
+\end_layout
+
+\begin_layout Standard
+Home prices, turbines location and potential wind capacity are the main
+ variables used in the analysis that follows.
+ I supplement this data with geographic and demographic controls at the
+ ZIP code level.
+ 
+\end_layout
+
+\begin_layout Standard
+First, I compute each ZIP code's distance from the coastline and elevation.
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+The US coastline can be accessed from 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://earthworks.stanford.edu/catalog/stanford-xv279yj9196
+\end_layout
+
+\end_inset
+
+, while the shapefile containing elevation data can be accessed through
+ the online ArcGIS catalog.
+ Distance from the coast and elevation are calculated from the ZIP code
+ centroid.
+\end_layout
+
+\end_inset
+
+ Second, average income is computed as the ratio between adjusted gross
+ income and number of returns in the 2010 tax year according to the IRS
+ Statistics of Income series.
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+Data publicly available at 
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://www.irs.gov/statistics/soi-tax-stats-individual-income-tax-statistics-zip-
+code-data-soi
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+ The location specific indicator of rurality is obtained from the Population
+ Studies Center of the University of Michigan.
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+Accessible at 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://dsdr-kb.psc.isr.umich.edu/answer/1102
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+ It is computed from the Rural-Urban Continuum Codes from the United States
+ Department of Agriculture (USDA), which classify each county into nine
+ groups according to its level of urbanization.
+ The mapping from counties to ZIP codes assumes that if a ZIP code falls
+ into more than one county, the characteristic of the county with the largest
+ share of the ZIP code will be used.
+ The remaining demographic controls – total population, male ratio, and
+ different ethnicity ratios – come from the 2010 Census.
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+All variables are mapped to ZIP codes and made available by Jean Roth at
+ 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://www.nber.org/data/census-2010-zip-code-data.html
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Sample characteristics
 \end_layout
 
 \begin_layout Standard
@@ -651,124 +1112,6 @@ This distribution is computed after excluding some observations from the
  As expected, the distribution of median home selling prices is highly right
  skewed.
  The mean value taken by this variable is about $150.
-\end_layout
-
-\begin_layout Standard
-To the Zillow median home selling prices I add then geographic and census
- data.
- Annual average wind raster data with a resolution from 200-meter to 1000-meter
- cell sizes is made available by the National Renewable Energy Laboratory
- (NREL).
-\begin_inset Foot
-status open
-
-\begin_layout Plain Layout
-The data can be downloaded at 
-\begin_inset Flex URL
-status open
-
-\begin_layout Plain Layout
-
-http://www.nrel.gov/gis/data_wind.html
-\end_layout
-
-\end_inset
-
-.
-\end_layout
-
-\end_inset
-
- For instance, appendix figure 1 shows the map assembled by NREL detailing
- wind level in Rhode Island.
- Wind speeds are recorded at a 50-meter height above the ground.
- Wind power is then grouped into classes that range from poor (class 1)
- to superb (class 7).
- High resolution land-based wind data for Alabama, Florida, Louisiana or
- Mississippi is unfortunately not available; these states will thus be excluded
- from the analysis.
- Other geographic characteristics that are used as control variables are
- the distance from the coastline, elevation, and urbanized areas in year
- 2000.
-\begin_inset Foot
-status open
-
-\begin_layout Plain Layout
-The US coastline can be accessed from 
-\begin_inset Flex URL
-status open
-
-\begin_layout Plain Layout
-
-https://earthworks.stanford.edu/catalog/stanford-xv279yj9196
-\end_layout
-
-\end_inset
-
-, while the shapefile containing elevation data can be accessed through
- the online catalogue of ArcGIS.
- Urbanized areas can be downloaded from the Census at 
-\begin_inset Flex URL
-status open
-
-\begin_layout Plain Layout
-
-https://www.census.gov/geo/maps-data/data/cbf/cbf_ua.html
-\end_layout
-
-\end_inset
-
-.
-\end_layout
-
-\end_inset
-
- In order to aggregate these variables at the zip code level, I first merge
- the related files in ArcGIS with the map detailing zip code boundaries.
- I then compute the percentage of the area of a given zip code that is recorded
- as urban according to the 2000 Census.
- Concerning the two other geographic controls, I instead find the centroid
- of each zip code and calculate the distance from the coastline and elevation
- related to these points.
- 
-\end_layout
-
-\begin_layout Standard
-The remaining demographic controls come from the 2000 Census.
-\begin_inset Foot
-status open
-
-\begin_layout Plain Layout
-All variables can be downloaded from 
-\begin_inset Flex URL
-status open
-
-\begin_layout Plain Layout
-
-https://factfinder.census.gov/faces/nav/jsf/pages/index.xhtml
-\end_layout
-
-\end_inset
-
-.
-\end_layout
-
-\end_inset
-
- These variables are collected at the census block group level, and I have
- thus to map them into the zip code polygons at which house prices are aggregate
-d.
- To do this, I match each zip code with the block group that occupies the
- largest fraction of its area.
- This is certainly an imperfect mapping between zip codes and block groups,
- since it could happen that the same block group is matched to multiple
- zip codes.
- At the moment I am still working on the development of an algorithm that
- performs this operation in a more precise way.
-\end_layout
-
-\begin_layout Section
-Sample characteristics
 \end_layout
 
 \begin_layout Standard
@@ -842,6 +1185,39 @@ Identification strategy
 
 \begin_layout Subsection
 Instrumental variable approach
+\end_layout
+
+\begin_layout Standard
+Annual average wind raster data with a resolution from 200-meter to 1000-meter
+ cell sizes is made available by the .
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+The data can be downloaded at 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://www.nrel.gov/gis/data_wind.html
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+ For instance, appendix figure 1 shows the map assembled by NREL detailing
+ wind level in Rhode Island.
+ Wind speeds are recorded at a 50-meter height above the ground.
+ Wind power is then grouped into classes that range from poor (class 1)
+ to superb (class 7).
+ High resolution land-based wind data for Alabama, Florida, Louisiana or
+ Mississippi is unfortunately not available; these states will thus be excluded
+ from the analysis.
 \end_layout
 
 \begin_layout Subsection
@@ -1346,7 +1722,14 @@ setstretch{1.0}
 \end_layout
 
 \begin_layout Section
-Repeat sales index methodology
+Repeat-sales index methodology
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:repeat-sales"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
