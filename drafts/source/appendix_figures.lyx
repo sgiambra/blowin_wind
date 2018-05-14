@@ -165,8 +165,10 @@ name "fig:dist_zhvi"
 \emph on
 Notes:
 \emph default
- The figure shows the cumulative distribution The sample is all ZIP codes
- with 
+ The sample is all ZIP code-months with data on the Zillow Home Value Index.
+ The figure shows the cumulative distribution function for monthly log ZHVI
+ truncated at $1 million.
+ 
 \end_layout
 
 \end_inset
@@ -189,7 +191,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Geographic coverage BDL index
+Geographic coverage of BDL house price index
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:bdl_coverage"
@@ -221,7 +223,10 @@ name "fig:bdl_coverage"
 \emph on
 Notes:
 \emph default
- 
+ The sample is the set of ZIP codes having data on Bogin et al.
+ (2016)'s house price index (HPI) in 2000 and 2005.
+ Darker areas represent ZIP codes experiencing a larger increase in HPI
+ between 2000 and 2005.
 \end_layout
 
 \end_inset
@@ -244,7 +249,14 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Number of currently active executives
+Estimates of potential wind capacity with different technology
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:2008_current_future_tech"
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -332,7 +344,14 @@ Panel B: Near future estimate vs 2008
 \emph on
 Notes:
 \emph default
- 
+ Each panel reports the binned scatter plot between measures of wind capacity
+ based on technology available in two distinct points in time.
+ Potential wind capacity is estimated by Lopez et al.
+ (2012).
+ I divide ZIP codes into twenty equal-sized bins and plot, for each bin,
+ the average potential wind capacity with the corresponding technology.
+ The solid lines show a fit from an OLS regression on the underlying data.
+ The slope of the estimated coefficients is reported in each plot.
 \end_layout
 
 \end_inset
@@ -355,7 +374,14 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Number of currently active executives
+Wind power class
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:wind_power_class"
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -380,7 +406,20 @@ Number of currently active executives
 \emph on
 Notes:
 \emph default
- 
+ The figure reports the annual average wind power class (no exclusions applied)
+ used in the Renewable Electricity Futures Study (
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://www.nrel.gov/analysis/re-futures.html
+\end_layout
+
+\end_inset
+
+).
+ Wind power class ranges from 1 (not shaded) to 7 (shaded in dark blue).
 \end_layout
 
 \end_inset
@@ -428,7 +467,8 @@ Number of currently active executives
 \emph on
 Notes:
 \emph default
- 
+ Green triangles represent offshore wind turbines (not included in the main
+ analysis)
 \end_layout
 
 \end_inset

@@ -77,9 +77,14 @@ program validate_pot_wind_cap
     }
     
     foreach stub in current near_fut {
+        qui reg pot_wind_cap_zip_area_`stub' pot_wind_cap_zip_area_2008
+        local slope = round(_b[pot_wind_cap_zip_area_2008],.001)
+
+        local plot_opts = `"legend(on order(- "slope = `slope'") pos(3) ring(0) region(style(none))) "' + ///
+                          `"xtitle("`: var label pot_wind_cap_zip_area_2008'") ytitle("`: var label pot_wind_cap_zip_area_`stub''")"'
+
         binscatter pot_wind_cap_zip_area_`stub' pot_wind_cap_zip_area_2008, ///
-            ytitle("`: var label pot_wind_cap_zip_area_`stub''") ///
-            xtitle("`: var label pot_wind_cap_zip_area_2008'")
+            mcolor(gs9) lcolor(gs7) `plot_opts'
         graph export "../output/pot_wind_cap_2008_`stub'.png", replace
     }
 end

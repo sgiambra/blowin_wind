@@ -208,14 +208,14 @@ This paper estimates the impact of wind turbines presence at the ZIP code
 \noindent
 
 \size small
-Keywords: wind turbines, home prices, 
+Keywords: wind turbines, home prices, disamenities
 \end_layout
 
 \begin_layout Standard
 \noindent
 
 \size small
-JEL: THREE JEL
+JEL: D62, Q42, R30
 \size default
 
 \begin_inset Newpage pagebreak
@@ -599,8 +599,8 @@ Wind turbines
 \end_layout
 
 \begin_layout Standard
-I use data on all wind energy projects in the US through December 2017 made
- available by the Federal Aviation Administration (FAA).
+I use data on all wind energy projects in the US through December 2017,
+ made available by the Federal Aviation Administration (FAA).
 \begin_inset Foot
 status open
 
@@ -625,8 +625,8 @@ https://www.fws.gov/southwest/es/Energy_Wind_FAA.html
 \end_layout
 
 \begin_layout Itemize
-Determined with Built Date: records returned to the FAA with a Built Date
- and generally represent completed construction.
+Determined with Built Date: records returned to the FAA with a Built Date;
+ generally represent completed constructions.
 \end_layout
 
 \begin_layout Itemize
@@ -642,7 +642,8 @@ Determined as Hazard: records that have been determined to be a hazard to
 
 \begin_layout Itemize
 Not yet Determined: records in the early phase of the permitting process
- and no determination of whether they are a hazard or not has been made.
+ for which no determination of whether they are a hazard or not has been
+ made.
 \end_layout
 
 \begin_layout Standard
@@ -692,7 +693,7 @@ key "nationalwindwatch"
 
 \end_inset
 
-, two diffused turbines model are the 1.8-megawatt Vestas V90 from Denmark
+, two diffused turbines model are the 1.8-megawatt Vestas V90 from Denmark,
  with a total height of 410 feet, and the 2-megawatt Gamesa G87 from Spain,
  totaling 399 feet.
 \end_layout
@@ -755,7 +756,7 @@ key "doeeere"
 \begin_inset Formula $^{2}$
 \end_inset
 
- and compute the percentage of each cell with potential capacity greater
+ and compute the percentage of each cell having potential capacity greater
  than 30%.
 \end_layout
 
@@ -780,7 +781,7 @@ wind corridor
 \end_inset
 
 , a region stretching from North Dakota and Montana southward to western
- Texas and characterized by high average annual wind speeds.
+ Texas, and characterized by high average annual wind speeds.
 \begin_inset Foot
 status open
 
@@ -898,18 +899,18 @@ reference "fig:dist_zhvi"
 \end_layout
 
 \begin_layout Standard
-Second, I use the house price index constructed by 
+Second, I use the house price index (HPI) constructed by 
 \begin_inset CommandInset citation
 LatexCommand citet
 key "bogin2016local"
 
 \end_inset
 
- (BDL) at the ZIP code and census tract level using data on 97 million home
- transactions from the Federal Housing Finance Agency (FHFA).
- The index is built using the repeat-sales methodology, which is based on
- the assumption that the characteristics of a given house remain unchanged
- over the period of the analysis.
+ (BDL henceforth) at the ZIP code and census tract level using data on 97
+ million home transactions from the Federal Housing Finance Agency (FHFA).
+ The index is based on the repeat-sales methodology, which makes the assumption
+ that the characteristics of a given house remain unchanged over the period
+ of the analysis.
  Holding this true, the price index for a given location can be computed
  by regressing differences in sale prices of the 
 \emph on
@@ -927,11 +928,11 @@ reference "sec:repeat-sales"
 
 \end_inset
 
- provides more detail about the repeat-sales methodology.
+ provides more details about the repeat-sales methodology.
  A specific feature of BDL's index is the low level of geographic aggregation
  (ZIP code and census tract), obtained by aggregating sales occurring over
  a one-year horizon.
- In summary BDL's index is available for approximately 18,000 ZIP codes
+ In summary, BDL's index is available for approximately 18,000 ZIP codes
  and 55,000 census tracts from 1975 through 2017.
  Appendix figure 
 \begin_inset CommandInset ref
@@ -940,8 +941,26 @@ reference "fig:bdl_coverage"
 
 \end_inset
 
- provides an overview of the ZIP codes for which the house index exists
- in 2005 and 2010.
+ provides an overview of the ZIP codes for which this HPI exists in both
+ 2000 and 2005.
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+Obviously, ZIP codes included in the sample are not randomly selected and
+ they likely correspond to more populated geographic areas where home transactio
+ns occur more frequently.
+ However, in most cases, they represent a relevant fraction of the complete
+ set of each state's ZIP codes.
+ 
+\end_layout
+
+\end_inset
+
+ After joining BDL house prices at the ZIP code level with wind turbines
+ and wind power capacity data, the resulting sample consists of about 16,800
+ distinct ZIP codes, or more than 44,000 ZIP code-years.
+ On the other hand, the number of wind turbines matched is just above 35%.
 \end_layout
 
 \begin_layout Standard
@@ -952,7 +971,7 @@ reference "fig:prices_comparison"
 
 \end_inset
 
- shows that, on average, the four price measures depict a similar pattern
+ shows that, on average, the four price measures trace a similar pattern
  for the US housing market.
 \end_layout
 
@@ -961,10 +980,10 @@ Additional variables
 \end_layout
 
 \begin_layout Standard
-Home prices, turbines location and potential wind capacity are the main
- variables used in the analysis that follows.
- I supplement this data with geographic and demographic controls at the
- ZIP code level.
+Home prices, turbines location and potential wind capacity are the central
+ variables for the analysis that follows.
+ I supplement this data with geographic and demographic controls, mainly
+ at the ZIP code level.
  
 \end_layout
 
@@ -1000,7 +1019,7 @@ https://earthworks.stanford.edu/catalog/stanford-xv279yj9196
 status open
 
 \begin_layout Plain Layout
-Data publicly available at 
+Income data is publicly available from the IRS at 
 \end_layout
 
 \begin_layout Plain Layout
@@ -1020,7 +1039,7 @@ code-data-soi
 
 \end_inset
 
- The location specific indicator of rurality is obtained from the Population
+ A location specific indicator of rurality is obtained from the Population
  Studies Center of the University of Michigan.
 \begin_inset Foot
 status open
@@ -1042,7 +1061,7 @@ https://dsdr-kb.psc.isr.umich.edu/answer/1102
 
 \end_inset
 
- It is computed from the Rural-Urban Continuum Codes from the United States
+ It is based on the Rural-Urban Continuum Codes computed by the United States
  Department of Agriculture (USDA), which classify each county into nine
  groups according to its level of urbanization.
  The mapping from counties to ZIP codes assumes that if a ZIP code falls
@@ -1079,104 +1098,71 @@ Sample characteristics
 \end_layout
 
 \begin_layout Standard
-Figure 2 displays the time trend for median home selling prices in the US
- as it emerges from Zillow data.
- The dashed line shows the trend obtained averaging across all zip codes
- that are allocated a wind turbine during the period for which house price
- data is available or before.
- The solid line reports the corresponding trend for zip codes that do not
- receive a wind turbine in the period considered or before it.
+Wind energy projects are usually targeted towards less developed areas.
+ Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:ts_prices"
+
+\end_inset
+
+ shows that, on average, ZIP codes that are allocated a wind farm (defined
+ as a total number of at least ten turbines) at some point in time have
+ lower house prices than ZIP codes where a wind farm is never built.
+ The difference between the two sub-samples is small (about $1,500) but
+ remarkably stable over time.
 \end_layout
 
 \begin_layout Standard
-Prices trend similarly over time in zip codes with and without a wind turbine,
- although they are somewhat noisy, reflecting the existence of a seasonal
- component.
- The empirical distribution of median home selling prices for the zip codes
- covered in the Zillow data is instead shown in Figure 3.
-\end_layout
-
-\begin_layout Standard
-This distribution is computed after excluding some observations from the
- dataset according to the following procedure.
- I first identify 183 zip code-month units that are associated with a median
- house price higher than $1000.
- If all other observations for the same zip code in different months have
- home prices below this cutoff, I treat the flagged value as a typo and
- I drop it from the dataset while leaving the other months.
- If instead there is more than one case of prices above the cutoff within
- the same zip code, I also drop all other observations related to that zip
- code.
- In total, I end up eliminating 21,567 zip code-month observations, or slightly
- more than 2.2% of the original dataset.
- As expected, the distribution of median home selling prices is highly right
- skewed.
- The mean value taken by this variable is about $150.
-\end_layout
-
-\begin_layout Standard
-Data related to wind turbine locations and other geographic and demographic
- variables is basically available for the entire US.
- On the other hand, I have information on median home selling prices only
- on a subsample of the full set of US zip codes.
- Appendix figure 2 makes this point more explicit.
- It shows in blue the zip codes for which information on home prices is
- available from Zillow.
- The red triangles represent wind turbines within these zip codes.
- Obviously, the zip codes included in the sample are not randomly selected
- and they likely correspond to highly populated geographic areas.
- However, at least for some of the US states, they represent a large fraction
- of the complete set of zip codes.
- 
-\end_layout
-
-\begin_layout Standard
-Considering only zip codes for which I have house prices, table 
+Table 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "tab:cov_balance"
 
 \end_inset
 
- presents a summary of means and standard deviations of the key variables
- used in the analysis that follows.
- Column 1 displays descriptive statistics for the full sample, while column
- 2 and 3 distinguish between zip codes characterized by the presence of
- a wind turbine or not.
- Areas with wind turbines are on average more distant from the coastline,
- have a higher elevation, and are less populated.
- They have a lower income per capita, a higher fraction of white inhabitants,
- and a lower fraction of blacks and asians.
- Moreover, they tend to have a higher fraction of male residents and of
- individuals with lower education (high school degree or less).
- The last row shows that the zip codes that are not allocated a wind turbine
- are characterized by a lower fraction of the total geographic area having
- annual average wind with power class greater or equal than three.
- The correlation between average wind and wind turbines location can be
- visually inspected from Figure 4 (as well as appendix figure 3).
- The figure makes it evident that wind turbines (depicted as black triangles)
- tend to be placed in areas characterized by higher wind level (dark-shaded).
+ presents a summary of means and standard deviations of a battery of demographic
+ and geographic variables.
+ Column (1) displays descriptive statistics for the full sample, while column
+ (2) and (3) distinguish between ZIP codes characterized by the presence
+ of a wind farm or not.
+ Areas with wind farms are on average more distant from the coastline, have
+ a higher elevation, and are less populated.
+ They have a lower average income, a higher fraction of white inhabitants,
+ and lower fractions of blacks and asians.
+ They also tend to have a higher fraction of male residents.
+ The last row shows that locations that are not allocated a wind warm are
+ characterized by a lower percentage of the area of the ZIP code with potential
+ wind capacity in 2008 greater than 30%.
 \end_layout
 
 \begin_layout Standard
-Column 4 of Table 1 shows that zip codes with and without a wind turbine
- are significantly different in terms of the variables considered.
- Since this paper uses the percentage of the area of a zip code having average
- wind of category three or more as instrument, I can investigate if the
- covariates are balanced conditional on this variable.
- Column 5 shows the coefficients estimated regressing each exogenous control
- on the percentage of zip code area having wind of power class larger than
- three, while column 6 adds to the regression all the other covariates as
- controls, together with state fixed effects.
- The differences in total population, percentage of black and asian population
- and level of education tend to disappear.
- The coefficients for the distance from the coastline, elevation and percentage
- of white and male population remain significant but considerably small.
- Income per capita is the only variable that remains statistically significant
- and with a large coefficient after regressing it on the wind variable and
- controlling for the other zip code characteristics.
- Overall however, the instrument seems to achieve a good balance of the
- covariates considered in the analysis.
+Column (4) of table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:cov_balance"
+
+\end_inset
+
+ shows the results of t-tests on the equality of means in the two sub-samples,
+ assuming unequal variances.
+ ZIP codes with and without a wind farm are significantly different in terms
+ of all variables considered.
+ Since the following analysis relies on the percentage of the area of the
+ ZIP code with potential wind capacity greater than 30% as excluded instrument,
+ I further investigate if the covariates are balanced conditional on this
+ variable.
+ This can be seen as a partial test of the independence assumption of the
+ instrumental variable design.
+ Column (5) shows the coefficients estimated regressing each exogenous control
+ on the percentage of the ZIP code area having potential wind capacity greater
+ than 30%, while column (6) adds to the regression all the other covariates
+ as controls, together with state fixed effects.
+ The differences between the two sub-sample remain statistically significant,
+ although the coefficients on the excluded instrument are relatively small.
+ Overall however, the instrument does not seem to achieve a perfect balance
+ of the geographic and demographic covariates considered.
+ This informs the subsequent analysis.
 \end_layout
 
 \begin_layout Section

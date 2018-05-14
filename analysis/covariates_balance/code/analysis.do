@@ -32,7 +32,7 @@ program main
             matrix reg_means = (nullmat(reg_means) \ `c_est')
             
             local resid_controls: list controls- control
-            reg `control' `inst' `resid_controls'
+            areg `control' `inst' `resid_controls', absorb(state)
             matrix reg_control_means = (nullmat(reg_control_means) \ `c_est')
         }
         else {

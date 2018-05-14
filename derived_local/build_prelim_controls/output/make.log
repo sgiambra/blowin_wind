@@ -1,5 +1,5 @@
 
- make.py started: 2018-05-12 13:02:31 C:\Users\giamb\Documents\GitHub\blowin_wind\derived_local\build_prelim_controls\code 
+ make.py started: 2018-05-14 18:17:04 C:\Users\giamb\Documents\GitHub\blowin_wind\derived_local\build_prelim_controls\code 
 
 
 
@@ -447,12 +447,17 @@ Notes:
   7.     }
   8.     
 .     foreach stub in current near_fut {
-  9.         binscatter pot_wind_cap_zip_area_`stub' pot_wind_cap_zip_area_2008, ///
->             ytitle("`: var label pot_wind_cap_zip_area_`stub''") ///
->             xtitle("`: var label pot_wind_cap_zip_area_2008'")
- 10.         graph export "../output/pot_wind_cap_2008_`stub'.png", replace
- 11.     }
- 12. end
+  9.         qui reg pot_wind_cap_zip_area_`stub' pot_wind_cap_zip_area_2008
+ 10.         local slope = round(_b[pot_wind_cap_zip_area_2008],.001)
+ 11. 
+.         local plot_opts = `"legend(on order(- "slope = `slope'") pos(3) ring(0) region(style(none))) "' + ///
+>                           `"xtitle("`: var label pot_wind_cap_zip_area_2008'") ytitle("`: var label pot_wind_cap_zip_area_`stub''")"'
+ 12. 
+.         binscatter pot_wind_cap_zip_area_`stub' pot_wind_cap_zip_area_2008, ///
+>             mcolor(gs9) lcolor(gs7) `plot_opts'
+ 13.         graph export "../output/pot_wind_cap_2008_`stub'.png", replace
+ 14.     }
+ 15. end
 
 . 
 . * Execute
@@ -849,4 +854,4 @@ file G:/My Drive/research projects/wind/stata/fhfa_zip.xls saved
 . 
 end of do-file
 
- make.py ended: 2018-05-12 13:04:17
+ make.py ended: 2018-05-14 18:18:11
