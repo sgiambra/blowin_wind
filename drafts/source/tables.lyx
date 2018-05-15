@@ -1916,9 +1916,8 @@ Number of ZIP codes
 \emph on
 Notes:
 \emph default
- The sample is the set of ZIP codes having information on Bogin et al.
- (2016)'s house price index for at least one year and the full vector of
- control variables.
+ The sample is the set of ZIP codes having information on BDL's house price
+ index for at least one year and the full vector of control variables.
  See section 2 for each variable definition and source.
  Standard errors are reported in parenthesis.
  Column (1) reports covariates averages for the full sample of ZIP codes.
@@ -1930,7 +1929,8 @@ Notes:
  Column (5) reports the coefficient obtained regressing each covariate on
  the percentage of the ZIP code area with potential wind capacity greater
  than 30%.
- Column (6) additionally controls for the remaining covariates.
+ Column (6) additionally controls for the remaining covariates and state
+ fixed effects.
 \end_layout
 
 \end_inset
@@ -2600,10 +2600,11 @@ Notes:
  code-year.
  In panel C and D, a time period is a month and the unit of analysis is
  the ZIP code-month.
- House prices in panel A and B are estimated by Bogin et al.
- (2016).
- House prices in panel C are median listing prices per square foot from
- Zillow, while specifications in panel D use the Zillow Home Value Index.
+ The sample in panel A (B) is the set of ZIP codes (census tracts) having
+ information on BDL's house price index.
+ The sample in panel C is the set of ZIP codes with data on median listing
+ prices per square foot from Zillow, while the sample in panel D is the
+ set of ZIP codes for which the Zillow Home Value Index is available.
  Each regression includes calendar time fixed effects.
  Standard errors in parenthesis are clustered by location.
 \end_layout
@@ -3358,6 +3359,11 @@ Notes:
  code-year.
  In panel C and D, a time period is a month and the unit of analysis is
  the ZIP code-month.
+ The sample in panel A (B) is the set of ZIP codes (census tracts) having
+ information on BDL's house price index.
+ The sample in panel C is the set of ZIP codes with data on median listing
+ prices per square foot from Zillow, while the sample in panel D is the
+ set of ZIP codes for which the Zillow Home Value Index is available.
  The excluded instrument is defined as the percentage of the area of a given
  location having potential wind capacity in 2008 greater than 30%, interacted
  with a dummy set to one in the years after the first wind turbine was installed
@@ -4033,10 +4039,11 @@ Notes:
  code-year.
  In panel C and D, a time period is a month and the unit of analysis is
  the ZIP code-month.
- House prices in panel A and B are estimated by Bogin et al.
- (2016).
- House prices in panel C are median listing prices per square foot from
- Zillow, while specifications in panel D use the Zillow Home Value Index.
+ The sample in panel A (B) is the set of ZIP codes (census tracts) having
+ information on BDL's house price index.
+ The sample in panel C is the set of ZIP codes with data on median listing
+ prices per square foot from Zillow, while the sample in panel D is the
+ set of ZIP codes for which the Zillow Home Value Index is available.
  The excluded instrument is defined as the percentage of the area of a given
  location having potential wind capacity in 2008 greater than 30%, interacted
  with a dummy set to one in the years after the first wind turbine was installed
@@ -4061,8 +4068,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Monotonicity test, Bogin et al.
- (2016) prices at ZIP code level
+Monotonicity test, BDL ZIP code sample
 \begin_inset CommandInset label
 LatexCommand label
 name "tab:monotonicity_bdl_zip"
@@ -5053,7 +5059,7 @@ Notes:
  Each specification use a different sub-sample from the set of ZIP codes
  having information on house prices estimated by Bogin et al.
  (2016).
- Sub-samples are defined according to a measures of rurality at the county
+ Sub-samples are defined according to a measure of rurality at the county
  level ranging from 1 through 9 (see 
 \begin_inset Flex URL
 status open
@@ -5602,7 +5608,8 @@ Number of location-time
 Notes:
 \emph default
  The sample is restricted to the period before the first wind turbine was
- installed in the US.
+ installed in the US (i.e.
+ 1998).
  In panel A, a time period is a year and the unit of analysis is the census
  tract-year.
  In panel B, a time period is a year and the unit of analysis is the ZIP

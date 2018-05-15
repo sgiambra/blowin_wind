@@ -131,8 +131,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Monotonicity test, Bogin et al.
- (2016) prices at census tract level
+Monotonicity test, BDL census tract sample
 \begin_inset CommandInset label
 LatexCommand label
 name "tab:monotonicity_bdl_tract"
@@ -1123,7 +1122,7 @@ Notes:
  Each specification use a different sub-sample from the set of census tracts
  having information on house prices estimated by Bogin et al.
  (2016).
- Sub-samples are defined according to a measures of rurality at the county
+ Sub-samples are defined according to a measure of rurality at the county
  level ranging from 1 through 9 (see 
 \begin_inset Flex URL
 status open
@@ -1160,7 +1159,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Monotonicity test, Zillow Home Value Index
+Monotonicity test, Zillow Home Value Index ZIP code sample
 \begin_inset CommandInset label
 LatexCommand label
 name "tab:monotonicity_zillow_zip"
@@ -2150,7 +2149,7 @@ Notes:
 \emph default
  Each specification use a different sub-sample from the set of ZIP codes
  having Zillow Home Value Index data.
- Sub-samples are defined according to a measures of rurality at the county
+ Sub-samples are defined according to a measure of rurality at the county
  level ranging from 1 through 9 (see 
 \begin_inset Flex URL
 status open

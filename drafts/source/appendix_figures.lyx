@@ -165,7 +165,8 @@ name "fig:dist_zhvi"
 \emph on
 Notes:
 \emph default
- The sample is all ZIP code-months with data on the Zillow Home Value Index.
+ The sample is all ZIP code-months with data on the Zillow Home Value Index
+ (ZHVI).
  The figure shows the cumulative distribution function for monthly log ZHVI
  truncated at $1 million.
  
@@ -235,6 +236,72 @@ Notes:
 \end_layout
 
 \begin_layout Standard
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Construction of the instrument
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:construct_instrument"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename G:/My Drive/research projects/wind/maps/marthas.PNG
+	lyxscale 50
+	scale 65
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\emph on
+Notes:
+\emph default
+ Green triangles represent offshore wind turbines (not included in the main
+ analysis).
+ The red bordered region is ZIP code 02535, Chilmark, MA (in Martha's Vineyard).
+ Blue shaded areas represent potential wind capacity cells estimated by
+ Lopez et al.
+ (2012).
+ Three of these cells intersect the geography of ZIP code 02535.
+ The estimate of the area of the cell with potential wind capacity of at
+ least 30% is different for each cell, and it is reported in percentages
+ on the map.
+ Assuming that potential wind capacity is equally distributed on the area
+ of each cell, I compute a weighted average for the wind variable using
+ as weights the proportion of the ZIP code territory covered by each cell.
+ In this specific example, 47% of the area of ZIP code 02535 has potential
+ wind capacity in 2008 of 30% or more.
+\end_layout
+
+\end_inset
+
+
 \begin_inset Newpage clearpage
 \end_inset
 
@@ -407,18 +474,19 @@ name "fig:wind_power_class"
 Notes:
 \emph default
  The figure reports the annual average wind power class (no exclusions applied)
- used in the Renewable Electricity Futures Study (
+ used in the Renewable Electricity Futures Study and available for download
+ at 
 \begin_inset Flex URL
 status open
 
 \begin_layout Plain Layout
 
-https://www.nrel.gov/analysis/re-futures.html
+https://www.nrel.gov/gis/data-wind.html
 \end_layout
 
 \end_inset
 
-).
+.
  Wind power class ranges from 1 (not shaded) to 7 (shaded in dark blue).
 \end_layout
 
@@ -428,51 +496,6 @@ https://www.nrel.gov/analysis/re-futures.html
 \end_layout
 
 \begin_layout Standard
-\begin_inset Newpage clearpage
-\end_inset
-
-
-\begin_inset Float figure
-placement H
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Number of currently active executives
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename G:/My Drive/research projects/wind/maps/marthas.PNG
-	lyxscale 50
-	scale 65
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-
-\emph on
-Notes:
-\emph default
- Green triangles represent offshore wind turbines (not included in the main
- analysis)
-\end_layout
-
-\end_inset
-
 
 \end_layout
 

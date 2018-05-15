@@ -1,5 +1,5 @@
 
- make.py started: 2018-05-14 22:49:02 C:\Users\giamb\Documents\GitHub\blowin_wind\analysis\covariates_balance\code 
+ make.py started: 2018-05-15 17:40:20 C:\Users\giamb\Documents\GitHub\blowin_wind\analysis\covariates_balance\code 
 
 
 
@@ -620,4 +620,4 @@ Ho: diff = 0                     Satterthwaite's degrees of freedom =  253.362
 . 
 end of do-file
 
- make.py ended: 2018-05-14 22:49:05
+ make.py ended: 2018-05-15 17:40:22

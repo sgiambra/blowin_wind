@@ -519,7 +519,15 @@ Panel B: Reduced form
 \emph on
 Notes:
 \emph default
- 
+ The sample is the set ZIP codes with data on the house price index (HPI)
+ estimated by Bogin et al.
+ (2016).
+ Panel A shows a fit from a local quadratic regression of change in number
+ of wind turbines in the ZIP code on the instrument, with the the rule-of-thumb
+ bandwidth suggested by Fan and Gijbels (1996).
+ Panel B similarly reports the fit from a local quadratic regression of
+ the change in HPI on the instrument.
+ Dashed lines depict ninety-five percentage confidence intervals.
 \end_layout
 
 \end_inset
@@ -542,7 +550,14 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Yearly house price
+House prices before and after wind farm construction
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:event_study"
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -567,7 +582,114 @@ Yearly house price
 \emph on
 Notes:
 \emph default
- 
+ The sample is the set of ZIP codes having information on BDL house price
+ index (HPI) and that are allocated a wind farm at some point in time.
+ The figure plots coefficients from a regression of log HPI on a vector
+ of lead and lagged indicators for years relative to the construction of
+ the first ZIP code wind farm, with the year prior to the event (
+\begin_inset Quotes eld
+\end_inset
+
+-1
+\begin_inset Quotes erd
+\end_inset
+
+) as the omitted category.
+ The unit of observation is the ZIP code-year.
+ Error bars are 
+\begin_inset Formula $\pm$
+\end_inset
+
+2 coefficient standard errors (robust).
+ The regression includes year fixed effects, ZIP code fixed effects, and
+ two indicators for observations before and after six years of wind farm
+ construction.
+ The dotted lines show the sample mean of ZIP code log HPI across observations
+ within six years of the event.
+ Each coefficient series is shifted by a constant so that the observation-count-
+weighted mean of the regression coefficients is equal to the sample mean
+ of the corresponding dependent variable.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+House prices before and after hazard determinarion
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:event_study_hazard"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename ../../analysis/event_study_plots/output/event_study_wind_panel_zip_fhfa_hazard_year.png
+	lyxscale 50
+	scale 35
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\emph on
+Notes:
+\emph default
+ The sample is the set of ZIP codes having information on BDL house price
+ index (HPI) and where a wind farm project is determined as hazard.
+ The figure plots coefficients from a regression of log HPI on a vector
+ of lead and lagged indicators for years relative to the time of hazard
+ determination, with the year prior to the event (
+\begin_inset Quotes eld
+\end_inset
+
+-1
+\begin_inset Quotes erd
+\end_inset
+
+) as the omitted category.
+ The unit of observation is the ZIP code-year.
+ Error bars are 
+\begin_inset Formula $\pm$
+\end_inset
+
+2 coefficient standard errors (robust).
+ The regression includes year fixed effects, ZIP code fixed effects, and
+ two indicators for observations before and after six years of hazard determinat
+ion.
+ The dotted lines show the sample mean of ZIP code log HPI across observations
+ within six years of the event.
+ Each coefficient series is shifted by a constant so that the observation-count-
+weighted mean of the regression coefficients is equal to the sample mean
+ of the corresponding dependent variable.
 \end_layout
 
 \end_inset
